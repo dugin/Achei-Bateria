@@ -1,31 +1,49 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:background="@color/corDeFundo"
+    android:orientation="vertical"
     tools:context="hmdugin.acheibateria.fragment.MapaFragment">
 
 
     <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="50dp"
+        android:layout_height="500dp"
+        android:layout_gravity="top"
+
         android:paddingTop="50dp"></com.google.android.gms.maps.MapView>
 
-    <Button
-        android:id="@+id/botãoCarreguei"
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
         android:layout_gravity="bottom"
-        android:text="@string/recomendo" />
+        android:orientation="horizontal">
+
+        <Button
+
+            android:id="@+id/botãoCarreguei"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start|bottom"
+            android:background="@drawable/button_border"
+            android:text="@string/recomendo"
+            android:textColor="#000" />
 
     <Button
+
         android:id="@+id/botãoRecomendo"
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:text="@string/carreguei" />
+        android:layout_width="180dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end|bottom"
+        android:background="@drawable/button_border"
+
+        android:text="@string/carreguei"
+        android:textColor="#000" />
+    </LinearLayout>
 
 
-</FrameLayout>
+</LinearLayout>
