@@ -15,8 +15,10 @@ import java.util.Locale;
 import java.util.Random;
 
 import de.greenrobot.event.EventBus;
+import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.activities.MainActivity;
 import hmdugin.acheibateria.eventBus.MessageEB;
+import hmdugin.acheibateria.util.Configuration;
 import hmdugin.acheibateria.util.NotificationUtils;
 import hmdugin.acheibateria.util.PrefManager;
 
@@ -37,7 +39,7 @@ public class BatteryLevelService extends Service {
         public void onReceive(Context arg0, Intent intent) {
 
             batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-
+            Log.d(TAG, "" + batteryStatus);
             prefManager = new PrefManager(arg0);
 
             String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
@@ -47,7 +49,7 @@ public class BatteryLevelService extends Service {
                     prefManager.setPrimeiraVez(false);
                 } else {
 
-                    showNotificationMessage(arg0, "Bateria Acabando", "Encontre locais para carregá-la!", new Intent(arg0, MainActivity.class));
+                    showNotificationMessage(arg0);
 
                     prefManager.setPrimeiraVez(false);
 
@@ -80,7 +82,7 @@ public class BatteryLevelService extends Service {
         if (intent.getExtras() != null) {
             Log.d(TAG, "" + intent.getExtras().getString("id"));
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
@@ -106,13 +108,16 @@ public class BatteryLevelService extends Service {
         return "Erro no random";
     }
 
-    private void showNotificationMessage(Context context, String title, String message, Intent intent) {
+    private void showNotificationMessage(Context context) {
+        String title = "Bateria Acabando";
+        String message = "Encontre locais para carregá-la!";
+        Intent intent = new Intent(context, MainActivity.class);
 
         notificationUtils = new NotificationUtils(context);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        notificationUtils.showNotificationMessage(title, message, intent);
+        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
 
     }
 

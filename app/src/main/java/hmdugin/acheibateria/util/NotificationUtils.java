@@ -15,8 +15,6 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-import hmdugin.acheibateria.R;
-
 
 public class NotificationUtils {
 
@@ -62,7 +60,7 @@ public class NotificationUtils {
         return isInBackground;
     }
 
-    public void showNotificationMessage(String title, String message, Intent intent) {
+    public void showNotificationMessage(String title, String message, Intent intent, int imgPath, int notificationID) {
 
         // Check for empty push message
         if (TextUtils.isEmpty(message))
@@ -70,10 +68,9 @@ public class NotificationUtils {
 
         //if (isAppIsInBackground(mContext)) {
         // notification icon
-        int icon = R.drawable.baterry_low;
+        int icon = imgPath;
 
-        int mNotificationId = Configuration.NOTIFICATION_ID;
-        intent.putExtra("id", mNotificationId);
+        intent.putExtra("id", notificationID);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         mContext,
@@ -98,7 +95,7 @@ public class NotificationUtils {
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(mNotificationId, notification);
+        notificationManager.notify(notificationID, notification);
 
           /*  } else {
                 intent.putExtra("title", title);
