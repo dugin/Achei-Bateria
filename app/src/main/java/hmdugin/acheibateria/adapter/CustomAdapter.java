@@ -13,6 +13,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 
+import org.json.JSONException;
+
+import java.util.Calendar;
+
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.domain.ListaDeLojas;
 import hmdugin.acheibateria.domain.Loja;
@@ -22,7 +26,8 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
 
     private static ParseGeoPoint mGeoPoint;
     private final String TAG = this.getClass().getSimpleName();
-
+    private TextView txtEnd, txtNome, txtDist, txtHrFunc, txtBairro;
+    private ParseImageView imgLoja;
 
     public CustomAdapter(Context context, final ParseGeoPoint geoPoint) {
 
@@ -51,30 +56,61 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
         listaDeLojas.setListaDeCompras(lojas);
 
         // Add and download the image
-        ParseImageView todoImage = (ParseImageView) v.findViewById(R.id.imgLoja);
+        imgLoja = (ParseImageView) v.findViewById(R.id.imgLoja);
         ParseFile imageFile = lojas.getImg();
         if (imageFile != null) {
-            todoImage.setParseFile(imageFile);
-            todoImage.loadInBackground();
+            imgLoja.setParseFile(imageFile);
+            imgLoja.loadInBackground();
         }
 
         // Add the title view
         TextView txtNome = (TextView) v.findViewById(R.id.txtNome);
         txtNome.setText(lojas.getNome());
 
-        TextView txtEnd = (TextView) v.findViewById(R.id.txtEnd);
+        txtEnd = (TextView) v.findViewById(R.id.txtEnd);
         String endereco = lojas.getEnd();
         txtEnd.setText(endereco);
-        TextView txtBairro = (TextView) v.findViewById(R.id.txtBairro);
+        txtBairro = (TextView) v.findViewById(R.id.txtBairro);
         txtBairro.setText(lojas.getBairro());
-        TextView txtDist = (TextView) v.findViewById(R.id.txtDist);
+        txtDist = (TextView) v.findViewById(R.id.txtDist);
 
         double distanciaKm = mGeoPoint.distanceInKilometersTo(lojas.getCoord());
         int minutos = calculaTempoMin(distanciaKm);
         txtDist.setText(String.format("%d min", (int) minutos));
 
 
+        txtHrFunc = (TextView) v.findViewById(R.id.txtHrFunc);
+        txtHrFunc.setText(HrFuncionamento(lojas));
+
         return v;
+    }
+
+
+    private String HrFuncionamento(Loja lojas) {
+
+        Calendar calendar = Calendar.getInstance();
+        String hr_abre = "";
+        String hr_fecha = "";
+
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        try {
+            if (day > 1 && day < 7) {
+                hr_abre = lojas.getHrOpen().getString(0);
+                hr_fecha = lojas.getHrClose().getString(0);
+            } else if (day == 7) {
+                hr_abre = lojas.getHrOpen().getString(1);
+                hr_fecha = lojas.getHrClose().getString(1);
+            } else if (day == 1) {
+                hr_abre = lojas.getHrOpen().getString(2);
+                hr_fecha = lojas.getHrClose().getString(2);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (hr_abre.equals("00:00") || hr_fecha.equals("00:00"))
+            return "Fechado";
+
+        return hr_abre + " - " + hr_fecha;
     }
 
     private int calculaTempoMin(double distanciaKm) {
