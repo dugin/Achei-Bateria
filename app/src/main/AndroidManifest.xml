@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hmdugin.acheibateria" >
 
-    <!--Permissions -->
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -12,9 +12,11 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.BATTERY_STATS" />
 
+
     <permission
         android:name="hmdugin.acheibateria.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="hmdugin.acheibateria.permission.C2D_MESSAGE" />
 
     <application
@@ -32,12 +34,12 @@
             </intent-filter>
         </activity>
 
-        <!--Google maps api -->
+        <!-- Google maps api -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/googleAPIKey" />
 
-        <!--Parse push service-->
+        <!-- Parse push service -->
         <service android:name="com.parse.PushService" />
 
         <receiver
@@ -67,17 +69,21 @@
         <service
             android:name=".service.BatteryLevelService"
             android:exported="false">
-
-
         </service>
-
-
         <service
             android:name=".service.PowerConnectionService"
             android:exported="false">
-
         </service>
 
+        <activity
+            android:name=".activities.NotificationActivity"
+            android:label="@string/title_activity_notification"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="hmdugin.acheibateria.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

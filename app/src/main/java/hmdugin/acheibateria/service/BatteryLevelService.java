@@ -9,10 +9,11 @@ import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.parse.ParseAnalytics;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 import de.greenrobot.event.EventBus;
 import hmdugin.acheibateria.R;
@@ -49,6 +50,7 @@ public class BatteryLevelService extends Service {
                     prefManager.setPrimeiraVez(false);
                 } else {
 
+                    ParseAnalytics.trackEventInBackground("NotificationLowBatteryClicado");
                     showNotificationMessage(arg0);
 
                     prefManager.setPrimeiraVez(false);
@@ -91,22 +93,7 @@ public class BatteryLevelService extends Service {
         return null;
     }
 
-    private String msgNotification() {
-        String msg1 = "Corre! A BATERIA do seu celular esta morrendo! Clique aqui para acharmos um lugar para você salva-la :)";
-        String msg2 = " Nossos videntes previram que a sua bateria morrerá... Clique aqui para consultar aonde você pode prevenir a morte dela!";
-        String msg3 = "Clique aqui para achar um local perto de você, para carregar a sua bateria!";
-        Random gerador = new Random();
-        int n = gerador.nextInt(3);
-        switch (n) {
-            case 0:
-                return msg1;
-            case 1:
-                return msg2;
-            case 2:
-                return msg3;
-        }
-        return "Erro no random";
-    }
+
 
     private void showNotificationMessage(Context context) {
         String title = "Bateria Acabando";
@@ -117,7 +104,7 @@ public class BatteryLevelService extends Service {
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
+        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_low, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
 
     }
 

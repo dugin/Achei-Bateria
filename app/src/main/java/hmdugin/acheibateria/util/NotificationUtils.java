@@ -60,7 +60,7 @@ public class NotificationUtils {
         return isInBackground;
     }
 
-    public void showNotificationMessage(String title, String message, Intent intent, int imgPath, int notificationID) {
+    public void showNotificationMessage(String title, String message, Intent intent, int imgPath, int smalIcon, int notificationID) {
 
         // Check for empty push message
         if (TextUtils.isEmpty(message))
@@ -83,7 +83,7 @@ public class NotificationUtils {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 mContext);
-        Notification notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        Notification notification = mBuilder.setSmallIcon(smalIcon).setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setStyle(inboxStyle)

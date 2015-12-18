@@ -18,7 +18,6 @@ import org.json.JSONException;
 import java.util.Calendar;
 
 import hmdugin.acheibateria.R;
-import hmdugin.acheibateria.domain.ListaDeLojas;
 import hmdugin.acheibateria.domain.Loja;
 
 public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
@@ -50,10 +49,8 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
             v = View.inflate(getContext(), R.layout.content_lista_lojas, null);
         }
 
-        super.getItemView(object, v, parent);
+        // super.getItemView(object, v, parent);
         Loja lojas = (Loja) object;
-        ListaDeLojas listaDeLojas = ListaDeLojas.getInstance();
-        listaDeLojas.setListaDeCompras(lojas);
 
         // Add and download the image
         imgLoja = (ParseImageView) v.findViewById(R.id.imgLoja);
@@ -110,7 +107,8 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
         if (hr_abre.equals("00:00") || hr_fecha.equals("00:00"))
             return "Fechado";
 
-        return hr_abre + " - " + hr_fecha;
+
+        return hr_abre.substring(0, 2) + "h às " + hr_fecha.substring(0, 2) + "h";
     }
 
     private int calculaTempoMin(double distanciaKm) {

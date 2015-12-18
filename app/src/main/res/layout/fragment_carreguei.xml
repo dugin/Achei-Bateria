@@ -22,4 +22,14 @@
         android:text="@string/msgCarregar"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorPrimaryDark" />
+
+    <ImageView
+        android:id="@+id/check"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/check" />
+
 </RelativeLayout>

@@ -73,7 +73,7 @@ public class MapaFragment extends Fragment {
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
         uiSettings.setZoomControlsEnabled(true);
-        googleMap.setMyLocationEnabled(true);
+
 
         List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
         double latitude = localizacao.getLocation().getLatitude();
@@ -109,10 +109,12 @@ public class MapaFragment extends Fragment {
 
         }
 
+
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(latitude, longitude)).zoom(15).build();
-        googleMap.animateCamera(CameraUpdateFactory
+        googleMap.moveCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
+
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -131,7 +133,6 @@ public class MapaFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                // TODO: 16/12/2015 Pegar listaDeLojas.get(pos), que é a loja selecionada e contabilizar aqui
                 ParseAnalytics.trackEventInBackground("CarregueiClicado");
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.add(R.id.main_layout, new CarregueiFragment(), "ListaLojasFragment");
@@ -181,5 +182,6 @@ public class MapaFragment extends Fragment {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
 
 }

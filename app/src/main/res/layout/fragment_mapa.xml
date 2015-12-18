@@ -15,7 +15,7 @@
         android:layout_height="510dp"
         android:layout_gravity="top"
 
-        android:paddingTop="50dp"></com.google.android.gms.maps.MapView>
+        android:paddingTop="56dp"></com.google.android.gms.maps.MapView>
 
 
     <LinearLayout

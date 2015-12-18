@@ -9,13 +9,15 @@ import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.parse.ParseAnalytics;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import hmdugin.acheibateria.R;
-import hmdugin.acheibateria.activities.MainActivity;
+import hmdugin.acheibateria.activities.NotificationActivity;
 import hmdugin.acheibateria.eventBus.MessageEB;
 import hmdugin.acheibateria.util.Configuration;
 import hmdugin.acheibateria.util.NotificationUtils;
@@ -52,8 +54,11 @@ public class PowerConnectionService extends Service {
 
                 //  prefManager.apagar();
 
-                if (intervaloCerto)
+                if (intervaloCerto) {
+                    ParseAnalytics.trackEventInBackground("NotificationCarregadoClicado");
                     showNotificationMessage(arg0);
+
+                }
             } else if (tipo.equals("android.intent.action.ACTION_POWER_DISCONNECTED")) {
                 MessageEB m = new MessageEB(TAG);
                 Log.d(TAG, "Entrou no Action Disconnected");
@@ -79,7 +84,7 @@ public class PowerConnectionService extends Service {
         intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
         intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
         this.registerReceiver(this.PowerConnectionReceiver, intentFilter);
-        // this.registerReceiver(this.PowerConnectionReceiver, new IntentFilter(Intent.ACTION_POWER_DISCONNECTED));
+
     }
 
 
@@ -113,13 +118,13 @@ public class PowerConnectionService extends Service {
     private void showNotificationMessage(Context context) {
         String title = "Carregando";
         String message = "Obrigado por utilizar nossos serviços!";
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, NotificationActivity.class);
 
         notificationUtils = new NotificationUtils(context);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_charged, Configuration.NOTIFICATION_CHARGING_ID);
+        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_charged, R.drawable.baterry_charged3, Configuration.NOTIFICATION_CHARGING_ID);
     }
 
 
