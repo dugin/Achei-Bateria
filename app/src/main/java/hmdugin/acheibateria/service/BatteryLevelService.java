@@ -81,9 +81,10 @@ public class BatteryLevelService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getExtras() != null) {
+        if (intent != null)
+            if (intent.getExtras() != null)
             Log.d(TAG, "" + intent.getExtras().getString("id"));
-        }
+
         return START_STICKY;
     }
 

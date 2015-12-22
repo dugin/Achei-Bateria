@@ -27,7 +27,11 @@ public class ListaDeLojas {
         return listaDeLojas;
     }
 
-    public void setListaDeCompras(Loja loja) {
+    public void setListaDeCompras(List<Loja> loja) {
+        this.listaDeLojas = loja;
+    }
+
+    public void addLojasListaDeCompras(Loja loja) {
         this.listaDeLojas.add(loja);
     }
 }

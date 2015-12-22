@@ -1,9 +1,11 @@
 package hmdugin.acheibateria.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -27,9 +29,9 @@ public class NotificationActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
-
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        upArrow.setColorFilter(getResources().getColor(R.color.corDeFundo), PorterDuff.Mode.SRC_ATOP);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.corDeFundo), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
 
@@ -39,7 +41,9 @@ public class NotificationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(NotificationActivity.this, MainActivity.class));
+
+        startActivity(new Intent(NotificationActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
 
     }
 
