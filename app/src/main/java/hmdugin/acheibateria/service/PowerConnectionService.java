@@ -20,6 +20,7 @@ import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.activities.NotificationActivity;
 import hmdugin.acheibateria.eventBus.MessageEB;
 import hmdugin.acheibateria.util.Configuration;
+import hmdugin.acheibateria.util.MathUtil;
 import hmdugin.acheibateria.util.NotificationUtils;
 import hmdugin.acheibateria.util.PrefManager;
 
@@ -50,7 +51,7 @@ public class PowerConnectionService extends Service {
 
                 String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
                 Log.d(TAG, "Data e hora do PowerConnectionReceiver: " + currentDateandTime);
-                boolean intervaloCerto = calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
+                boolean intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
 
                 //  prefManager.apagar();
 
@@ -94,26 +95,6 @@ public class PowerConnectionService extends Service {
         return null;
     }
 
-
-    private boolean calcIntTempo(String data, String data1) {
-        Log.d(TAG, "Valor1 = " + Integer.parseInt(data.substring(12)) + " Valor2 = " + Integer.parseInt(data1.substring(12)));
-        int dia = Integer.parseInt(data.substring(0, 1));
-        int dia1 = Integer.parseInt(data1.substring(0, 1));
-        int hr = Integer.parseInt(data.substring(9, 10));
-        int hr1 = Integer.parseInt(data1.substring(9, 10));
-        int min = Integer.parseInt(data.substring(12));
-        int min1 = Integer.parseInt(data1.substring(12));
-        int tempo, tempo1;
-        tempo = hr * 60 * min;
-        if (dia == dia1)
-            tempo1 = hr1 * 60 * min1;
-        else
-            tempo1 = 24 * hr1 * 60 * min1;
-
-        Log.d(TAG, "tempo1 = " + tempo + " tempo2 = " + tempo1);
-        return Math.abs(tempo1 - tempo) < 20;
-
-    }
 
     private void showNotificationMessage(Context context) {
         String title = "Carregando";

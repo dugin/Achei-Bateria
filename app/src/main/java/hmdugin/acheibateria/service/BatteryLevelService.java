@@ -46,9 +46,12 @@ public class BatteryLevelService extends Service {
             String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
 
             if (batteryStatus != BatteryManager.BATTERY_STATUS_CHARGING) {
+                /*
                 if (prefManager.getPrimeiraVez()) {
+                    Log.d(TAG,"primeira vez");
                     prefManager.setPrimeiraVez(false);
-                } else {
+                }  */
+                if (NotificationUtils.isAppIsInBackground(arg0)) {
 
                     ParseAnalytics.trackEventInBackground("NotificationLowBatteryClicado");
                     showNotificationMessage(arg0);
@@ -66,6 +69,7 @@ public class BatteryLevelService extends Service {
                 }
 
 
+
             }
         }
 
@@ -75,7 +79,8 @@ public class BatteryLevelService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
 
-        this.registerReceiver(this.BatteryLevelReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        this.registerReceiver(this.BatteryLevelReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
+
     }
 
 
@@ -84,6 +89,11 @@ public class BatteryLevelService extends Service {
         if (intent != null)
             if (intent.getExtras() != null)
             Log.d(TAG, "" + intent.getExtras().getString("id"));
+
+        Log.d(TAG, "onStartCommand");
+
+
+
 
         return START_STICKY;
     }

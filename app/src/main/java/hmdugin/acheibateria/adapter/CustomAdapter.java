@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseImageView;
@@ -13,12 +14,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 
-import org.json.JSONException;
-
-import java.util.Calendar;
-
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.domain.Loja;
+import hmdugin.acheibateria.util.BitmapDecodeUtil;
+import hmdugin.acheibateria.util.CalendarUtil;
 
 public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
 
@@ -56,9 +55,17 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
         imgLoja = (ParseImageView) v.findViewById(R.id.imgLoja);
         ParseFile imageFile = lojas.getImg();
         if (imageFile != null) {
-            imgLoja.setParseFile(imageFile);
-            imgLoja.loadInBackground();
+
+            try {
+                imgLoja.setImageBitmap(BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(imageFile.getFile())));
+                imgLoja.loadInBackground();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            // imgLoja.setParseFile(imageFile);
+
         }
+
 
         // Add the title view
         TextView txtNome = (TextView) v.findViewById(R.id.txtNome);
@@ -74,46 +81,19 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
         double distanciaKm = mGeoPoint.distanceInKilometersTo(lojas.getCoord());
         int minutos = calculaTempoMin(distanciaKm);
         txtDist.setText(String.format("%d min", (int) minutos));
-
+        if (!lojas.getIsWifiAvailable())
+            v.findViewById(R.id.imgWifi).setVisibility(View.GONE);
 
         txtHrFunc = (TextView) v.findViewById(R.id.txtHrFunc);
-        txtHrFunc.setText(HrFuncionamento(lojas));
+        txtHrFunc.setText(CalendarUtil.HrFuncionamento(lojas));
 
         return v;
     }
 
 
-    private String HrFuncionamento(Loja lojas) {
-
-        Calendar calendar = Calendar.getInstance();
-        String hr_abre = "";
-        String hr_fecha = "";
-
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-        try {
-            if (day > 1 && day < 7) {
-                hr_abre = lojas.getHrOpen().getString(0);
-                hr_fecha = lojas.getHrClose().getString(0);
-            } else if (day == 7) {
-                hr_abre = lojas.getHrOpen().getString(1);
-                hr_fecha = lojas.getHrClose().getString(1);
-            } else if (day == 1) {
-                hr_abre = lojas.getHrOpen().getString(2);
-                hr_fecha = lojas.getHrClose().getString(2);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (hr_abre.equals("00:00") || hr_fecha.equals("00:00"))
-            return "Fechado";
-
-
-        return hr_abre.substring(0, 2) + "h às " + hr_fecha.substring(0, 2) + "h";
-    }
-
     private int calculaTempoMin(double distanciaKm) {
         int distanciaM = (int) (1000 * distanciaKm);
-        double segundos = distanciaM / 1.2;
+        double segundos = distanciaM / 1.3;
         double minutos = segundos / 60;
         if ((int) minutos == 0)
             minutos = 1;

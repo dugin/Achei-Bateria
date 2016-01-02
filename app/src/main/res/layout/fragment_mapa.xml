@@ -1,71 +1,38 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mapa_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/azulMedio"
+
+    android:background="#e8e8e8"
     android:orientation="vertical"
+
     tools:context="hmdugin.acheibateria.fragment.MapaFragment">
 
 
     <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="510dp"
-        android:layout_gravity="top"
-
-        android:paddingTop="56dp"></com.google.android.gms.maps.MapView>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/botãoCarreguei"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingBottom="2dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"
-            fancy:fb_borderColor="#000"
-            fancy:fb_borderWidth="2dp"
-            fancy:fb_defaultColor="@color/colorPrimaryDark"
-            fancy:fb_focusColor="@color/colorPrimary"
-            fancy:fb_radius="20dp"
-            fancy:fb_text="@string/carreguei"
-            fancy:fb_textColor="@color/corDeFundo"
-
-            />
-
-        <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/botãoRecomendo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingBottom="2dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"
-
-            fancy:fb_borderColor="#000"
-            fancy:fb_borderWidth="2dp"
-            fancy:fb_defaultColor="@color/colorPrimaryDark"
-            fancy:fb_focusColor="@color/colorPrimary"
-            fancy:fb_iconResource="@drawable/like"
-
-            fancy:fb_radius="20dp"
-
-            />
 
 
-    </LinearLayout>
+        ></com.google.android.gms.maps.MapView>
 
 
-</LinearLayout>
+    <!--
+
+            <include
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_alignParentBottom="true"
+
+                android:id="@+id/botãoFeedback"
+                layout="@layout/botao_feedback"
+
+                ></include>
+
+
+     -->
+
+
+</RelativeLayout>

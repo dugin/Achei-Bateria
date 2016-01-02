@@ -2,13 +2,16 @@ package hmdugin.acheibateria.fragment;
 
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,13 +24,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
 
+import java.io.File;
 import java.util.List;
 
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.domain.ListaDeLojas;
 import hmdugin.acheibateria.domain.Localizacao;
 import hmdugin.acheibateria.domain.Loja;
+import hmdugin.acheibateria.util.BitmapDecodeUtil;
+import hmdugin.acheibateria.util.CalendarUtil;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -40,6 +47,7 @@ public class MapaFragment extends Fragment {
     private GoogleMap googleMap;
     private FancyButton carreguei, recomendo;
     private int pos;
+    private View view;
 
     public MapaFragment() {
         // Required empty public constructor
@@ -48,7 +56,7 @@ public class MapaFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             final Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
 
         // Inflate the layout for this fragment
@@ -58,8 +66,11 @@ public class MapaFragment extends Fragment {
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
-        //   mMapView.onResume();// needed to get the map to display immediately
+        mMapView.onResume();// needed to get the map to display immediately
         Bundle args = getArguments();
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
@@ -73,9 +84,10 @@ public class MapaFragment extends Fragment {
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
         uiSettings.setZoomControlsEnabled(true);
+        uiSettings.setMyLocationButtonEnabled(true);
 
 
-        List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+        final List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
         double latitude = localizacao.getLocation().getLatitude();
         double longitude = localizacao.getLocation().getLongitude();
         // latitude and longitude
@@ -120,35 +132,61 @@ public class MapaFragment extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Log.d(TAG, marker.getId());
-                if (marker.getId().equals("m0"))
+                if (marker.getId().equals("m0")) {
                     ParseAnalytics.trackEventInBackground("MarkerPessoaClicado");
-                else
+
+                } else
                     ParseAnalytics.trackEventInBackground("MarkerLojaClicado");
                 return false;
             }
         });
 
-        carreguei = (FancyButton) v.findViewById(R.id.botãoCarreguei);
-        carreguei.setOnClickListener(new View.OnClickListener() {
+
+        googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
-            public void onClick(View v) {
-
-                ParseAnalytics.trackEventInBackground("CarregueiClicado");
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.add(R.id.main_layout, new CarregueiFragment(), "ListaLojasFragment");
-                //transaction.replace(R.id.mapa_layout, new CarregueiFragment(), "CarregueiFragment");
-                transaction.addToBackStack("CarregueiFragment");
-
-                transaction.commit();
+            public View getInfoWindow(Marker marker) {
+                return null;
             }
-        });
 
-        recomendo = (FancyButton) v.findViewById(R.id.botãoRecomendo);
-        recomendo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public View getInfoContents(Marker marker) {
+                view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
+                int n = marker.getId().charAt(1) - '0' - 1;
+                TextView txtNome, txtHrFunc;
+                txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
+                ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
+                File f = null;
+                byte[] bitmapdata = new byte[0];
+                try {
+                    if (n >= 0) {
+                        bitmapdata = listaDeLojas.get(n).getImg().getData();
+                        f = listaDeLojas.get(n).getImg().getFile();
+                        txtNome.setText(listaDeLojas.get(n).getNome());
+                        if (!listaDeLojas.get(n).getIsWifiAvailable())
+                            view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
+                        txtHrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
+                        String texto = CalendarUtil.HrFuncionamento(listaDeLojas.get(n));
+                        txtHrFunc.setText(texto);
 
-                ParseAnalytics.trackEventInBackground("RecomendoClicado");
+                    } else if (n == -1) {
+
+                        return getActivity().getLayoutInflater().inflate(R.layout.marker_info_eu, null);
+
+
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+
+                }
+
+                Bitmap bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(f));
+                image.setImageBitmap(bitmap);
+
+
+                //  TextView textView = (TextView) view.findViewById(R.id.textView);
+                //textView.setText(listaDeLojas.get(2).getNome());
+
+                return view;
             }
         });
 
