@@ -3,14 +3,14 @@ package hmdugin.acheibateria.fragment;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,13 +29,15 @@ import com.parse.ParseException;
 import java.io.File;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.domain.ListaDeLojas;
+import hmdugin.acheibateria.domain.ListaMarker;
 import hmdugin.acheibateria.domain.Localizacao;
 import hmdugin.acheibateria.domain.Loja;
+import hmdugin.acheibateria.eventBus.MessageEB;
 import hmdugin.acheibateria.util.BitmapDecodeUtil;
 import hmdugin.acheibateria.util.CalendarUtil;
-import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,10 +45,10 @@ import mehdi.sakout.fancybuttons.FancyButton;
 public class MapaFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     MapView mMapView;
+    RelativeLayout relativeLayout;
     Localizacao localizacao = new Localizacao();
+    List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
     private GoogleMap googleMap;
-    private FancyButton carreguei, recomendo;
-    private int pos;
     private View view;
 
     public MapaFragment() {
@@ -54,26 +56,23 @@ public class MapaFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        EventBus.getDefault().register(this);
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_mapa, container, false);
 
 
         mMapView = (MapView) v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-
+        relativeLayout = (RelativeLayout) v.findViewById(R.id.mapa_layout);
         mMapView.onResume();// needed to get the map to display immediately
         Bundle args = getArguments();
 
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -87,11 +86,15 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
-        final List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+        new MyTask().execute();
+
+
+
+
         double latitude = localizacao.getLocation().getLatitude();
         double longitude = localizacao.getLocation().getLongitude();
         // latitude and longitude
-        pos = args.getInt("pos");
+        //pos = args.getInt("pos");
 
 
 
@@ -104,22 +107,7 @@ public class MapaFragment extends Fragment {
         // adding marker
         googleMap.addMarker(marker);
 
-        for (int i = 0; i < listaDeLojas.size(); i++) {
-            Loja loja = listaDeLojas.get(i);
 
-            // create marker
-            MarkerOptions marker2 = new MarkerOptions().position(
-                    new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
-                    .title(loja.getNome())
-                    .flat(true)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.recarrega2));
-
-            if (pos == i)
-                googleMap.addMarker(marker2).showInfoWindow();
-            else
-                googleMap.addMarker(marker2);
-
-        }
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -131,6 +119,7 @@ public class MapaFragment extends Fragment {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+
                 Log.d(TAG, marker.getId());
                 if (marker.getId().equals("m0")) {
                     ParseAnalytics.trackEventInBackground("MarkerPessoaClicado");
@@ -213,12 +202,69 @@ public class MapaFragment extends Fragment {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         mMapView.onDestroy();
+        EventBus.getDefault().unregister(this);
+        ListaMarker.getInstance().getListaMarker().clear();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    public void onEvent(MessageEB event) {
+
+        if (event.getData().equals("ListaLojasFragment")) {
+            int pos = event.getPos();
+            ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(listaDeLojas.get(pos).getCoord().getLatitude(),
+                            listaDeLojas.get(pos).getCoord().getLongitude())).zoom(15).build();
+            googleMap.moveCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+
+        }
+
+
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            while (listaDeLojas.isEmpty()) {
+                listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            for (int i = 0; i < listaDeLojas.size(); i++) {
+                Loja loja = listaDeLojas.get(i);
+
+                // create marker
+                MarkerOptions marker2 = new MarkerOptions().position(
+                        new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
+                        .title(loja.getNome())
+                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.recarrega2));
+
+
+                Marker marker = googleMap.addMarker(marker2);
+                ListaMarker.getInstance().addMarker(marker);
+
+            }
+
+            Log.d(TAG, "onPostExecute");
+            relativeLayout.setVisibility(View.VISIBLE);
+        }
+
+
     }
 
 

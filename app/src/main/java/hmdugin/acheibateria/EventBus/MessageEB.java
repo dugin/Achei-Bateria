@@ -5,13 +5,22 @@ package hmdugin.acheibateria.eventBus;
  */
 public class MessageEB {
 
-    private String data;
+    private String nomeClasse;
+    private int pos;
 
-    public MessageEB(String data) {
-        this.data = data;
+    public MessageEB(String nomeClasse) {
+        this.nomeClasse = nomeClasse;
     }
 
     public String getData() {
-        return data;
+        return nomeClasse;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
     }
 }

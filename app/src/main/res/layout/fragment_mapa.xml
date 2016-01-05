@@ -4,19 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="#e8e8e8"
-    android:orientation="vertical"
+    android:visibility="gone"
+
 
     tools:context="hmdugin.acheibateria.fragment.MapaFragment">
 
 
-    <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/corDeFundo"
 
 
-        ></com.google.android.gms.maps.MapView>
+        />
 
 
     <!--
