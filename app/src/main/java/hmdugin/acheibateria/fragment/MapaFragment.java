@@ -48,6 +48,7 @@ public class MapaFragment extends Fragment {
     RelativeLayout relativeLayout;
     Localizacao localizacao = new Localizacao();
     List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+    Bitmap bitmap;
     private GoogleMap googleMap;
     private View view;
 
@@ -156,6 +157,8 @@ public class MapaFragment extends Fragment {
                         txtHrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
                         String texto = CalendarUtil.HrFuncionamento(listaDeLojas.get(n));
                         txtHrFunc.setText(texto);
+                        System.gc();
+
 
                     } else if (n == -1) {
 
@@ -168,7 +171,8 @@ public class MapaFragment extends Fragment {
 
                 }
 
-                Bitmap bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(f));
+
+                bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(f));
                 image.setImageBitmap(bitmap);
 
 
@@ -186,7 +190,7 @@ public class MapaFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume");
+
         super.onResume();
         mMapView.onResume();
     }
@@ -202,8 +206,8 @@ public class MapaFragment extends Fragment {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         mMapView.onDestroy();
-        EventBus.getDefault().unregister(this);
-        ListaMarker.getInstance().getListaMarker().clear();
+
+
     }
 
     @Override
@@ -213,9 +217,11 @@ public class MapaFragment extends Fragment {
     }
 
     public void onEvent(MessageEB event) {
+        Log.d(TAG, "onEvent= " + event.getData());
+        if (event.getData().equals(TAG)) {
 
-        if (event.getData().equals("ListaLojasFragment")) {
             int pos = event.getPos();
+            Log.d(TAG, "Posição: " + pos);
             ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(listaDeLojas.get(pos).getCoord().getLatitude(),
@@ -244,6 +250,8 @@ public class MapaFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            ListaMarker.getInstance().getListaMarker().clear();
+            Log.d(TAG, "onPostExecute");
             for (int i = 0; i < listaDeLojas.size(); i++) {
                 Loja loja = listaDeLojas.get(i);
 
@@ -260,7 +268,7 @@ public class MapaFragment extends Fragment {
 
             }
 
-            Log.d(TAG, "onPostExecute");
+
             relativeLayout.setVisibility(View.VISIBLE);
         }
 

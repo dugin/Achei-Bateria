@@ -19,6 +19,9 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+
+        System.gc();
+
         Log.d(TAG, "onReceive");
         if (NotificationUtils.isAppIsInBackground(context)) {
             prefManager = new PrefManager(context);
@@ -27,4 +30,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         }
     }
+
+
 }

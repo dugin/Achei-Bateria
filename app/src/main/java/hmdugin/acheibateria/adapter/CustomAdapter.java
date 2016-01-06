@@ -2,6 +2,7 @@ package hmdugin.acheibateria.adapter;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
 
     private static ParseGeoPoint mGeoPoint;
     private final String TAG = this.getClass().getSimpleName();
+    Bitmap bitmap;
     private TextView txtEnd, txtNome, txtDist, txtHrFunc, txtBairro;
     private ParseImageView imgLoja;
 
@@ -57,7 +59,9 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
         if (imageFile != null) {
 
             try {
-                imgLoja.setImageBitmap(BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(imageFile.getFile())));
+                bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(imageFile.getFile()));
+                imgLoja.setImageBitmap(bitmap);
+
                 imgLoja.loadInBackground();
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -86,6 +90,7 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
 
         txtHrFunc = (TextView) v.findViewById(R.id.txtHrFunc);
         txtHrFunc.setText(CalendarUtil.HrFuncionamento(lojas));
+
 
         return v;
     }

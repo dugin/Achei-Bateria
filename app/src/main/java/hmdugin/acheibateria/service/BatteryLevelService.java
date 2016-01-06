@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -31,29 +30,18 @@ public class BatteryLevelService extends Service {
     private final String TAG = this.getClass().getSimpleName();
     NotificationUtils notificationUtils;
     PrefManager prefManager;
-
-
-    int batteryStatus;
     public BroadcastReceiver BatteryLevelReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context arg0, Intent intent) {
+            Log.d(TAG, "Entrei no low battery");
 
-            batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-            Log.d(TAG, "" + batteryStatus);
             prefManager = new PrefManager(arg0);
 
             String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
 
-            if (batteryStatus != BatteryManager.BATTERY_STATUS_CHARGING) {
-                /*
-                if (prefManager.getPrimeiraVez()) {
-                    Log.d(TAG,"primeira vez");
-                    prefManager.setPrimeiraVez(false);
-                }  */
-                if (NotificationUtils.isAppIsInBackground(arg0)) {
 
-                    ParseAnalytics.trackEventInBackground("NotificationLowBatteryClicado");
+            ParseAnalytics.trackEventInBackground("NotificationLowBatteryClicado");
                     showNotificationMessage(arg0);
 
                     prefManager.setPrimeiraVez(false);
@@ -66,14 +54,12 @@ public class BatteryLevelService extends Service {
 
                     unregisterReceiver(BatteryLevelReceiver);
                     stopSelf();
-                }
 
 
-
-            }
         }
 
     };
+    int batteryStatus;
 
     public void onCreate() {
         super.onCreate();
