@@ -68,18 +68,22 @@
             android:name="com.parse.push.notification_icon"
             android:resource="@drawable/baterry_low" />
 
-        <service
-            android:name=".service.BatteryLevelService"
-            android:exported="false">
-        </service>
-        <service
-            android:name=".service.PowerConnectionService"
-            android:exported="false">
-        </service>
+        <service android:name=".LocationService" />
+
+        <receiver android:name=".receiver.BatteryLevelReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.PowerConnectionReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".activities.NotificationActivity"
-
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         </activity>

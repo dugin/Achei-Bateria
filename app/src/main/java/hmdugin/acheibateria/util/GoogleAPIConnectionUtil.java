@@ -14,6 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -22,13 +23,15 @@ import com.google.android.gms.location.LocationSettingsResult;
 /**
  * Created by Rodrigo on 22/12/2015.
  */
-public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     // Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
     private final String TAG = this.getClass().getSimpleName();
+    Location mCurrentLocation;
+    LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
@@ -38,10 +41,34 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
 
     }
 
+    public GoogleAPIConnectionUtil(Context context) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        if (mGoogleApiClient == null) {
+
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+    }
+
     public GoogleAPIConnectionUtil(Activity activity) {
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mActivity = activity;
         if (mGoogleApiClient == null) {
-            Log.d(TAG, "mGoogleApiClient build");
+
             mGoogleApiClient = new GoogleApiClient.Builder(activity.getApplicationContext())
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
@@ -52,8 +79,15 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "onConnected");
+        Log.println(Log.ASSERT, TAG, "onConnected");
+        startLocationUpdates();
 
+
+    }
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
@@ -100,11 +134,9 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
         mResolvingError = false;
     }
 
-    public PendingResult<LocationSettingsResult> mudaSettingsLocation(final Context context) {
+    public PendingResult<LocationSettingsResult> mudaSettingsLocation() {
 
-        LocationRequest mLocationRequest = new LocationRequest();
 
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
@@ -117,11 +149,23 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     }
 
     public Location minhaLocalizacao() {
-        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        return mCurrentLocation;
     }
 
     public GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
     }
 
     /* A fragment to display an error dialog */
