@@ -4,33 +4,30 @@ package hmdugin.acheibateria.adapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 import android.util.Log;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.fragment.ListaLojasFragment;
 import hmdugin.acheibateria.fragment.MapaFragment;
 
-/**
- * Created by hp1 on 21-01-2015.
- */
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+
+public class ViewPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
 
     private final String TAG = this.getClass().getSimpleName();
-    int icons[] = {R.drawable.ic_action_list, R.drawable.ic_action_map};
-    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+
+    int switch_icons[] = {R.drawable.lista, R.drawable.mapa};
+
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
     Context context;
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(Context context, FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ViewPagerAdapter(Context context, FragmentManager fm, int mNumbOfTabsumb) {
         super(fm);
         this.context = context;
-        this.Titles = mTitles;
+
         this.NumbOfTabs = mNumbOfTabsumb;
 
     }
@@ -59,23 +56,19 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     // This method return the titles for the Tabs in the Tab Strip
 
-    @Override
-    public CharSequence getPageTitle(int position) {
 
-        Drawable drawable = context.getResources().getDrawable(icons[position]);
-
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        ImageSpan imageSpan = new ImageSpan(drawable);
-        SpannableString spannableString = new SpannableString(" ");
-        spannableString.setSpan(imageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        return spannableString;
-    }
 
     // This method return the Number of tabs for the tabs Strip
 
     @Override
     public int getCount() {
         return NumbOfTabs;
+    }
+
+    @Override
+    public int getPageIconResId(int position) {
+
+
+        return switch_icons[position];
     }
 }
