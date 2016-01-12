@@ -24,7 +24,7 @@
     <application
         android:name=".application.App"
         android:allowBackup="true"
-        android:icon="@drawable/battery"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -63,12 +63,12 @@
                 <category android:name="hmdugin.acheibateria" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.AlarmReceiver" />
+
         <meta-data
             android:name="com.parse.push.notification_icon"
             android:resource="@drawable/baterry_low" />
 
-        <service android:name=".LocationService" />
+        <service android:name=".service.LocationService" />
 
         <receiver android:name=".receiver.BatteryLevelReceiver">
             <intent-filter>

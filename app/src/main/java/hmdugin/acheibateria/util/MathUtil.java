@@ -25,7 +25,7 @@ public class MathUtil {
             tempo1 = 24 * hr1 * 60 + min1;
 
 
-        return Math.abs(tempo1 - tempo) < 20;
+        return Math.abs(tempo1 - tempo) < 30;
 
     }
 }

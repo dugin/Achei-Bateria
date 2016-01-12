@@ -21,7 +21,7 @@ import hmdugin.acheibateria.fragment.MapaFragment;
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private final String TAG = this.getClass().getSimpleName();
-    int icons[] = {R.drawable.list, R.drawable.mapa};
+    int icons[] = {R.drawable.ic_action_list, R.drawable.ic_action_map};
     CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
     Context context;
@@ -63,9 +63,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
 
         Drawable drawable = context.getResources().getDrawable(icons[position]);
-        drawable.setBounds(0, 0, 36, 36);
+
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         ImageSpan imageSpan = new ImageSpan(drawable);
-        SpannableString spannableString = new SpannableString("     " + Titles[position]);
+        SpannableString spannableString = new SpannableString(" ");
         spannableString.setSpan(imageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         return spannableString;

@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/msgCarregar"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="@color/colorPrimary" />
 
     <ImageView
         android:id="@+id/check"
@@ -44,5 +44,19 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:src="@drawable/check" />
+
+    <include
+        android:id="@+id/botãoFeedbackLista"
+        layout="@layout/botao_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_above="@+id/check"
+        android:layout_marginLeft="10dp"
+
+        android:layout_marginRight="10dp"
+
+
+        ></include>
+
 
 </RelativeLayout>

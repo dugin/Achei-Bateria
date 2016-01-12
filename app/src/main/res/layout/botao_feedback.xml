@@ -21,7 +21,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         fancy:fb_borderColor="#000"
         fancy:fb_borderWidth="2dp"
-        fancy:fb_defaultColor="@color/colorPrimaryDark"
+        fancy:fb_defaultColor="@color/colorPrimary"
         fancy:fb_focusColor="@color/colorPrimary"
         fancy:fb_radius="5dp"
         fancy:fb_text="@string/feedback"

@@ -20,6 +20,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 
+import de.greenrobot.event.EventBus;
+import hmdugin.acheibateria.eventBus.MessageEB;
+
 /**
  * Created by Rodrigo on 22/12/2015.
  */
@@ -29,6 +32,8 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
+    static String nome;
+    private static boolean locationChanged = false;
     private final String TAG = this.getClass().getSimpleName();
     Location mCurrentLocation;
     LocationRequest mLocationRequest;
@@ -42,9 +47,10 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     }
 
     public GoogleAPIConnectionUtil(Context context) {
+
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setFastestInterval(2500);
 
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -55,7 +61,8 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        }
+        } else
+            mGoogleApiClient.reconnect();
 
     }
 
@@ -74,18 +81,33 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        }
+        } else
+            mGoogleApiClient.reconnect();
+    }
+
+    public static void setNomeDaClasse(String nome) {
+        GoogleAPIConnectionUtil.nome = nome;
+
+    }
+
+    public static boolean isLocationChanged() {
+        return locationChanged;
+    }
+
+    public static void setLocationChanged(boolean locationChanged) {
+        GoogleAPIConnectionUtil.locationChanged = locationChanged;
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.println(Log.ASSERT, TAG, "onConnected");
+
         startLocationUpdates();
 
 
     }
+    // The rest of this code is all about building the error dialog
 
-    protected void startLocationUpdates() {
+    public void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
@@ -116,7 +138,6 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
             mResolvingError = true;
         }
     }
-    // The rest of this code is all about building the error dialog
 
     /* Creates a dialog for an error message */
     private void showErrorDialog(int errorCode) {
@@ -136,13 +157,22 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
 
     public PendingResult<LocationSettingsResult> mudaSettingsLocation() {
 
+        LocationSettingsRequest.Builder builder =
+                new LocationSettingsRequest.Builder()
+                        .setAlwaysShow(true)
+                        .addLocationRequest(mLocationRequest);
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
+                        builder.build());
 
 
+
+/*
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
 
         PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build()); */
 
         return result;
 
@@ -152,15 +182,35 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
         return mCurrentLocation;
     }
 
+    public void setMinhaLocalizacao(Location l) {
+        mCurrentLocation = l;
+    }
+
     public GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        mCurrentLocation = location;
 
-        stopLocationUpdates();
+
+        locationChanged = true;
+        Log.println(Log.ASSERT, TAG, "Lat: " + location.getLatitude() + " Lon: " + location.getLongitude());
+        Log.println(Log.ASSERT, TAG, "onLocationChanged");
+        mCurrentLocation = location;
+        if (nome != null) {
+            if (nome.equals("LocationService")) {
+                MessageEB m = new MessageEB("LocationService");
+                m.setLocation(location);
+                EventBus.getDefault().post(m);
+            }
+
+        }
+
+        if (mGoogleApiClient.isConnected())
+            stopLocationUpdates();
+
+
     }
 
     protected void stopLocationUpdates() {

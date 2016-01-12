@@ -26,15 +26,20 @@ public class BatteryLevelReceiver extends BroadcastReceiver {
 
 
     private void showNotificationMessage(Context context) {
+
+        /*
         String title = "Bateria Acabando";
-        String message = "Encontre locais para carregá-la!";
+        String message = "Encontre locais para carregá-la!"; */
+
         Intent intent = new Intent(context, MainActivity.class);
 
         notificationUtils = new NotificationUtils(context);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_low, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
+        String[] msg = notificationUtils.msgBateriaMorrendo();
+
+        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.baterry_low, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
 
     }
 }

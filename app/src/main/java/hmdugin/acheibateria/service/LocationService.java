@@ -1,11 +1,14 @@
-package hmdugin.acheibateria;
+package hmdugin.acheibateria.service;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.ParseAnalytics;
 
 import java.text.SimpleDateFormat;
@@ -13,7 +16,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import de.greenrobot.event.EventBus;
+import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.activities.NotificationActivity;
+import hmdugin.acheibateria.eventBus.MessageEB;
 import hmdugin.acheibateria.util.Configuration;
 import hmdugin.acheibateria.util.GoogleAPIConnectionUtil;
 import hmdugin.acheibateria.util.MathUtil;
@@ -23,39 +29,70 @@ import hmdugin.acheibateria.util.PrefManager;
 /**
  * Created by Rodrigo on 06/01/2016.
  */
-public class LocationService extends IntentService {
+public class LocationService extends Service {
 
     private final String TAG = this.getClass().getSimpleName();
     GoogleAPIConnectionUtil googleAPIConnectionUtil;
     Location location;
     PrefManager prefManager;
     NotificationUtils notificationUtils;
-
+    GoogleApiClient mGoogleApiClient;
     public LocationService() {
-        super("LocationService");
 
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onDestroy() {
 
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        EventBus.getDefault().register(this);
         prefManager = new PrefManager(getApplicationContext());
+        Log.println(Log.ASSERT, TAG, "onCreate");
 
-        Log.println(Log.ASSERT, TAG, "onHandleIntent");
         googleAPIConnectionUtil = new GoogleAPIConnectionUtil(getApplicationContext());
-        googleAPIConnectionUtil.getmGoogleApiClient().connect();
+        GoogleAPIConnectionUtil.setNomeDaClasse(TAG);
+        mGoogleApiClient = googleAPIConnectionUtil.getmGoogleApiClient();
+        mGoogleApiClient.connect();
 
-        while (googleAPIConnectionUtil.minhaLocalizacao() == null) {
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.println(Log.ASSERT, TAG, "onStartCommand");
+
+
+        Log.println(Log.ASSERT, TAG, "isConnecting?= " + mGoogleApiClient.isConnected());
+
+
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+    }
+
+    public void onEvent(MessageEB event) {
+        Log.d(TAG, "onEvent= " + event.getData());
+        if (event.getData().equals(TAG)) {
+            location = event.getLocation();
+            mGoogleApiClient.disconnect();
+
+
+            Log.println(Log.ASSERT, TAG, "Data e hora do BatteryLevelReceiver: " + prefManager.getDataEHora());
+            carregou();
+            stopSelf();
 
         }
-        location = googleAPIConnectionUtil.minhaLocalizacao();
-        googleAPIConnectionUtil.getmGoogleApiClient().disconnect();
-
-
-        Log.d(TAG, "Data e hora do BatteryLevelReceiver: " + prefManager.getDataEHora());
-        carregou();
-
-
     }
 
     private void showNotificationMessage(Context context) {
@@ -66,8 +103,8 @@ public class LocationService extends IntentService {
         notificationUtils = new NotificationUtils(context);
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        notificationUtils.showNotificationMessage(title, message, intent, R.drawable.baterry_charged, R.drawable.baterry_charged3, Configuration.NOTIFICATION_CHARGING_ID);
+        String[] msg = notificationUtils.msgCarregouLoja();
+        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.baterry_charged, R.drawable.baterry_charged3, Configuration.NOTIFICATION_CHARGING_ID);
     }
 
 

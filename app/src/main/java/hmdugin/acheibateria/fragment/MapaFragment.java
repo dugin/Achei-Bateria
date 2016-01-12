@@ -2,7 +2,9 @@ package hmdugin.acheibateria.fragment;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,15 +45,15 @@ import hmdugin.acheibateria.util.CalendarUtil;
  * A simple {@link Fragment} subclass.
  */
 public class MapaFragment extends Fragment {
+    static boolean aqui = true;
     private final String TAG = this.getClass().getSimpleName();
     MapView mMapView;
     RelativeLayout relativeLayout;
     Localizacao localizacao = new Localizacao();
-    List<Loja> listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+    List<Loja> listaDeLojas;
     Bitmap bitmap;
     private GoogleMap googleMap;
     private View view;
-
     public MapaFragment() {
         // Required empty public constructor
     }
@@ -62,7 +64,10 @@ public class MapaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        EventBus.getDefault().register(this);
+        if (aqui) {
+            EventBus.getDefault().register(this);
+            aqui = false;
+        }
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_mapa, container, false);
 
@@ -96,14 +101,14 @@ public class MapaFragment extends Fragment {
         double longitude = localizacao.getLocation().getLongitude();
         // latitude and longitude
         //pos = args.getInt("pos");
-
+        listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
 
 
         // create marker
         MarkerOptions marker = new MarkerOptions().position(
                 new LatLng(latitude, longitude))
                 .title("Você está aqui")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpoint))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpoint_2))
                 .flat(false);
         // adding marker
         googleMap.addMarker(marker);
@@ -183,6 +188,17 @@ public class MapaFragment extends Fragment {
             }
         });
 
+        v.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto", "hmdugin@gmail.com", null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
+            }
+        });
+
         // Perform any camera updates here
         return v;
     }
@@ -206,6 +222,7 @@ public class MapaFragment extends Fragment {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         mMapView.onDestroy();
+
 
 
     }
@@ -239,9 +256,10 @@ public class MapaFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-
-            while (listaDeLojas.isEmpty()) {
-                listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+            if (listaDeLojas != null) {
+                while (listaDeLojas.isEmpty()) {
+                    listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+                }
             }
 
 
@@ -250,7 +268,7 @@ public class MapaFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            ListaMarker.getInstance().getListaMarker().clear();
+
             Log.d(TAG, "onPostExecute");
             for (int i = 0; i < listaDeLojas.size(); i++) {
                 Loja loja = listaDeLojas.get(i);

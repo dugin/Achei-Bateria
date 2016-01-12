@@ -2,8 +2,6 @@ package hmdugin.acheibateria.extras;
 
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -193,26 +191,12 @@ public class SlidingTabLayout extends HorizontalScrollView {
             }
 
             mTabStrip.addView(tabView);
+            tabTitleView.setTextColor(getResources().getColorStateList(R.color.selector));
             if (i == mViewPager.getCurrentItem()) {
                 tabView.setSelected(true);
             }
-            int[][] states = new int[][]{
-                    new int[]{android.R.attr.state_enabled}, // enabled
-                    new int[]{-android.R.attr.state_enabled}, // disabled
-                    new int[]{-android.R.attr.state_checked}, // unchecked
-                    new int[]{android.R.attr.state_pressed}  // pressed
-            };
 
-            int[] colors = new int[]{
-                    getResources().getColor(R.color.corDeFundo),
-                    Color.RED,
-                    Color.GREEN,
-                    Color.BLUE
-            };
 
-            ColorStateList myList = new ColorStateList(states, colors);
-            tabTitleView.setTextColor(myList);
-            tabTitleView.setTextSize(14);
 
         }
 
