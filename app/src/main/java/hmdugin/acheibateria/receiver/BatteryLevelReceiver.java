@@ -39,7 +39,7 @@ public class BatteryLevelReceiver extends BroadcastReceiver {
 
         String[] msg = notificationUtils.msgBateriaMorrendo();
 
-        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.baterry_low, R.drawable.baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
+        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.ic_baterry_low, R.drawable.ic_stat_baterry_low, Configuration.NOTIFICATION_LOW_BATTERY_ID);
 
     }
 }

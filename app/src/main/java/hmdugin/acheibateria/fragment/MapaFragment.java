@@ -108,7 +108,7 @@ public class MapaFragment extends Fragment {
         MarkerOptions marker = new MarkerOptions().position(
                 new LatLng(latitude, longitude))
                 .title("Você está aqui")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pinpoint))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_me))
                 .flat(false);
         // adding marker
         googleMap.addMarker(marker);
@@ -278,7 +278,7 @@ public class MapaFragment extends Fragment {
                         new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
                         .title(loja.getNome())
                         .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.recarrega2));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_carregando));
 
 
                 Marker marker = googleMap.addMarker(marker2);

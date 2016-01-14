@@ -43,7 +43,7 @@
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/txtNomeMapa"
             android:layout_toRightOf="@+id/txtNomeMapa"
-            android:src="@drawable/wifi_logo" />
+            android:src="@drawable/ic_wifi" />
 
         <TextView
             android:id="@+id/txtHrFuncMapa"
