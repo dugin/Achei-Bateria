@@ -2,9 +2,7 @@ package hmdugin.acheibateria.eventBus;
 
 import android.location.Location;
 
-/**
- * Created by Rodrigo on 16/12/2015.
- */
+
 public class MessageEB {
 
     private String nomeClasse;

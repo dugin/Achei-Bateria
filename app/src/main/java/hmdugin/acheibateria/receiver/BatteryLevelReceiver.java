@@ -4,14 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.parse.ParseAnalytics;
+
 import hmdugin.acheibateria.R;
 import hmdugin.acheibateria.activities.MainActivity;
 import hmdugin.acheibateria.util.Configuration;
 import hmdugin.acheibateria.util.NotificationUtils;
 
-/**
- * Created by Rodrigo on 06/01/2016.
- */
 public class BatteryLevelReceiver extends BroadcastReceiver {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -20,18 +19,17 @@ public class BatteryLevelReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
+        ParseAnalytics.trackEventInBackground("Sem_Bateria");
         showNotificationMessage(context);
+
     }
 
 
     private void showNotificationMessage(Context context) {
 
-        /*
-        String title = "Bateria Acabando";
-        String message = "Encontre locais para carregá-la!"; */
 
         Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("from_notification_low_battery", true);
 
         notificationUtils = new NotificationUtils(context);
 

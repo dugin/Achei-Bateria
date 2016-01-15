@@ -128,10 +128,10 @@ public class MapaFragment extends Fragment {
 
                 Log.d(TAG, marker.getId());
                 if (marker.getId().equals("m0")) {
-                    ParseAnalytics.trackEventInBackground("MarkerPessoaClicado");
+                    ParseAnalytics.trackEventInBackground("Marker_Pessoa");
 
                 } else
-                    ParseAnalytics.trackEventInBackground("MarkerLojaClicado");
+                    ParseAnalytics.trackEventInBackground("Marker_Loja");
                 return false;
             }
         });
@@ -151,10 +151,10 @@ public class MapaFragment extends Fragment {
                 txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
                 ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
                 File f = null;
-                byte[] bitmapdata = new byte[0];
+
                 try {
                     if (n >= 0) {
-                        bitmapdata = listaDeLojas.get(n).getImg().getData();
+
                         f = listaDeLojas.get(n).getImg().getFile();
                         txtNome.setText(listaDeLojas.get(n).getNome());
                         if (!listaDeLojas.get(n).getIsWifiAvailable())
@@ -191,6 +191,7 @@ public class MapaFragment extends Fragment {
         v.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ParseAnalytics.trackEventInBackground("Mapa_Email");
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "hmdugin@gmail.com", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");

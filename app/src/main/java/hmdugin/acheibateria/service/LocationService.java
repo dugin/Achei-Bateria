@@ -26,9 +26,7 @@ import hmdugin.acheibateria.util.MathUtil;
 import hmdugin.acheibateria.util.NotificationUtils;
 import hmdugin.acheibateria.util.PrefManager;
 
-/**
- * Created by Rodrigo on 06/01/2016.
- */
+
 public class LocationService extends Service {
 
     private final String TAG = this.getClass().getSimpleName();
@@ -58,24 +56,28 @@ public class LocationService extends Service {
     public void onCreate() {
         EventBus.getDefault().register(this);
         prefManager = new PrefManager(getApplicationContext());
-        Log.println(Log.ASSERT, TAG, "onCreate");
 
-        googleAPIConnectionUtil = new GoogleAPIConnectionUtil(getApplicationContext());
-        GoogleAPIConnectionUtil.setNomeDaClasse(TAG);
-        mGoogleApiClient = googleAPIConnectionUtil.getmGoogleApiClient();
-        mGoogleApiClient.connect();
+        String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
+        boolean intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
+
+
+        Log.println(Log.ASSERT, TAG, "intervalo certo?= " + intervaloCerto);
+        if (intervaloCerto) {
+            googleAPIConnectionUtil = new GoogleAPIConnectionUtil(getApplicationContext());
+            GoogleAPIConnectionUtil.setNomeDaClasse(TAG);
+            mGoogleApiClient = googleAPIConnectionUtil.getmGoogleApiClient();
+            mGoogleApiClient.connect();
+        } else {
+            prefManager.apagar();
+            EventBus.getDefault().unregister(this);
+        }
+
 
 
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        Log.println(Log.ASSERT, TAG, "onStartCommand");
-
-
-        Log.println(Log.ASSERT, TAG, "isConnecting?= " + mGoogleApiClient.isConnected());
-
 
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
@@ -91,27 +93,26 @@ public class LocationService extends Service {
             Log.println(Log.ASSERT, TAG, "Data e hora do BatteryLevelReceiver: " + prefManager.getDataEHora());
             carregou();
             stopSelf();
-
+            EventBus.getDefault().unregister(this);
         }
     }
 
     private void showNotificationMessage(Context context) {
-        String title = "Carregando";
-        String message = "Obrigado por utilizar nossos serviços!";
+
         Intent intent = new Intent(context, NotificationActivity.class);
 
         notificationUtils = new NotificationUtils(context);
-
+        intent.putExtra("from_notification_charging", true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         String[] msg = notificationUtils.msgCarregouLoja();
-        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.ic_baterry_charged, R.drawable.ic_stat_baterry_charged, Configuration.NOTIFICATION_CHARGING_ID);
+
+        notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.ic_baterry_charged,
+                R.drawable.ic_stat_baterry_charged, Configuration.NOTIFICATION_CHARGING_ID);
     }
 
 
     private void carregou() {
 
-        String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
-        boolean intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
 
         Set<String> coord = prefManager.getCoord();
         Log.println(Log.ASSERT, TAG, "minha localização - lat: " + location.getLatitude() + "lon: " + location.getLongitude());
@@ -125,17 +126,17 @@ public class LocationService extends Service {
             Log.println(Log.ASSERT, TAG, "lat: " + lat + " lon: " + lon);
             Log.println(Log.ASSERT, TAG, "distancia: " + location.distanceTo(locationLojas));
 
-            if (location.distanceTo(locationLojas) < 25)
-                if (intervaloCerto) {
-                    ParseAnalytics.trackEventInBackground("NotificationCarregadoClicado");
-                    showNotificationMessage(getApplicationContext());
-                    prefManager.apagar();
-                    break;
-                }
+            if (location.distanceTo(locationLojas) < 25) {
 
+                ParseAnalytics.trackEventInBackground("Carregando");
+                showNotificationMessage(getApplicationContext());
+                prefManager.apagar();
+                break;
+
+
+            }
 
         }
-
     }
 
 
