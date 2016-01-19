@@ -31,7 +31,5 @@ public class ListaDeLojas {
         this.listaDeLojas = loja;
     }
 
-    public void addLojasListaDeCompras(Loja loja) {
-        this.listaDeLojas.add(loja);
-    }
+
 }

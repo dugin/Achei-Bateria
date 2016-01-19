@@ -16,7 +16,7 @@ public class Localizacao {
         Localizacao.location = location;
     }
 
-    public Location getLocation() {
+    public static Location getLocation() {
         return location;
     }
 }

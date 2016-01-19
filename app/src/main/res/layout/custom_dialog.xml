@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/custom_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/corDeFundo">
+
+
+    <!-- use Material.Widget.Slider.Discrete style for discrete mode -->
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+
+
+        android:layout_toEndOf="@+id/txtRaio"
+        android:layout_toRightOf="@+id/txtRaio"
+        android:padding="3dp"
+        app:dsb_indicatorColor="@color/colorPrimary"
+        app:dsb_max="10"
+        app:dsb_min="1"
+        app:dsb_progressColor="@color/colorPrimary"
+        app:dsb_rippleColor="#FF7788FF"
+        app:dsb_value="2" />
+
+
+    <TextView
+        android:id="@+id/txtRaio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/seekBar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:text="Distância"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:id="@+id/imageWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/txtRaio"
+        android:layout_alignLeft="@+id/txtRaio"
+        android:layout_alignRight="@+id/txtRaio"
+        android:layout_alignStart="@+id/txtRaio"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_wifi" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageWifi"
+        android:layout_below="@+id/seekBar"
+        android:layout_toRightOf="@+id/imageWifi"
+        android:paddingLeft="20dp"
+        android:paddingTop="15dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+
+
+        android:layout_alignParentBottom="true">
+
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/botãoOK"
+
+            android:layout_width="0dp"
+
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            fancy:fb_borderColor="#000"
+            fancy:fb_borderWidth="2dp"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_focusColor="@color/colorPrimary"
+            fancy:fb_radius="5dp"
+            fancy:fb_text="Ok"
+            fancy:fb_textColor="@color/corDeFundo"
+            fancy:fb_textSize="18dp" />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/botãoCancelar"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            fancy:fb_borderColor="#000"
+            fancy:fb_borderWidth="2dp"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_focusColor="@color/colorPrimary"
+            fancy:fb_radius="5dp"
+            fancy:fb_text="Cancelar"
+            fancy:fb_textColor="@color/corDeFundo"
+
+            fancy:fb_textSize="18dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtCidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtRaio"
+        android:fontFamily="sans-serif"
+        android:paddingLeft="132dp"
+        android:paddingTop="3dp"
+        android:text="2 km"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+
+        android:textSize="12sp" />
+</RelativeLayout>
