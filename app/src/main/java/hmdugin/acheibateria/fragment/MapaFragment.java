@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import hmdugin.acheibateria.R;
+import hmdugin.acheibateria.adapter.CustomViewPager;
 import hmdugin.acheibateria.domain.ListaDeLojas;
 import hmdugin.acheibateria.domain.ListaMarker;
 import hmdugin.acheibateria.domain.Localizacao;
@@ -84,7 +86,8 @@ public class MapaFragment extends Fragment {
         }
 
         googleMap = mMapView.getMap();
-        // googleMap.setMyLocationEnabled(true);
+        googleMap.setMyLocationEnabled(true);
+
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
         uiSettings.setZoomControlsEnabled(true);
@@ -107,7 +110,7 @@ public class MapaFragment extends Fragment {
         MarkerOptions marker = new MarkerOptions().position(
                 new LatLng(latitude, longitude))
                 .title("Você está aqui")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_me))
+                .visible(false)
                 .flat(false);
         // adding marker
         googleMap.addMarker(marker);
@@ -187,7 +190,27 @@ public class MapaFragment extends Fragment {
             }
         });
 
+        CustomViewPager customViewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0)
+                    googleMap.setMyLocationEnabled(false);
+                else
+                    googleMap.setMyLocationEnabled(true);
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         // Perform any camera updates here
         return v;

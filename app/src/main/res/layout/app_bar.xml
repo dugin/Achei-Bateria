@@ -21,22 +21,24 @@
         android:layout_gravity="center"
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
-        android:fontFamily="sans-serif-light"
-
+        android:fontFamily="sans-serif"
+        android:paddingBottom="1dp"
         android:paddingLeft="5dp"
-        android:text="@string/app_name"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/corDeFundo" />
+        android:text="Battery"
+        android:textColor="@color/corDeFundo"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
 
             android:layout_height="wrap_content"
-            android:paddingBottom="12dp"
-            android:paddingTop="5dp"
+            android:layout_centerVertical="true"
 
-            android:src="@mipmap/ic_launcher" />
+            android:layout_gravity="center"
+
+            android:src="@drawable/ic_action_sos" />
 
 
         <ImageButton

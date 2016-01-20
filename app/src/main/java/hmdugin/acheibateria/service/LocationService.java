@@ -54,11 +54,14 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
+        boolean intervaloCerto = false;
         EventBus.getDefault().register(this);
         prefManager = new PrefManager(getApplicationContext());
 
         String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
-        boolean intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
+
+        if (prefManager.getDataEHora() != null)
+            intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
 
 
         Log.println(Log.ASSERT, TAG, "intervalo certo?= " + intervaloCerto);
@@ -70,6 +73,7 @@ public class LocationService extends Service {
         } else {
             prefManager.apagar();
             EventBus.getDefault().unregister(this);
+            stopSelf();
         }
 
 
