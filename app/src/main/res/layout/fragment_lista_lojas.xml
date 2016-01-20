@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lista_lojas_fragment"
+    android:layout_width="match_parent"
+
+
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    tools:context="hmdugin.acheibateria.fragment.ListaLojasFragment"
+
+    >
+
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/corDeFundo"
+        android:divider="#ffffff"
+        android:dividerHeight="2sp"
+        android:scrollbars="none" />
+
+
+    <TextView
+        android:id="@+id/txtSemLoja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="60dp"
+        android:text="@string/semLojas"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorPrimary"
+
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imageSad"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/txtSemLoja"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/sad2"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textNenhumaLoja"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageSad"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+
+        android:paddingRight="10dp"
+        android:text="@string/listaVazia"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/botãoFeedbackLista"
+        layout="@layout/botao_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+
+        android:visibility="gone" />
+
+
+</RelativeLayout>

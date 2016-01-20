@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:padding="1dp"
+
+    >
+
+    <com.parse.ParseImageView
+        android:id="@+id/imgLoja"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+
+        />
+
+    <TextView
+        android:id="@+id/txtNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/imgLoja"
+        android:fontFamily="sans-serif"
+        android:paddingBottom="3dp"
+        android:paddingTop="5dp"
+        android:text="@null"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+
+        android:id="@+id/txtEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtNome"
+        android:layout_below="@+id/txtNome"
+        android:fontFamily="sans-serif"
+        android:gravity="bottom"
+        android:paddingTop="5dp"
+        android:text="@null"
+        android:textSize="12sp" />
+
+    <TextView
+
+        android:id="@+id/txtBairro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtNome"
+        android:layout_below="@+id/txtEnd"
+        android:fontFamily="sans-serif"
+        android:gravity="bottom"
+        android:paddingBottom="5dp"
+        android:text="@null"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/txtHrFunc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtNome"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/txtBairro"
+        android:fontFamily="sans-serif"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imgWifi"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignBottom="@+id/txtNome"
+        android:layout_alignParentEnd="true"
+
+        android:layout_alignParentRight="true"
+        android:paddingLeft="10dp"
+        android:src="@drawable/ic_wifi"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/imgWalking"
+        android:layout_width="wrap_content"
+        android:layout_height="26dp"
+        android:layout_alignParentBottom="true"
+
+        android:layout_alignParentRight="true"
+
+
+        android:paddingBottom="8dp"
+        android:src="@drawable/ic_directions_walk_black_24dp" />
+
+    <TextView
+        android:id="@+id/txtDist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtHrFunc"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/imgWalking"
+        android:fontFamily="sans-serif"
+        android:paddingBottom="5dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

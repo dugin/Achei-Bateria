@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SOS Battery</string>
+    <string name="feedback">Conte para a gente!</string>
+    <string name="loading">Carregando Lojas</string>
+    <string name="listaVazia">Conhece alguma loja que gostaria de ajudar as pessoas a carregar o celular?</string>
+    <string name="semLojas">Nenhuma loja cadastrada perto de você</string>
+    <string name="msgCarregar">Aproveite sua bateria sem moderação!</string>
+    <string name="exp">Como foi sua experiência com app?</string>
+
+    <string name="minhaLocalizacao">Estou aqui</string>
+
+    <!--  Google maps Key-->
+    <string name="googleAPIKey">AIzaSyAytwGi5GcaXKLmbLZqfvvCHN-xDFUKwLs</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+
+
+</resources>
