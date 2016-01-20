@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mapa_layout"
     android:layout_width="match_parent"
@@ -18,44 +17,7 @@
 
         />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:clickable="true"
-            android:scaleType="center"
-            android:src="@drawable/ic_email_white_24dp"
-            app:backgroundTint="@color/colorPrimary"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:fabSize="normal"
-
-
-            />
-    </LinearLayout>
-
-
-    <!--
-
-            <include
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_alignParentBottom="true"
-
-                android:id="@+id/botãoFeedback"
-                layout="@layout/botao_feedback"
-
-                ></include>
-
-
-     -->
 
 
 </RelativeLayout>

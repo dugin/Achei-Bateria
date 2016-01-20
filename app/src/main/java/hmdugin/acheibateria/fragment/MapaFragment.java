@@ -2,9 +2,7 @@ package hmdugin.acheibateria.fragment;
 
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -86,6 +84,7 @@ public class MapaFragment extends Fragment {
         }
 
         googleMap = mMapView.getMap();
+        // googleMap.setMyLocationEnabled(true);
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
         uiSettings.setZoomControlsEnabled(true);
@@ -188,17 +187,7 @@ public class MapaFragment extends Fragment {
             }
         });
 
-        v.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseAnalytics.trackEventInBackground("Mapa_Email");
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "hmdugin@gmail.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-                startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
-            }
-        });
+
 
         // Perform any camera updates here
         return v;
@@ -279,7 +268,7 @@ public class MapaFragment extends Fragment {
                         new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
                         .title(loja.getNome())
                         .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_carregando));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_loja_marker));
 
 
                 Marker marker = googleMap.addMarker(marker2);

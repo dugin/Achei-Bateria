@@ -24,18 +24,25 @@
         android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/smiley_blink" />
 
     <TextView
         android:id="@+id/textMsgCarregar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/blinkSmiley"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="5dp"
+        android:layout_above="@+id/blinkSmiley"
+        android:layout_alignEnd="@+id/botãoFeedbackLista"
+
+        android:layout_alignRight="@+id/botãoFeedbackLista"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/msgCarregar"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
 
 
@@ -48,7 +55,22 @@
         android:layout_margin="20dp"
 
 
+
         />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/botãoFeedbackLista"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/exp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+
+        android:textSize="20sp" />
 
 
 </RelativeLayout>

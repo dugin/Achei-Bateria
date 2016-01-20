@@ -103,7 +103,7 @@ public class LocationService extends Service {
 
         notificationUtils = new NotificationUtils(context);
         intent.putExtra("from_notification_charging", true);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         String[] msg = notificationUtils.msgCarregouLoja();
 
         notificationUtils.showNotificationMessage(msg[0], msg[1], intent, R.drawable.ic_baterry_charged,

@@ -126,7 +126,7 @@ public class NotificationUtils {
         msg2[1] = "Previna que isso ocorra!";
 
         msg3[0] = "BATERIA acabando!";
-        msg3[1] = "Clique aqui para saber aonde carregá-la :)";
+        msg3[1] = "Clique aqui para saber aonde carregá-la";
 
         Random gerador = new Random();
 
@@ -155,10 +155,10 @@ public class NotificationUtils {
         msg1[1] = "Ficamos felizes em tê-lo ajudado :)";
 
         msg2[0] = "UFAAA...";
-        msg2[1] = "Já está carregando na Loja que te indicamos?";
+        msg2[1] = "Já está carregando na Loja que indicamos?";
 
         msg3[0] = "Obrigado!";
-        msg3[1] = "Por carregar em uma das Lojas parceiras :)";
+        msg3[1] = "Por carregar em uma Loja parceira :)";
 
         Random gerador = new Random();
 

@@ -33,7 +33,7 @@ public class BatteryLevelReceiver extends BroadcastReceiver {
 
         notificationUtils = new NotificationUtils(context);
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         String[] msg = notificationUtils.msgBateriaMorrendo();
 

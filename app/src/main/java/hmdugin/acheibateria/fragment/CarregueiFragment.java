@@ -2,8 +2,10 @@ package hmdugin.acheibateria.fragment;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.parse.ParseAnalytics;
 
 import hmdugin.acheibateria.R;
 
@@ -39,6 +43,20 @@ public class CarregueiFragment extends Fragment {
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+
+
+        v.findViewById(R.id.botãoFeedback).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseAnalytics.trackEventInBackground("Carregou_Email");
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto", "hmdugin@gmail.com", null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
+            }
+        });
 
         return v;
     }
