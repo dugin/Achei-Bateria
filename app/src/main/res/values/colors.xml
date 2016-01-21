@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2B2B2B</color>
-    <color name="colorPrimaryLight">#A5A5A5</color>
-    <color name="colorAccent">#A4C639</color>
+    <!-- <color name="colorPrimary">#2B2B2B</color>-->
+    <!--   <color name="colorPrimary">#589E3F</color>-->
 
+    <color name="colorPrimary">#3C008B</color>
+    <color name="colorPrimaryLight">#A5A5A5</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <!--   <color name="colorAccent">#A4C639</color> -->
     <!-- <color name="colorAccent">#D3FFC9</color> -->
     <color name="corDeFundo">#F4F4F4</color>
     9D00FF

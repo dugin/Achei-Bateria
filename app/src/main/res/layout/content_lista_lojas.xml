@@ -24,7 +24,7 @@
         android:fontFamily="sans-serif"
         android:paddingBottom="3dp"
         android:paddingTop="5dp"
-        android:text="@null"
+
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
         android:fontFamily="sans-serif"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -104,7 +104,7 @@
         android:layout_toLeftOf="@+id/imgWalking"
         android:fontFamily="sans-serif"
         android:paddingBottom="5dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/black"
         android:textSize="14sp"
         android:textStyle="bold" />
 

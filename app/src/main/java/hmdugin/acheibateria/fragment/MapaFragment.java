@@ -76,7 +76,7 @@ public class MapaFragment extends Fragment {
         mMapView.onCreate(savedInstanceState);
         relativeLayout = (RelativeLayout) v.findViewById(R.id.mapa_layout);
         mMapView.onResume();// needed to get the map to display immediately
-        Bundle args = getArguments();
+
 
 
         try {
@@ -86,7 +86,7 @@ public class MapaFragment extends Fragment {
         }
 
         googleMap = mMapView.getMap();
-        googleMap.setMyLocationEnabled(true);
+
 
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
@@ -291,7 +291,7 @@ public class MapaFragment extends Fragment {
                         new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
                         .title(loja.getNome())
                         .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_loja_marker));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_white_38dp));
 
 
                 Marker marker = googleMap.addMarker(marker2);

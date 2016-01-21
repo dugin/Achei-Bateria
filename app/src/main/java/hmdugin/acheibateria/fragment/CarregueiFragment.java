@@ -4,6 +4,7 @@ package hmdugin.acheibateria.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.parse.ParseAnalytics;
 
@@ -44,6 +46,11 @@ public class CarregueiFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
+        TextView t1 = (TextView) v.findViewById(R.id.textMsgCarregar);
+        TextView t2 = (TextView) v.findViewById(R.id.textMsgCarregar2);
+        Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+        t1.setTypeface(type);
+        t2.setTypeface(type);
 
         v.findViewById(R.id.botãoFeedback).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -31,45 +31,42 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:gravity="center"
-
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:paddingTop="60dp"
+        android:paddingTop="80dp"
+
         android:text="@string/semLojas"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/colorPrimary"
 
         android:textSize="20sp"
-        android:textStyle="bold"
+
         android:visibility="gone" />
 
     <ImageView
         android:id="@+id/imageSad"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/txtSemLoja"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/sad2"
+        android:src="@drawable/ic_no_stores_found"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/textNenhumaLoja"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageSad"
-        android:fontFamily="sans-serif-light"
+        android:layout_above="@+id/botãoFeedbackLista"
         android:gravity="center"
+        android:paddingBottom="10dp"
         android:paddingLeft="10dp"
 
         android:paddingRight="10dp"
         android:text="@string/listaVazia"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorPrimary"
+
         android:textSize="20sp"
-        android:textStyle="bold"
+
         android:visibility="gone" />
 
     <include

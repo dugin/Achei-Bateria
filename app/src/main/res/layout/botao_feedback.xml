@@ -27,7 +27,7 @@
         fancy:fb_text="@string/feedback"
         fancy:fb_textColor="@color/corDeFundo"
 
-        fancy:fb_textSize="19dp" />
+        fancy:fb_textSize="22dp" />
 
 
 </LinearLayout>

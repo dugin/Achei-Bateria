@@ -3,6 +3,7 @@ package hmdugin.acheibateria.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.parse.ParseAnalytics;
@@ -126,6 +128,11 @@ public class ListaLojasFragment extends Fragment {
                     PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
                     pagerSlidingTabStrip.setVisibility(View.GONE);
                     CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+                    TextView t1 = (TextView) view.findViewById(R.id.txtSemLoja);
+                    TextView t2 = (TextView) view.findViewById(R.id.textNenhumaLoja);
+                    Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+                    t1.setTypeface(type);
+                    t2.setTypeface(type);
                     viewPager.setPagingEnabled(false);
 
 
