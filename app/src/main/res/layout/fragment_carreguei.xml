@@ -64,7 +64,7 @@
         android:layout_above="@+id/botãoFeedbackLista"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/exp"

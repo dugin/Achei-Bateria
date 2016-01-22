@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.parse.ParseAnalytics;
@@ -64,7 +63,7 @@ public class LocationService extends Service {
             intervaloCerto = MathUtil.calcIntTempo(prefManager.getDataEHora(), currentDateandTime);
 
 
-        Log.println(Log.ASSERT, TAG, "intervalo certo?= " + intervaloCerto);
+
         if (intervaloCerto) {
             googleAPIConnectionUtil = new GoogleAPIConnectionUtil(getApplicationContext());
             GoogleAPIConnectionUtil.setNomeDaClasse(TAG);
@@ -88,13 +87,12 @@ public class LocationService extends Service {
     }
 
     public void onEvent(MessageEB event) {
-        Log.d(TAG, "onEvent= " + event.getData());
+
+
         if (event.getData().equals(TAG)) {
             location = event.getLocation();
             mGoogleApiClient.disconnect();
 
-
-            Log.println(Log.ASSERT, TAG, "Data e hora do BatteryLevelReceiver: " + prefManager.getDataEHora());
             carregou();
             stopSelf();
             EventBus.getDefault().unregister(this);
@@ -119,16 +117,13 @@ public class LocationService extends Service {
 
 
         Set<String> coord = prefManager.getCoord();
-        Log.println(Log.ASSERT, TAG, "minha localização - lat: " + location.getLatitude() + "lon: " + location.getLongitude());
+
         for (String s : coord) {
             String lat = s.substring(0, s.lastIndexOf("_"));
             String lon = s.substring(s.lastIndexOf("_") + 1);
             Location locationLojas = new Location("");
             locationLojas.setLatitude(Double.parseDouble(lat));
             locationLojas.setLongitude(Double.parseDouble(lon));
-
-            Log.println(Log.ASSERT, TAG, "lat: " + lat + " lon: " + lon);
-            Log.println(Log.ASSERT, TAG, "distancia: " + location.distanceTo(locationLojas));
 
             if (location.distanceTo(locationLojas) < 25) {
 

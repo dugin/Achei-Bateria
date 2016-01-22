@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.parse.ParseAnalytics;
@@ -26,7 +25,7 @@ public class NotificationActivity extends AppCompatActivity {
             if (getIntent().getExtras() != null)
                 if (getIntent().getExtras().getBoolean("from_notification_charging")) {
                     ParseAnalytics.trackEventInBackground("Carregando_Clicado");
-                    Log.println(Log.ASSERT, TAG, "ParseAnalytics Carregando_Clicado");
+
                 }
 
         getFragmentManager().beginTransaction()

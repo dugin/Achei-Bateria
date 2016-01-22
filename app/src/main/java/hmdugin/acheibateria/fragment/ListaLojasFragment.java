@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,18 +63,10 @@ public class ListaLojasFragment extends Fragment {
 
 
     @Override
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_lista_lojas, container, false);
-        Log.d(TAG, "onCreateView");
 
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -169,7 +160,7 @@ public class ListaLojasFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ParseAnalytics.trackEventInBackground("Nenhuma_Loja_Email");
-                Log.d(TAG, "Clicou botaoFeedback");
+
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "hmdugin@gmail.com", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");

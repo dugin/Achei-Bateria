@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,24 +97,10 @@ public class MapaFragment extends Fragment {
 
 
 
-
         double latitude = localizacao.getLocation().getLatitude();
         double longitude = localizacao.getLocation().getLongitude();
-        // latitude and longitude
-        //pos = args.getInt("pos");
+
         listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
-
-
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(
-                new LatLng(latitude, longitude))
-                .title("Você está aqui")
-                .visible(false)
-                .flat(false);
-        // adding marker
-        googleMap.addMarker(marker);
-
-
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -127,12 +112,6 @@ public class MapaFragment extends Fragment {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-
-                Log.d(TAG, marker.getId());
-                if (marker.getId().equals("m0")) {
-                    ParseAnalytics.trackEventInBackground("Marker_Pessoa");
-
-                } else
                     ParseAnalytics.trackEventInBackground("Marker_Loja");
                 return false;
             }
@@ -147,17 +126,18 @@ public class MapaFragment extends Fragment {
 
             @Override
             public View getInfoContents(Marker marker) {
+
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
-                int n = marker.getId().charAt(1) - '0' - 1;
+                int n = marker.getId().charAt(1) - '0';
                 TextView txtNome, txtHrFunc;
                 txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
                 ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
                 File f = null;
 
                 try {
-                    if (n >= 0) {
 
-                        f = listaDeLojas.get(n).getImg().getFile();
+
+                    f = listaDeLojas.get(n).getImg().getFile();
                         txtNome.setText(listaDeLojas.get(n).getNome());
                         if (!listaDeLojas.get(n).getIsWifiAvailable())
                             view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
@@ -167,24 +147,14 @@ public class MapaFragment extends Fragment {
                         System.gc();
 
 
-                    } else if (n == -1) {
-
-                        return getActivity().getLayoutInflater().inflate(R.layout.marker_info_eu, null);
-
-
-                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
 
                 }
 
-
                 bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(f));
                 image.setImageBitmap(bitmap);
 
-
-                //  TextView textView = (TextView) view.findViewById(R.id.textView);
-                //textView.setText(listaDeLojas.get(2).getNome());
 
                 return view;
             }
@@ -232,7 +202,7 @@ public class MapaFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+
         super.onDestroy();
         mMapView.onDestroy();
 
@@ -247,11 +217,11 @@ public class MapaFragment extends Fragment {
     }
 
     public void onEvent(MessageEB event) {
-        Log.d(TAG, "onEvent= " + event.getData());
+
         if (event.getData().equals(TAG)) {
 
             int pos = event.getPos();
-            Log.d(TAG, "Posição: " + pos);
+
             ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(listaDeLojas.get(pos).getCoord().getLatitude(),
@@ -282,7 +252,7 @@ public class MapaFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
 
-            Log.d(TAG, "onPostExecute");
+
             for (int i = 0; i < listaDeLojas.size(); i++) {
                 Loja loja = listaDeLojas.get(i);
 
@@ -291,7 +261,7 @@ public class MapaFragment extends Fragment {
                         new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
                         .title(loja.getNome())
                         .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_white_38dp));
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
 
 
                 Marker marker = googleMap.addMarker(marker2);

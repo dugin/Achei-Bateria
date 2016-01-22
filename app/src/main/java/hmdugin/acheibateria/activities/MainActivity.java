@@ -2,13 +2,12 @@ package hmdugin.acheibateria.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,12 +21,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -38,8 +37,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.parse.ParseAnalytics;
-
-import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import java.lang.reflect.Field;
 import java.util.Timer;
@@ -64,11 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private final String TAG = this.getClass().getSimpleName();
     boolean doubleBackToExitPressedOnce = false;
-    int valor;
-    boolean isSwitchOn;
-    Dialog dialog;
-    int distanciaEscolhida = 2;
-    DiscreteSeekBar discreteSeekBar;
     CustomViewPager pager;
     ViewPagerAdapter adapter;
     PagerSlidingTabStrip tabs;
@@ -86,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             if (getIntent().getExtras() != null) {
                 if (getIntent().getExtras().getBoolean("from_notification_low_battery")) {
                     ParseAnalytics.trackEventInBackground("Sem_Bateria_Clicado");
-                    Log.println(Log.ASSERT, TAG, "ParseAnalytics Sem_Bateria_Clicado");
+
                 }
 
             }
@@ -99,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             teste();
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
-        Log.d(TAG, "onCreate");
+
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
@@ -112,22 +104,15 @@ public class MainActivity extends AppCompatActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.corDeFundo), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
-        if (savedInstanceState != null) {
-            Log.d(TAG, "savedInstanceState != null");
-        }
 
         findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (tabs.getVisibility() == View.GONE)
                     tabs.setVisibility(View.VISIBLE);
-
                 pager.removeAllViews();
-                Log.println(Log.ASSERT, TAG, "connected? = " + googleAPIConnectionUtil.getmGoogleApiClient().isConnected());
-                Log.println(Log.ASSERT, TAG, "Location Changed? = " + GoogleAPIConnectionUtil.isLocationChanged());
                 googleAPIConnectionUtil.setMinhaLocalizacao(null);
                 googleAPIConnectionUtil.startLocationUpdates();
                 changeSettings();
@@ -145,10 +130,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        TextView t1 = (TextView) findViewById(R.id.toolbar_title);
+        Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
+        t1.setTypeface(type);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+
 
         menu.add("Fale Conosco").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -229,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+
         finish();
 
 
@@ -249,13 +237,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        Log.d(TAG, "onPause");
+
     }
 
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "getBackStackEntryCount: " + getFragmentManager().getBackStackEntryCount());
+
         if (getFragmentManager().getBackStackEntryCount() > 1) {
             if (getFragmentManager().getBackStackEntryCount() == 2) {
                 getSupportActionBar().setHomeButtonEnabled(false);
@@ -336,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (findViewById(R.id.main_layout) != null && !firstUse) {
-            Log.println(Log.ASSERT, TAG, "comecaListaLojasFragment entrei no if");
+
             ListaDeLojas.getInstance().getListaDeCompras().clear();
             ListaMarker.getInstance().getListaMarker().clear();
             // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
@@ -362,14 +350,12 @@ public class MainActivity extends AppCompatActivity {
 
     protected void changeSettings() {
 
-        Log.println(Log.ASSERT, TAG, "changeSettings");
-
 
         PendingResult<LocationSettingsResult> result = googleAPIConnectionUtil.mudaSettingsLocation();
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
-                Log.println(Log.ASSERT, TAG, "onResult callback");
+
                 final Status status = result.getStatus();
                 final LocationSettingsStates locationSettingsStates = result.getLocationSettingsStates();
 
@@ -415,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        Log.println(Log.ASSERT, TAG, "onActivityResult OK");
+
                         new MyTask().execute();
 
                         break;
@@ -580,7 +566,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Log.println(Log.ASSERT, TAG, "doInBackground");
 
 
             if (!googleAPIConnectionUtil.getmGoogleApiClient().isConnected())
@@ -590,7 +575,6 @@ public class MainActivity extends AppCompatActivity {
             while (googleAPIConnectionUtil.minhaLocalizacao() == null) {
 
             }
-            Log.println(Log.ASSERT, TAG, "saiu do while");
 
 
             return null;

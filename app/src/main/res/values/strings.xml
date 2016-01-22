@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">SOS Battery</string>
+    <string name="bateria">Battery</string>
     <string name="feedback">Conte para a gente!</string>
     <string name="loading">Carregando Lojas</string>
     <string name="listaVazia">Conhece alguma loja que gostaria de participar?</string>
     <string name="semLojas">Nenhuma loja cadastrada perto de você</string>
     <string name="msgCarregar">Aproveite sua bateria sem moderação!</string>
-    <string name="exp">Como foi sua experiência com o app?</string>
+    <string name="exp">Como foi sua experiência?</string>
 
     <string name="minhaLocalizacao">Estou aqui</string>
 

@@ -12,7 +12,6 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.List;
 import java.util.Random;
@@ -34,8 +33,7 @@ public class NotificationUtils {
     /**
      * Method checks if the app is in background or not
      *
-     * @param context
-     * @return
+     *
      */
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
@@ -60,7 +58,7 @@ public class NotificationUtils {
                 }
             }
         } catch (NullPointerException e) {
-            Log.d(TAG, "Entrou no catch");
+
             return true;
         }
 
@@ -76,7 +74,7 @@ public class NotificationUtils {
 
         //if (isAppIsInBackground(mContext)) {
         // notification icon
-        int icon = imgPath;
+
 
         intent.putExtra("id", notificationID);
         PendingIntent resultPendingIntent =
@@ -97,7 +95,7 @@ public class NotificationUtils {
                 .setStyle(inboxStyle)
                 .setContentIntent(resultPendingIntent)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), imgPath))
                 .setContentText(message)
                 .build();
 
@@ -119,14 +117,14 @@ public class NotificationUtils {
         String[] msg3 = new String[2];
 
 
-        msg1[0] = "Sua BATERIA está morrendo!";
-        msg1[1] = "Quer saber aonde salvá-la?";
+        msg1[0] = "Saiba aonde carregá-la!";
+        msg1[1] = "Locais para carregar sua bateria";
 
-        msg2[0] = "Sua BATERIA morrerá!!";
-        msg2[1] = "Previna que isso ocorra!";
+        msg2[0] = "Ajudamos a sua bateria!";
+        msg2[1] = "Você pode carrega-la em uma loja perto";
 
-        msg3[0] = "BATERIA acabando!";
-        msg3[1] = "Clique aqui para saber aonde carregá-la";
+        msg3[0] = "Recarga de bateria!";
+        msg3[1] = "Clique agora para saber aonde :)";
 
         Random gerador = new Random();
 

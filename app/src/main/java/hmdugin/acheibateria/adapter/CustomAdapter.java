@@ -27,7 +27,7 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
     private static ParseGeoPoint mGeoPoint;
     private final String TAG = this.getClass().getSimpleName();
     Bitmap bitmap;
-    private TextView txtEnd, txtNome, txtDist, txtHrFunc, txtBairro;
+    private TextView txtEnd, txtDist, txtHrFunc, txtBairro;
     private ParseImageView imgLoja;
 
     public CustomAdapter(Context context, final ParseGeoPoint geoPoint) {

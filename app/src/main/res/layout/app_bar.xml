@@ -22,11 +22,11 @@
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
         android:fontFamily="sans-serif"
-        android:paddingBottom="1dp"
+
         android:paddingLeft="5dp"
-        android:text="Battery"
+        android:text="@string/bateria"
         android:textColor="@color/corDeFundo"
-        android:textSize="22sp"
+        android:textSize="23sp"
         android:textStyle="bold" />
 
         <ImageView

@@ -3,7 +3,6 @@ package hmdugin.acheibateria.util;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -15,9 +14,7 @@ import com.parse.SaveCallback;
 
 import hmdugin.acheibateria.domain.Loja;
 
-/**
- * Created by Rodrigo on 16/12/2015.
- */
+
 public class ParseUtils {
 
     private static String TAG = ParseUtils.class.getSimpleName();
@@ -39,9 +36,6 @@ public class ParseUtils {
         ParsePush.subscribeInBackground(Configuration.PARSE_CHANNEL, new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e != null)
-                    Log.e(TAG, "Erro: " + e);
-
 
             }
         });

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -23,9 +22,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import de.greenrobot.event.EventBus;
 import hmdugin.acheibateria.eventBus.MessageEB;
 
-/**
- * Created by Rodrigo on 22/12/2015.
- */
+
 public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     // Request code to use when launching the resolution activity
@@ -124,7 +121,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
             return;
         } else if (connectionResult.hasResolution()) {
             try {
-                Log.d(TAG, "hasResolution");
+
                 mResolvingError = true;
                 connectionResult.startResolutionForResult(mActivity, REQUEST_RESOLVE_ERROR);
             } catch (IntentSender.SendIntentException e) {
@@ -134,7 +131,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
         } else {
             // Show dialog using GoogleApiAvailability.getErrorDialog()
             showErrorDialog(connectionResult.getErrorCode());
-            Log.d(TAG, "erro");
+
             mResolvingError = true;
         }
     }
@@ -161,20 +158,10 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
                 new LocationSettingsRequest.Builder()
                         .setAlwaysShow(true)
                         .addLocationRequest(mLocationRequest);
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
-                        builder.build());
 
 
-
-/*
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build()); */
-
-        return result;
+        return LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
+                builder.build());
 
     }
 
@@ -195,8 +182,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
 
 
         locationChanged = true;
-        Log.println(Log.ASSERT, TAG, "Lat: " + location.getLatitude() + " Lon: " + location.getLongitude());
-        Log.println(Log.ASSERT, TAG, "onLocationChanged");
+
         mCurrentLocation = location;
         if (nome != null) {
             if (nome.equals("LocationService")) {
