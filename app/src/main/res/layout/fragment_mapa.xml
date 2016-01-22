@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:visibility="gone"
 
-    tools:context="hmdugin.acheibateria.fragment.MapaFragment">
+    tools:context="eliteapps.SOSBattery.fragment.MapaFragment">
 
 
     <com.google.android.gms.maps.MapView

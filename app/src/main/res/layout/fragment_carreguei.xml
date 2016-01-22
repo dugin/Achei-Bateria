@@ -11,7 +11,7 @@
 
     android:background="@color/corDeFundo"
 
-    tools:context="hmdugin.acheibateria.fragment.CarregueiFragment">
+    tools:context="eliteapps.SOSBattery.fragment.CarregueiFragment">
 
     <include
         android:id="@+id/app_bar2"

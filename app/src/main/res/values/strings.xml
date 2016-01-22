@@ -11,7 +11,7 @@
     <string name="minhaLocalizacao">Estou aqui</string>
 
     <!--  Google maps Key-->
-    <string name="googleAPIKey">AIzaSyAytwGi5GcaXKLmbLZqfvvCHN-xDFUKwLs</string>
+    <string name="googleAPIKey">AIzaSyDAwiaS-gwiQ99orRpeeJq1cjUsoiVnXhk</string>
     <string name="title_activity_notification">NotificationActivity</string>
 
 
