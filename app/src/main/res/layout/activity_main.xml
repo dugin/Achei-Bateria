@@ -13,16 +13,31 @@
         android:id="@+id/app_bar"
         layout="@layout/app_bar" />
 
-    <com.astuetz.PagerSlidingTabStrip
+    <FrameLayout
+        android:id="@+id/drawer_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/app_bar"
+
+
+        android:theme="@style/MaterialTheme.Light.ActionBar">
+
+
+        <RelativeLayout
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"
 
 
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_below="@id/app_bar"
+
         android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:paddingBottom="12dp"
+                android:elevation="20dp"
+
         app:pstsDividerColor="@color/colorPrimary"
         app:pstsIndicatorColor="@color/colorAccent"
         app:pstsIndicatorHeight="3dp"
@@ -61,6 +76,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorPrimary"
         android:visibility="visible" />
+
+        </RelativeLayout>
+    </FrameLayout>
 
 
 </RelativeLayout>

@@ -9,4 +9,16 @@
     <color name="colorBackground">#F4F4F4</color>
 
 
+    <!-- Material DEFAULT colors -->
+    <color name="material_drawer_primary">#589e3f</color>
+    <color name="material_drawer_primary_dark">#41722F</color>
+    <color name="material_drawer_primary_light">#A5A5A5</color>
+    <color name="material_drawer_accent">#FFFFFF</color>
+
+    <!-- OVERWRITE THESE COLORS FOR A LIGHT THEME -->
+    <!-- MaterialDrawer DEFAULT colors -->
+    <color name="material_drawer_background">#F4F4F4</color>
+    <color name="material_drawer_divider">#FFFFFF</color>
+
+
 </resources>

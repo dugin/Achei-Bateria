@@ -50,9 +50,11 @@ import eliteapps.SOSBattery.adapter.ViewPagerAdapter;
 import eliteapps.SOSBattery.domain.ListaDeLojas;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
+import eliteapps.SOSBattery.fragment.LoginFragment;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
+import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
 
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     int Numboftabs = 2;
     ImageButton refreshBtn;
     PrefManager prefManager;
+    Toolbar toolbar;
     private GoogleAPIConnectionUtil googleAPIConnectionUtil;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
+        toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
@@ -141,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
         TextView t1 = (TextView) findViewById(R.id.toolbar_title);
         Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
         t1.setTypeface(type);
+
+        new NavigationDrawerUtil(MainActivity.this, savedInstanceState, toolbar);
+
 
 
     }
@@ -243,16 +249,18 @@ public class MainActivity extends AppCompatActivity {
 
             if (googleAPIConnectionUtil.getLastKnownLocation() != null)
                 new Localizacao(googleAPIConnectionUtil.getLastKnownLocation());
-                
+
             else {
-                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
-                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
+                if (prefManager.getMinhaCoord() != null) {
+                    Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
+                    Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
 
-                Location minhaLocalizacao = new Location("");
-                minhaLocalizacao.setLatitude(lat);
-                minhaLocalizacao.setLongitude(lon);
+                    Location minhaLocalizacao = new Location("");
+                    minhaLocalizacao.setLatitude(lat);
+                    minhaLocalizacao.setLongitude(lon);
 
-                new Localizacao(minhaLocalizacao);
+                    new Localizacao(minhaLocalizacao);
+                }
 
 
             }
@@ -298,16 +306,20 @@ public class MainActivity extends AppCompatActivity {
                     super.onBackPressed();
 
                 } else {
-                    this.doubleBackToExitPressedOnce = true;
-                    Toast.makeText(this, "Pressione VOLTAR de novo para sair", Toast.LENGTH_SHORT).show();
+                    if (NavigationDrawerUtil.getDrawer().isDrawerOpen())
+                        NavigationDrawerUtil.getDrawer().closeDrawer();
+                    else {
+                        this.doubleBackToExitPressedOnce = true;
+                        Toast.makeText(this, "Pressione VOLTAR de novo para sair", Toast.LENGTH_SHORT).show();
 
-                    new Handler().postDelayed(new Runnable() {
+                        new Handler().postDelayed(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            doubleBackToExitPressedOnce = false;
-                        }
-                    }, 2000);
+                            @Override
+                            public void run() {
+                                doubleBackToExitPressedOnce = false;
+                            }
+                        }, 2000);
+                    }
 
                 }
             } else {
@@ -435,6 +447,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        final LoginFragment fragment = (LoginFragment) getFragmentManager().findFragmentById(R.id.login_fragment);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
@@ -470,6 +487,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     protected void acessoLocationNegada() {
         new AlertDialog.Builder(this)

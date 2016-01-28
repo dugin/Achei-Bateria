@@ -6,23 +6,28 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
         <item name="android:textColorPrimary">@android:color/black</item>
-        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
-        <item name="android:itemTextAppearance">@style/myCustomMenuTextApearance</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
     </style>
 
-    <style name="CustomAppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="CustomAppCompatAlertDialogStyle" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:indeterminateTint">?attr/colorAccent</item>
         <item name="android:indeterminateTintMode">src_in</item>
+    </style>
+
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <item name="actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
+        <item name="actionOverflowMenuStyle">@style/CMOptionsMenu</item>
+        <item name="android:itemTextAppearance">@style/myCustomMenuTextApearance</item>
     </style>
 
     <style name="myCustomMenuTextApearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
-
 
     <style name="CMOptionsMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:popupBackground">@color/colorBackground</item>
@@ -33,4 +38,6 @@
     <style name="MyActionButtonOverflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_more_vert_white_24dp</item>
     </style>
+
+
 </resources>

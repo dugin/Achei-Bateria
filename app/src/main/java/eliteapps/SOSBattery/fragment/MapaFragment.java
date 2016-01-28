@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import eliteapps.SOSBattery.domain.Loja;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.util.BitmapDecodeUtil;
 import eliteapps.SOSBattery.util.CalendarUtil;
+import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -179,10 +181,14 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 1)
+                DrawerLayout mDrawerLayout = NavigationDrawerUtil.getDrawer().getDrawerLayout();
+                if (position == 1) {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                     googleMap.setMyLocationEnabled(true);
-                else
+                } else {
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     googleMap.setMyLocationEnabled(false);
+                }
 
             }
 

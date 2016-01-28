@@ -2,6 +2,8 @@ package eliteapps.SOSBattery.application;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+
 import eliteapps.SOSBattery.util.ParseUtils;
 
 /**
@@ -19,7 +21,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-
+        FacebookSdk.sdkInitialize(this);
         // register with parse
         ParseUtils.registerParse(this);
 

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:paddingTop="48dp">
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="OU"
+        android:textSize="16sp"
+
+        />
+
+    <EditText
+        android:id="@+id/editTextLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:text="Login" />
+
+    <EditText
+
+        android:id="@+id/editTextSenha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/botãoEntrar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_margin="30dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:paddingTop="10dp"
+        fancy:fb_borderColor="@color/colorPrimary"
+        fancy:fb_borderWidth="2dp"
+        fancy:fb_defaultColor="@color/colorPrimary"
+        fancy:fb_focusColor="@color/colorPrimaryDark"
+        fancy:fb_ghost="true"
+        fancy:fb_radius="5dp"
+        fancy:fb_text="Entrar"
+        fancy:fb_textColor="@color/colorPrimary"
+
+        fancy:fb_textSize="22dp" />
+
+
+    <TextView
+
+        android:id="@+id/txtEsqueciSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="ESQUECI MINHA SENHA"
+        android:textColor="@drawable/txt_esqueci"
+        android:textSize="16sp"
+
+
+        />
+    <!--
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/botãoEsqueciSenha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:paddingBottom="2dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="2dp"
+
+            fancy:fb_ghost="true"
+            fancy:fb_borderColor="#000"
+            fancy:fb_borderWidth="0dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            fancy:fb_focusColor="@color/colorPrimaryDark"
+            fancy:fb_radius="5dp"
+            fancy:fb_text="ESQUECI MINHA SENHA"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_textColor="@drawable/txt_esqueci"
+
+            fancy:fb_textSize="16dp" /> -->
+
+
+</LinearLayout>

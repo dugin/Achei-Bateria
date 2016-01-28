@@ -10,13 +10,15 @@
 
     <string name="minhaLocalizacao">Estou aqui</string>
 
-    <!--  Google maps Key RELEASE -->
-    <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string>
+    <!--  Google maps Key RELEASE
+    <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string> -->
     <string name="title_activity_notification">NotificationActivity</string>
 
-    <!--  Google maps Key DEBUG
+    <!--  Google maps Key DEBUG-->
 
-    <string name="googleAPIKey">AIzaSyDRde4JwXO2u-8bZgXc8HFpqllc7aigBSI</string> -->
+    <string name="googleAPIKey">AIzaSyDRde4JwXO2u-8bZgXc8HFpqllc7aigBSI</string>
 
+
+    <string name="facebook_id">yxs9tcF/vkSBwF2L+eIkEARB4Xg=</string>
 
 </resources>
