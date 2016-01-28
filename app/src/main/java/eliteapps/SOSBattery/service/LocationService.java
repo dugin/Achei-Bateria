@@ -48,7 +48,7 @@ public class LocationService extends Service {
     public void onCreate() {
         boolean intervaloCerto = false;
         EventBus.getDefault().register(this);
-        prefManager = new PrefManager(getApplicationContext());
+        prefManager = new PrefManager(getApplicationContext(), TAG);
 
         String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
 

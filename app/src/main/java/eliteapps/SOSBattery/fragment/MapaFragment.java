@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public class MapaFragment extends Fragment {
     Localizacao localizacao = new Localizacao();
     List<Loja> listaDeLojas;
     Bitmap bitmap;
+    double latitude;
+    double longitude;
     private GoogleMap googleMap;
     private View view;
     public MapaFragment() {
@@ -85,7 +88,7 @@ public class MapaFragment extends Fragment {
         }
 
         googleMap = mMapView.getMap();
-
+        googleMap.setMyLocationEnabled(true);
 
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
@@ -96,9 +99,16 @@ public class MapaFragment extends Fragment {
         new MyTask().execute();
 
 
+        try {
+            latitude = localizacao.getLocation().getLatitude();
+            longitude = localizacao.getLocation().getLongitude();
+        } catch (NullPointerException e) {
+            Log.println(Log.ASSERT, TAG, "Catch");
 
-        double latitude = localizacao.getLocation().getLatitude();
-        double longitude = localizacao.getLocation().getLongitude();
+            System.exit(1);
+
+
+        }
 
         listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
 
@@ -169,10 +179,10 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 0)
-                    googleMap.setMyLocationEnabled(false);
-                else
+                if (position == 1)
                     googleMap.setMyLocationEnabled(true);
+                else
+                    googleMap.setMyLocationEnabled(false);
 
             }
 

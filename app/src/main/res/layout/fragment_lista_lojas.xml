@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@color/corDeFundo"
+        android:background="@color/colorBackground"
         android:divider="#ffffff"
         android:dividerHeight="2sp"
         android:scrollbars="none" />

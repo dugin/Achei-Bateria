@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -24,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -52,6 +54,7 @@ import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
+import eliteapps.SOSBattery.util.PrefManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     ViewPagerAdapter adapter;
     PagerSlidingTabStrip tabs;
     int Numboftabs = 2;
+    ImageButton refreshBtn;
+    PrefManager prefManager;
     private GoogleAPIConnectionUtil googleAPIConnectionUtil;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        prefManager = new PrefManager(MainActivity.this, TAG);
         if (getIntent() != null) {
             if (getIntent().getExtras() != null) {
                 if (getIntent().getExtras().getBoolean("from_notification_low_battery")) {
@@ -99,15 +104,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.barraLoading);
 
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        refreshBtn = (ImageButton) findViewById(R.id.refresh_button);
 
-
-        findViewById(R.id.refresh_button).setOnClickListener(new View.OnClickListener() {
+        refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (tabs.getVisibility() == View.GONE)
@@ -118,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 changeSettings();
                 ParseAnalytics.trackEventInBackground("Refresh");
                 new DialogoDeProgresso(MainActivity.this);
+
+
                 firstUse = false;
 
 
@@ -133,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         TextView t1 = (TextView) findViewById(R.id.toolbar_title);
         Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
         t1.setTypeface(type);
+
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -229,12 +239,40 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
 
+        if (googleAPIConnectionUtil.minhaLocalizacao() == null && prefManager.getVeiodoPause()) {
+
+            if (googleAPIConnectionUtil.getLastKnownLocation() != null)
+                new Localizacao(googleAPIConnectionUtil.getLastKnownLocation());
+                
+            else {
+                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
+                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
+
+                Location minhaLocalizacao = new Location("");
+                minhaLocalizacao.setLatitude(lat);
+                minhaLocalizacao.setLongitude(lon);
+
+                new Localizacao(minhaLocalizacao);
+
+
+            }
+
+            prefManager.apagar();
+
+        }
+
 
         super.onResume();
     }
 
     @Override
     protected void onPause() {
+
+
+        prefManager.setVeiodoPause(true);
+        Location location = googleAPIConnectionUtil.minhaLocalizacao();
+        prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
+
         super.onPause();
 
 

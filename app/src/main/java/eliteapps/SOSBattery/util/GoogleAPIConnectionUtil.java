@@ -136,6 +136,13 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
         }
     }
 
+    public Location getLastKnownLocation() {
+        return LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+    }
+
+
+
     /* Creates a dialog for an error message */
     private void showErrorDialog(int errorCode) {
         // Create a fragment for the error dialog

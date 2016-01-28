@@ -32,7 +32,6 @@ import java.util.TreeSet;
 
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
-import eliteapps.SOSBattery.activities.MainActivity;
 import eliteapps.SOSBattery.adapter.CustomAdapter;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.domain.ListaDeLojas;
@@ -74,11 +73,14 @@ public class ListaLojasFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
 
 
+
         try {
             lat = localizacao.getLocation().getLatitude();
             lon = localizacao.getLocation().getLongitude();
         } catch (NullPointerException e) {
-            startActivity(new Intent(getActivity(), MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+            System.exit(1);
+
         }
 
 
@@ -109,7 +111,7 @@ public class ListaLojasFragment extends Fragment {
                     getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
 
 
-                    prefManager = new PrefManager(getActivity());
+                    prefManager = new PrefManager(getActivity(), "LocationService");
 
                     prefManager.pegaDataEHora(new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date()));
                     toTreeset((List) objects);

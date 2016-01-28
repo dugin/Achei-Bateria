@@ -25,7 +25,7 @@
         fancy:fb_focusColor="@color/colorPrimary"
         fancy:fb_radius="5dp"
         fancy:fb_text="@string/feedback"
-        fancy:fb_textColor="@color/corDeFundo"
+        fancy:fb_textColor="@color/colorBackground"
 
         fancy:fb_textSize="22dp" />
 

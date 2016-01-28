@@ -43,7 +43,7 @@ public class CarregueiFragment extends Fragment {
         upArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(upArrow);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 

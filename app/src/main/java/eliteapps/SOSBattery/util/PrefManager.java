@@ -13,9 +13,11 @@ import java.util.TreeSet;
  */
 public class PrefManager {
     // Shared pref file name
-    private static final String PREF_NAME = "SOSBaterry";
+    private static final String PREF_NAME_1 = "LocationService";
+    private static final String PREF_NAME_2 = "MainActivity";
     private static final String DATA_E_HORA = "data";
-    private static final String APP_ABERTO = "aberto";
+    private static final String MINHA_COORD = "coord";
+    private static final String APP_PAUSED = "pause";
     private static final Set<String> COORD = new TreeSet<>();
 
     private static final String LATLONG = "latlong";
@@ -30,9 +32,14 @@ public class PrefManager {
     int PRIVATE_MODE = 0;
 
     // Constructor
-    public PrefManager(Context context) {
+    public PrefManager(Context context, String nomeDaClasse) {
         this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+
+        if (nomeDaClasse.equals(PREF_NAME_1))
+            pref = _context.getSharedPreferences(PREF_NAME_1, PRIVATE_MODE);
+        else if (nomeDaClasse.equals(PREF_NAME_2))
+            pref = _context.getSharedPreferences(PREF_NAME_2, PRIVATE_MODE);
+
         editor = pref.edit();
     }
 
@@ -61,15 +68,26 @@ public class PrefManager {
         editor.commit();
     }
 
-    public boolean getPrimeiraVez() {
+    public boolean getVeiodoPause() {
 
-        return pref.getBoolean(APP_ABERTO, true);
+        return pref.getBoolean(APP_PAUSED, false);
     }
 
-    public void setPrimeiraVez(boolean trueFalse) {
+    public void setVeiodoPause(boolean trueFalse) {
 
-        editor.putBoolean(APP_ABERTO, trueFalse);
+        editor.putBoolean(APP_PAUSED, trueFalse);
         editor.commit();
+    }
+
+    public String getMinhaCoord() {
+        return pref.getString(MINHA_COORD, null);
+    }
+
+    public void setMinhaCoord(String minhaCoord) {
+
+        editor.putString(MINHA_COORD, minhaCoord);
+        editor.commit();
+
     }
 
     public String getDataEHora() {

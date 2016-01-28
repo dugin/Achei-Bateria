@@ -114,33 +114,30 @@ public class NotificationUtils {
     public String[] msgBateriaMorrendo() {
         String[] msg1 = new String[2];
         String[] msg2 = new String[2];
-        String[] msg3 = new String[2];
 
 
-        msg1[0] = "Saiba aonde carregá-la!";
-        msg1[1] = "Locais para carregar sua bateria";
+        msg1[0] = "Bateria tá acabando?";
+        msg1[1] = "Clique aqui para saber onde carregar!";
 
-        msg2[0] = "Ajudamos a sua bateria!";
-        msg2[1] = "Você pode carrega-la em uma loja perto";
+        msg2[0] = "Precisando carregar?";
+        msg2[1] = "Clique aqui e descubra onde!";
 
-        msg3[0] = "Recarga de bateria!";
-        msg3[1] = "Clique agora para saber aonde :)";
+
 
         Random gerador = new Random();
 
-        int numero = gerador.nextInt(3);
+        int numero = gerador.nextInt(2);
 
         switch (numero) {
             case 0:
                 return msg1;
             case 1:
                 return msg2;
-            case 2:
-                return msg3;
+
         }
 
 
-        return msg3;
+        return msg1;
     }
 
     public String[] msgCarregouLoja() {
@@ -149,14 +146,14 @@ public class NotificationUtils {
         String[] msg3 = new String[2];
 
 
-        msg1[0] = "Conseguiu carregar o celular?";
-        msg1[1] = "Ficamos felizes em tê-lo ajudado :)";
+        msg1[0] = "Obrigado por usar o SOS Battery!";
+        msg1[1] = "Ficamos felizes em ajudar! :)";
 
-        msg2[0] = "UFAAA...";
-        msg2[1] = "Já está carregando na Loja que indicamos?";
+        msg2[0] = "Obrigado por usar o SOS Battery!";
+        msg2[1] = "Aproveite sua bateria sem moderação! :)";
 
-        msg3[0] = "Obrigado!";
-        msg3[1] = "Por carregar em uma Loja parceira :)";
+        msg3[0] = "Obrigado por usar o SOS Battery!";
+        msg3[1] = "Volte sempre! :)";
 
         Random gerador = new Random();
 
