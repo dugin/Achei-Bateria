@@ -103,6 +103,7 @@ public class ListaLojasFragment extends Fragment {
                 if (DialogoDeProgresso.getDialog() != null)
                     DialogoDeProgresso.getDialog().dismiss();
                 ListaDeLojas.getInstance().setListaDeCompras((List) objects);
+
                 if (!NotificationUtils.isAppIsInBackground(getActivity())) {
 
                     getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);

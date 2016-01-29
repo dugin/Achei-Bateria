@@ -72,6 +72,7 @@ public class MapaFragment extends Fragment {
             EventBus.getDefault().register(this);
             aqui = false;
         }
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_mapa, container, false);
 
@@ -98,7 +99,7 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
-        new MyTask().execute();
+        //  new MyTask().execute();
 
 
         try {
@@ -112,7 +113,7 @@ public class MapaFragment extends Fragment {
 
         }
 
-        listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -138,6 +139,7 @@ public class MapaFragment extends Fragment {
 
             @Override
             public View getInfoContents(Marker marker) {
+                listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
                 int n = marker.getId().charAt(1) - '0';
@@ -234,6 +236,7 @@ public class MapaFragment extends Fragment {
 
     public void onEvent(MessageEB event) {
 
+        Log.println(Log.ASSERT, TAG, "onEvent");
         if (event.getData().equals(TAG)) {
 
             int pos = event.getPos();
@@ -245,6 +248,27 @@ public class MapaFragment extends Fragment {
             googleMap.moveCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
 
+        } else if (event.getData().equals("ListaLojasFragment")) {
+            listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+            Log.println(Log.ASSERT, TAG, "entrou aqui!!!");
+            for (int i = 0; i < listaDeLojas.size(); i++) {
+                Loja loja = listaDeLojas.get(i);
+
+                // create marker
+                MarkerOptions marker2 = new MarkerOptions().position(
+                        new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
+                        .title(loja.getNome())
+                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
+
+
+                Marker marker = googleMap.addMarker(marker2);
+                ListaMarker.getInstance().addMarker(marker);
+
+            }
+
+
+            relativeLayout.setVisibility(View.VISIBLE);
         }
 
 

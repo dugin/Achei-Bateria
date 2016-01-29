@@ -11,13 +11,16 @@
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_marginTop="20dp"
         android:paddingBottom="20dp"
-        android:paddingTop="20dp" />
+        android:paddingTop="20dp"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView"
@@ -30,36 +33,66 @@
 
         />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <EditText
         android:id="@+id/editTextLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:ems="10"
-        android:inputType="textEmailAddress"
-        android:text="Login" />
+        android:inputType="textEmailAddress" />
 
     <EditText
-
         android:id="@+id/editTextSenha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/editTextLogin"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:ems="10"
         android:inputType="textPassword" />
 
+        <TextView
+            android:id="@+id/textViewLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/editTextLogin"
+            android:layout_alignLeft="@+id/editTextLogin"
+            android:layout_alignStart="@+id/editTextLogin"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:text="E-mail"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textViewSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/editTextSenha"
+            android:layout_alignLeft="@+id/editTextSenha"
+            android:layout_alignStart="@+id/editTextSenha"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:text="Senha"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
     <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/botãoEntrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_margin="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
         android:paddingBottom="10dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
@@ -84,10 +117,51 @@
         android:layout_gravity="center_horizontal"
         android:text="ESQUECI MINHA SENHA"
         android:textColor="@drawable/txt_esqueci"
-        android:textSize="16sp"
+        android:textSize="14sp"
 
 
         />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+
+            android:id="@+id/txtSemCadastro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+
+            android:layout_above="@+id/botãoCadastrar"
+            android:layout_centerHorizontal="true"
+            android:text="Ainda não é cadastrado?"
+            android:textColor="@android:color/black"
+
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/botãoCadastrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            fancy:fb_borderColor="#000"
+            fancy:fb_borderWidth="2dp"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_focusColor="@color/colorPrimaryDark"
+            fancy:fb_radius="5dp"
+            fancy:fb_text="Cadastrar!"
+            fancy:fb_textColor="@color/colorBackground"
+
+            fancy:fb_textSize="22dp" />
+    </RelativeLayout>
     <!--
         <mehdi.sakout.fancybuttons.FancyButton
             android:id="@+id/botãoEsqueciSenha"

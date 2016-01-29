@@ -3,7 +3,6 @@ package eliteapps.SOSBattery.util;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,20 +25,18 @@ import eliteapps.SOSBattery.fragment.LoginFragment;
  */
 public class NavigationDrawerUtil {
 
+    static boolean isDrawer;
     private static Drawer drawer;
     private static AccountHeader headerNavigationLeft;
     private final String TAG = this.getClass().getSimpleName();
-
-
     PrimaryDrawerItem item1 = new PrimaryDrawerItem().withName("home");
     SecondaryDrawerItem item2 = new SecondaryDrawerItem().withName("settings");
 
-    public NavigationDrawerUtil(final Activity activity, Bundle savedInstanceState, Toolbar toolbar) {
+    public NavigationDrawerUtil(final Activity activity, Toolbar toolbar) {
 
         headerNavigationLeft = new AccountHeaderBuilder()
                 .withActivity(activity)
                 .withCompactStyle(false)
-                .withSavedInstance(savedInstanceState)
                 .withHeaderBackground(R.color.colorPrimary)
                 .addProfiles(
                         new ProfileDrawerItem().withName("Visitante")
@@ -75,7 +72,6 @@ public class NavigationDrawerUtil {
                 .withRootView(R.id.drawer_container)
                 .withActionBarDrawerToggleAnimated(true)
                 .withDrawerGravity(Gravity.START)
-                .withSavedInstance(savedInstanceState)
                 .withSelectedItem(0)
                 .withActionBarDrawerToggle(true)
                 .withAccountHeader(headerNavigationLeft)
@@ -107,6 +103,14 @@ public class NavigationDrawerUtil {
                 .build();
 
 
+    }
+
+    public static boolean isDrawer() {
+        return isDrawer;
+    }
+
+    public static void setIsDrawer(boolean isDrawer) {
+        NavigationDrawerUtil.isDrawer = isDrawer;
     }
 
     public static Drawer getDrawer() {

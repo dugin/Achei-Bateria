@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleAPIConnectionUtil googleAPIConnectionUtil;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
         t1.setTypeface(type);
 
-        new NavigationDrawerUtil(MainActivity.this, savedInstanceState, toolbar);
+        new NavigationDrawerUtil(MainActivity.this, toolbar);
 
 
 
@@ -279,7 +281,8 @@ public class MainActivity extends AppCompatActivity {
 
         prefManager.setVeiodoPause(true);
         Location location = googleAPIConnectionUtil.minhaLocalizacao();
-        prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
+        if (location != null)
+            prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
 
         super.onPause();
 
@@ -289,13 +292,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Log.println(Log.ASSERT, TAG, "" + getFragmentManager().getBackStackEntryCount());
 
-        if (getFragmentManager().getBackStackEntryCount() > 1) {
-            if (getFragmentManager().getBackStackEntryCount() == 2) {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            NavigationDrawerUtil.setIsDrawer(true);
                 getSupportActionBar().setHomeButtonEnabled(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            }
             getFragmentManager().popBackStack();
+            if (tabs != null)
+                tabs.setViewPager(pager);
+            NavigationDrawerUtil.getDrawer().getDrawerLayout().setVisibility(View.VISIBLE);
+            NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+
+
         } else {
             if (pager != null) {
                 if (pager.getCurrentItem() == 1)
@@ -351,15 +361,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+
         switch (id) {
-            case R.id.home:
-                onBackPressed();
-                break;
-            case R.id.homeAsUp:
-                onBackPressed();
-                break;
+
             case android.R.id.home:
+                if (!NavigationDrawerUtil.isDrawer())
                 onBackPressed();
+                else if (!NavigationDrawerUtil.getDrawer().isDrawerOpen())
+                    NavigationDrawerUtil.getDrawer().openDrawer();
+
+                else
+                    NavigationDrawerUtil.getDrawer().closeDrawer();
+
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -628,8 +642,9 @@ public class MainActivity extends AppCompatActivity {
                 googleAPIConnectionUtil.getmGoogleApiClient().reconnect();
 
 
-            while (googleAPIConnectionUtil.minhaLocalizacao() == null) {
-
+            while (true) {
+                if (googleAPIConnectionUtil.minhaLocalizacao() != null)
+                    break;
             }
 
 
