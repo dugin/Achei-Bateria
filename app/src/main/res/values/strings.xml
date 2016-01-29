@@ -7,12 +7,12 @@
     <string name="semLojas">Nenhuma loja cadastrada perto de você</string>
     <string name="msgCarregar">Aproveite sua bateria sem moderação!</string>
     <string name="exp">Como foi sua experiência?</string>
-
+    <string name="title_activity_notification">NotificationActivity</string>
     <string name="minhaLocalizacao">Estou aqui</string>
 
     <!--  Google maps Key RELEASE -->
     <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string>
-    <string name="title_activity_notification">NotificationActivity</string>
+
 
     <!--  Google maps Key DEBUG
 

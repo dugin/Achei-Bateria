@@ -114,6 +114,7 @@ public class ListaLojasFragment extends Fragment {
                     prefManager = new PrefManager(getActivity(), "LocationService");
 
                     prefManager.pegaDataEHora(new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date()));
+
                     toTreeset((List) objects);
 
                 }

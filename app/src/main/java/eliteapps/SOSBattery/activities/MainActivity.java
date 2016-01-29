@@ -243,16 +243,18 @@ public class MainActivity extends AppCompatActivity {
 
             if (googleAPIConnectionUtil.getLastKnownLocation() != null)
                 new Localizacao(googleAPIConnectionUtil.getLastKnownLocation());
-                
+
             else {
-                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
-                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
+                if (prefManager.getMinhaCoord() != null) {
+                    Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
+                    Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
 
-                Location minhaLocalizacao = new Location("");
-                minhaLocalizacao.setLatitude(lat);
-                minhaLocalizacao.setLongitude(lon);
+                    Location minhaLocalizacao = new Location("");
+                    minhaLocalizacao.setLatitude(lat);
+                    minhaLocalizacao.setLongitude(lon);
 
-                new Localizacao(minhaLocalizacao);
+                    new Localizacao(minhaLocalizacao);
+                }
 
 
             }
@@ -271,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
         prefManager.setVeiodoPause(true);
         Location location = googleAPIConnectionUtil.minhaLocalizacao();
+        if (location != null)
         prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
 
         super.onPause();

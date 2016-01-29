@@ -22,7 +22,6 @@
         android:layout_below="@id/app_bar"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        android:paddingBottom="12dp"
         app:pstsDividerColor="@color/colorPrimary"
         app:pstsIndicatorColor="@color/colorAccent"
         app:pstsIndicatorHeight="3dp"

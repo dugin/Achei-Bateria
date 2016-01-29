@@ -3,7 +3,6 @@ package eliteapps.SOSBattery.fragment;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -96,8 +95,6 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
-        new MyTask().execute();
-
 
         try {
             latitude = localizacao.getLocation().getLatitude();
@@ -110,7 +107,7 @@ public class MapaFragment extends Fragment {
 
         }
 
-        listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -136,6 +133,7 @@ public class MapaFragment extends Fragment {
 
             @Override
             public View getInfoContents(Marker marker) {
+                listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
                 int n = marker.getId().charAt(1) - '0';
@@ -238,30 +236,9 @@ public class MapaFragment extends Fragment {
                             listaDeLojas.get(pos).getCoord().getLongitude())).zoom(15).build();
             googleMap.moveCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
+        } else if (event.getData().equals("ListaLojasFragment")) {
 
-        }
-
-
-    }
-
-    private class MyTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            if (listaDeLojas != null) {
-                while (listaDeLojas.isEmpty()) {
-                    listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
-                }
-            }
-
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-
+            listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
 
             for (int i = 0; i < listaDeLojas.size(); i++) {
                 Loja loja = listaDeLojas.get(i);

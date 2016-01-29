@@ -19,7 +19,7 @@
         android:layout_marginRight="16dp"
         android:background="@color/colorBackground"
         android:divider="#ffffff"
-        android:dividerHeight="2sp"
+        android:dividerHeight="1sp"
         android:scrollbars="none" />
 
 

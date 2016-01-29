@@ -5,14 +5,25 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-
         <item name="android:textColorPrimary">@android:color/black</item>
-        <item name="actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
-        <item name="actionOverflowMenuStyle">@style/CMOptionsMenu</item>
-        <item name="android:itemTextAppearance">@style/myCustomMenuTextApearance</item>
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
 
+    </style>
+
+
+    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="MyTheme" parent="Theme.AppCompat.NoActionBar" />
+
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <item name="actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
+        <item name="actionOverflowMenuStyle">@style/CMOptionsMenu</item>
+        <item name="android:itemTextAppearance">@style/myCustomMenuTextApearance</item>
     </style>
 
     <style name="myCustomMenuTextApearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
@@ -29,10 +40,6 @@
     <style name="MyActionButtonOverflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_more_vert_white_24dp</item>
     </style>
-
-    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

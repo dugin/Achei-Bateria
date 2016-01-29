@@ -22,7 +22,7 @@
         fancy:fb_borderColor="#000"
         fancy:fb_borderWidth="2dp"
         fancy:fb_defaultColor="@color/colorPrimary"
-        fancy:fb_focusColor="@color/colorPrimary"
+        fancy:fb_focusColor="@color/colorPrimaryDark"
         fancy:fb_radius="5dp"
         fancy:fb_text="@string/feedback"
         fancy:fb_textColor="@color/colorBackground"
