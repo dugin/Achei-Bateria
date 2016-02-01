@@ -36,7 +36,9 @@ public class NavigationDrawerUtil {
 
         headerNavigationLeft = new AccountHeaderBuilder()
                 .withActivity(activity)
-                .withCompactStyle(false)
+                .withCompactStyle(true)
+                .withOnlyMainProfileImageVisible(true)
+                .withSelectionListEnabled(false)
                 .withHeaderBackground(R.color.colorPrimary)
                 .addProfiles(
                         new ProfileDrawerItem().withName("Visitante")
@@ -50,8 +52,8 @@ public class NavigationDrawerUtil {
 
                         // Replace whatever is in the fragment_container view with this fragment,
                         // and add the transaction to the back stack so the user can navigate back
-                        transaction.replace(R.id.main_layout, new LoginFragment());
-                        transaction.addToBackStack(null);
+                        transaction.replace(R.id.drawer_container, new LoginFragment(), "LoginFragment");
+                        transaction.addToBackStack("MainFragment");
 
                         // Commit the transaction
                         transaction.commit();
@@ -115,6 +117,11 @@ public class NavigationDrawerUtil {
 
     public static Drawer getDrawer() {
         return drawer;
+    }
+
+
+    public static AccountHeader getHeaderNavigationLeft() {
+        return headerNavigationLeft;
     }
 }
 

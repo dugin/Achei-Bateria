@@ -299,8 +299,10 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setHomeButtonEnabled(false);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getFragmentManager().popBackStack();
-            if (tabs != null)
+            if (tabs != null) {
                 tabs.setViewPager(pager);
+                mudaCorTab();
+            }
             NavigationDrawerUtil.getDrawer().getDrawerLayout().setVisibility(View.VISIBLE);
             NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 
@@ -460,9 +462,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        final LoginFragment fragment = (LoginFragment) getFragmentManager().findFragmentById(R.id.login_fragment);
+        Log.println(Log.ASSERT, TAG, "onActivityResult");
+        final LoginFragment fragment = (LoginFragment) getFragmentManager().findFragmentByTag("LoginFragment");
         if (fragment != null) {
+            Log.println(Log.ASSERT, TAG, "fragment != null");
             fragment.onActivityResult(requestCode, resultCode, data);
         }
 

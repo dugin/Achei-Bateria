@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:orientation="vertical"
-    android:paddingTop="48dp">
+    android:orientation="vertical">
 
 
     <com.facebook.login.widget.LoginButton
@@ -27,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="10dp"
+
         android:text="OU"
         android:textSize="16sp"
 
@@ -72,6 +71,7 @@
             android:textSize="16sp" />
 
         <TextView
+
             android:id="@+id/textViewSenha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
     </RelativeLayout>
 
     <mehdi.sakout.fancybuttons.FancyButton
-        android:id="@+id/botãoEntrar"
+        android:id="@+id/botaoEntrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
 
 
-            android:layout_above="@+id/botãoCadastrar"
+            android:layout_above="@+id/botaoCadastrar"
             android:layout_centerHorizontal="true"
             android:text="Ainda não é cadastrado?"
             android:textColor="@android:color/black"
@@ -141,26 +141,9 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <mehdi.sakout.fancybuttons.FancyButton
-            android:id="@+id/botãoCadastrar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            fancy:fb_borderColor="#000"
-            fancy:fb_borderWidth="2dp"
-            fancy:fb_defaultColor="@color/colorPrimary"
-            fancy:fb_focusColor="@color/colorPrimaryDark"
-            fancy:fb_radius="5dp"
-            fancy:fb_text="Cadastrar!"
-            fancy:fb_textColor="@color/colorBackground"
+        <include
 
-            fancy:fb_textSize="22dp" />
+            layout="@layout/botao_cadastrar" />
     </RelativeLayout>
     <!--
         <mehdi.sakout.fancybuttons.FancyButton

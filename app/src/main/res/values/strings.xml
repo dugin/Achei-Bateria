@@ -9,16 +9,22 @@
     <string name="exp">Como foi sua experiência?</string>
 
     <string name="minhaLocalizacao">Estou aqui</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+
 
     <!--  Google maps Key RELEASE
     <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string> -->
-    <string name="title_activity_notification">NotificationActivity</string>
 
-    <!--  Google maps Key DEBUG-->
+    <!--  Google maps Key DEBUG -->
 
     <string name="googleAPIKey">AIzaSyDRde4JwXO2u-8bZgXc8HFpqllc7aigBSI</string>
 
 
-    <string name="facebook_id">yxs9tcF/vkSBwF2L+eIkEARB4Xg=</string>
+    <string name="facebook_id">1663915383866616</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="radioPFisica">Pessoa Física</string>
+    <string name="radioPJuridica">Pessoa Jurídica</string>
 
 </resources>

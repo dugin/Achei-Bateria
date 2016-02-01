@@ -1,0 +1,90 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context="eliteapps.SOSBattery.fragment.CadastroFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="@color/colorBackground"
+        android:orientation="vertical">
+
+
+        <RadioGroup
+            android:id="@+id/radioPessoa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+
+            <RadioButton
+                android:id="@+id/radioPFisica"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/radioPFisica" />
+
+            <RadioButton
+
+                android:id="@+id/radioPJuridica"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="@string/radioPJuridica" />
+
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Nome" />
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:text="E-mail" />
+
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/editText4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <RelativeLayout
+            android:id="@+id/layoutPFuridica"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/botao_cadastrar_pfisica"
+                layout="@layout/botao_cadastrar"
+
+                />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</ScrollView>
