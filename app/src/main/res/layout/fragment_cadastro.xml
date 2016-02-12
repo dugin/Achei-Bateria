@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
 
         android:background="@color/colorBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
 
 
         <RadioGroup
@@ -42,36 +43,42 @@
         </RadioGroup>
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/cadastroNome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Nome" />
+            android:text="Nome"
+            android:textColor="#50000000" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/cadastroEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:ems="10"
             android:inputType="textEmailAddress"
-            android:text="E-mail" />
+            android:text="E-mail"
+            android:textColor="#50000000" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/cadastroSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="text"
+            android:text="Senha"
+            android:textColor="#50000000" />
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/cadastroSenhaRepete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="text"
+            android:text="Repetir Senha"
+            android:textColor="#50000000" />
 
         <RelativeLayout
             android:id="@+id/layoutPFuridica"

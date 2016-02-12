@@ -68,6 +68,7 @@
             android:paddingBottom="10dp"
             android:paddingLeft="5dp"
             android:text="E-mail"
+            android:textColor="#50000000"
             android:textSize="16sp" />
 
         <TextView
@@ -81,6 +82,7 @@
             android:paddingBottom="10dp"
             android:paddingLeft="5dp"
             android:text="Senha"
+            android:textColor="#50000000"
             android:textSize="16sp" />
     </RelativeLayout>
 

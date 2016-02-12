@@ -5,13 +5,16 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import eliteapps.SOSBattery.R;
+import eliteapps.SOSBattery.util.TextRestrictionsUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,7 +24,8 @@ public class PJuridicaFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     EditText segSexIni, sabIni, domIni;
     EditText segSexFim, sabFim, domFim;
-    int n1;
+    boolean n1 = true;
+    TextRestrictionsUtil textRestrictionsUtil = new TextRestrictionsUtil();
 
     public PJuridicaFragment() {
         // Required empty public constructor
@@ -43,57 +47,148 @@ public class PJuridicaFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int hora1, hora2;
-                int minuto1;
-                Log.println(Log.ASSERT, TAG, "s : " + s);
-                Log.println(Log.ASSERT, TAG, "start : " + start);
-                Log.println(Log.ASSERT, TAG, "n1 : " + n1);
-                if (s.length() >= 1) {
-                    hora1 = s.charAt(0) - '0';
-                    if (hora1 > 2)
-                        segSexIni.setText("");
-                }
-                if (s.length() == 2) {
-                    hora1 = s.charAt(0) - '0';
-                    hora2 = s.charAt(1) - '0';
-                    if (hora1 == 2 && hora2 > 3) {
-                        segSexIni.setText(s.subSequence(0, 1));
-                        segSexIni.setSelection(1);
-                    } else if (s.charAt(1) != ':') {
-                        segSexIni.setText(s + ":");
-                        segSexIni.setSelection(3);
-                    }
 
-                }
-                if (s.length() == 3 && before == 3) {
-                    segSexIni.setText(s.subSequence(0, 1));
-                    segSexIni.setSelection(1);
-                }
 
-                if (s.length() >= 4) {
-                    minuto1 = s.charAt(3) - '0';
-                    if (minuto1 > 5) {
-                        segSexIni.setText(s.subSequence(0, 2));
-                        segSexIni.setSelection(3);
-                    }
-                }
-                if (s.length() == 5)
-                    segSexFim.requestFocus();
-
-                // if (s.length()>= 5) segSexIni.setText(s.subSequence(0, 4));
+                textRestrictionsUtil.getHrFuncRestricao(s, segSexIni, segSexFim);
 
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.println(Log.ASSERT, TAG, "Editable s : " + s);
 
             }
         });
 
         segSexFim = (EditText) view.findViewById(R.id.SegSexFim);
+        segSexFim.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                textRestrictionsUtil.getHrFuncRestricao(s, segSexFim, sabIni);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        sabIni = (EditText) view.findViewById(R.id.SabadoIni);
+        sabIni.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                textRestrictionsUtil.getHrFuncRestricao(s, sabIni, sabFim);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        sabFim = (EditText) view.findViewById(R.id.SabadoFim);
+        sabFim.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                textRestrictionsUtil.getHrFuncRestricao(s, sabFim, domIni);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        domIni = (EditText) view.findViewById(R.id.DomingoIni);
+        domIni.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                textRestrictionsUtil.getHrFuncRestricao(s, domIni, domFim);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        domFim = (EditText) view.findViewById(R.id.DomingoFim);
+        domFim.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                textRestrictionsUtil.getHrFuncRestricao(s, domFim, null);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+// Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.estado, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+// Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setSelection(18);
+
+        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.wifiRadio);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+            }
+        });
 
         return view;
     }

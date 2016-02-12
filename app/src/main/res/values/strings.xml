@@ -10,7 +10,8 @@
 
     <string name="minhaLocalizacao">Estou aqui</string>
     <string name="title_activity_notification">NotificationActivity</string>
-
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
 
     <!--  Google maps Key RELEASE
     <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string> -->
@@ -22,9 +23,40 @@
 
     <string name="facebook_id">1663915383866616</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="radioPFisica">Pessoa Física</string>
     <string name="radioPJuridica">Pessoa Jurídica</string>
+
+    <string-array name="estado">
+        <item>AC</item>
+        <item>AL</item>
+        <item>AP</item>
+        <item>AM</item>
+        <item>BA</item>
+        <item>CE</item>
+        <item>DF</item>
+        <item>GO</item>
+        <item>ES</item>
+        <item>MA</item>
+        <item>MT</item>
+        <item>MS</item>
+        <item>MG</item>
+        <item>PA</item>
+        <item>PB</item>
+        <item>PR</item>
+        <item>PE</item>
+        <item>PI</item>
+        <item>RJ</item>
+        <item>RN</item>
+        <item>RS</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>SP</item>
+        <item>SC</item>
+        <item>SE</item>
+        <item>TO</item>
+
+
+    </string-array>
 
 </resources>

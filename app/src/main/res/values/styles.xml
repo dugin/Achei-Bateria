@@ -9,6 +9,8 @@
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:windowBackground">@color/colorBackground</item>
 
+        <item name="android:textColorHighlight">@color/colorPrimaryDark</item>
+
     </style>
 
 
