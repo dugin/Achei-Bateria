@@ -1,11 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="120dp"
     android:padding="1dp"
 
     >
 
-    <com.parse.ParseImageView
+    <ImageView
         android:id="@+id/imgLoja"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/txtNome"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/txtBairro"
+
         android:fontFamily="sans-serif"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"

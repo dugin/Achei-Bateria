@@ -3,7 +3,6 @@ package eliteapps.SOSBattery.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import com.parse.ParseQueryAdapter;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.domain.Loja;
 import eliteapps.SOSBattery.util.BitmapDecodeUtil;
-import eliteapps.SOSBattery.util.CalendarUtil;
 
 public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
 
@@ -90,10 +88,10 @@ public class CustomAdapter extends ParseQueryAdapter<ParseObject> {
             v.findViewById(R.id.imgWifi).setVisibility(View.GONE);
 
         txtHrFunc = (TextView) v.findViewById(R.id.txtHrFunc);
-        String hrFunc = CalendarUtil.HrFuncionamento(lojas);
+       /* String hrFunc = CalendarUtil.HrFuncionamento(lojas);
         txtHrFunc.setText(hrFunc);
         if (hrFunc.equals("Fechado"))
-            txtHrFunc.setTextColor(Color.RED);
+            txtHrFunc.setTextColor(Color.RED); */
 
 
         return v;

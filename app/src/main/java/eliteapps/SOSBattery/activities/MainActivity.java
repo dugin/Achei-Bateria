@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -47,6 +48,7 @@ import java.util.TimerTask;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.adapter.ViewPagerAdapter;
+import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaDeLojas;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Firebase.setAndroidContext(this);
         prefManager = new PrefManager(MainActivity.this, TAG);
         if (getIntent() != null) {
             if (getIntent().getExtras() != null) {
@@ -366,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (findViewById(R.id.main_layout) != null && !firstUse) {
 
-            ListaDeLojas.getInstance().getListaDeCompras().clear();
+            ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
             ListaMarker.getInstance().getListaMarker().clear();
             // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
             adapter = new ViewPagerAdapter(MainActivity.this, getFragmentManager(), Numboftabs);

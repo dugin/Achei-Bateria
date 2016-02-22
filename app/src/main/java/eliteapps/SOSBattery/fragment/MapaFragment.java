@@ -2,7 +2,6 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -24,20 +23,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseAnalytics;
-import com.parse.ParseException;
+import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
-import eliteapps.SOSBattery.domain.ListaDeLojas;
+import eliteapps.SOSBattery.domain.Estabelecimentos;
+import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
-import eliteapps.SOSBattery.domain.Loja;
 import eliteapps.SOSBattery.eventBus.MessageEB;
-import eliteapps.SOSBattery.util.BitmapDecodeUtil;
+import eliteapps.SOSBattery.extras.CircleTransformation;
 import eliteapps.SOSBattery.util.CalendarUtil;
 
 /**
@@ -49,12 +47,13 @@ public class MapaFragment extends Fragment {
     MapView mMapView;
     RelativeLayout relativeLayout;
     Localizacao localizacao = new Localizacao();
-    List<Loja> listaDeLojas;
-    Bitmap bitmap;
+    List<Estabelecimentos> estabelecimentosList;
     double latitude;
     double longitude;
     private GoogleMap googleMap;
+
     private View view;
+
     public MapaFragment() {
         // Required empty public constructor
     }
@@ -133,35 +132,39 @@ public class MapaFragment extends Fragment {
 
             @Override
             public View getInfoContents(Marker marker) {
-                listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+                estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
+
+                for (int i = 0; i < estabelecimentosList.size(); i++) {
+                    Log.println(Log.ASSERT, TAG, "nome na lista: " + estabelecimentosList.get(i).getNome());
+                }
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
                 int n = marker.getId().charAt(1) - '0';
-                TextView txtNome, txtHrFunc;
-                txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
+                Log.println(Log.ASSERT, TAG, "n pego: " + marker.getId());
+                TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
+                TextView hrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
+
                 ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
-                File f = null;
 
-                try {
+                txtNome.setText(estabelecimentosList.get(n).getNome());
+                String hrFunc2 = CalendarUtil.HrFuncionamento(estabelecimentosList.get(n));
+                hrFunc.setText(hrFunc2);
+                Picasso.with(getActivity())
+                        .load(estabelecimentosList.get(n).getImg().getUrl())
+                        .resize(50, 50)
+                        .transform(new CircleTransformation())
+                        .centerCrop()
+                        .into(image);
 
-
-                    f = listaDeLojas.get(n).getImg().getFile();
-                        txtNome.setText(listaDeLojas.get(n).getNome());
-                        if (!listaDeLojas.get(n).getIsWifiAvailable())
+                if (estabelecimentosList.get(n).getWifi().equals("false"))
                             view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
-                        txtHrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
-                        String texto = CalendarUtil.HrFuncionamento(listaDeLojas.get(n));
-                        txtHrFunc.setText(texto);
+
                         System.gc();
 
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
 
-                }
 
-                bitmap = BitmapDecodeUtil.getRoundedCornerBitmap(BitmapDecodeUtil.decodeFile(f));
-                image.setImageBitmap(bitmap);
+
 
 
                 return view;
@@ -232,27 +235,28 @@ public class MapaFragment extends Fragment {
 
             ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(listaDeLojas.get(pos).getCoord().getLatitude(),
-                            listaDeLojas.get(pos).getCoord().getLongitude())).zoom(15).build();
+                    .target(new LatLng(Double.parseDouble(estabelecimentosList.get(pos).getL()[0]),
+                            Double.parseDouble(estabelecimentosList.get(pos).getL()[1]))).zoom(15).build();
             googleMap.moveCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         } else if (event.getData().equals("ListaLojasFragment")) {
 
-            listaDeLojas = ListaDeLojas.getInstance().getListaDeCompras();
+            estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
-            for (int i = 0; i < listaDeLojas.size(); i++) {
-                Loja loja = listaDeLojas.get(i);
+            for (int i = 0; i < estabelecimentosList.size(); i++) {
+                Estabelecimentos estabelecimentos = estabelecimentosList.get(i);
 
                 // create marker
                 MarkerOptions marker2 = new MarkerOptions().position(
-                        new LatLng(loja.getCoord().getLatitude(), loja.getCoord().getLongitude()))
-                        .title(loja.getNome())
+                        new LatLng(Double.parseDouble(estabelecimentos.getL()[0]), Double.parseDouble(estabelecimentos.getL()[1])))
+                        .title(estabelecimentos.getNome())
                         .flat(true)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
 
 
                 Marker marker = googleMap.addMarker(marker2);
                 ListaMarker.getInstance().addMarker(marker);
+
 
             }
 

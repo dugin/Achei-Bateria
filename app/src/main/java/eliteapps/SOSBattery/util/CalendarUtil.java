@@ -1,13 +1,11 @@
 package eliteapps.SOSBattery.util;
 
-import org.json.JSONException;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import eliteapps.SOSBattery.domain.Loja;
+import eliteapps.SOSBattery.domain.Estabelecimentos;
 
 /**
  * Created by Rodrigo on 22/12/2015.
@@ -25,27 +23,25 @@ public class CalendarUtil {
         return currentDateandTime;
     }
 
-    public static String HrFuncionamento(Loja lojas) {
+    public static String HrFuncionamento(Estabelecimentos lojas) {
 
         Calendar calendar = Calendar.getInstance();
         String hr_abre = "";
         String hr_fecha = "";
 
         int day = calendar.get(Calendar.DAY_OF_WEEK);
-        try {
+
             if (day > 1 && day < 7) {
-                hr_abre = lojas.getHrOpen().getString(0);
-                hr_fecha = lojas.getHrClose().getString(0);
+                hr_abre = lojas.getHr_open()[0];
+                hr_fecha = lojas.getHr_close()[0];
             } else if (day == 7) {
-                hr_abre = lojas.getHrOpen().getString(1);
-                hr_fecha = lojas.getHrClose().getString(1);
+                hr_abre = lojas.getHr_open()[1];
+                hr_fecha = lojas.getHr_close()[1];
             } else if (day == 1) {
-                hr_abre = lojas.getHrOpen().getString(2);
-                hr_fecha = lojas.getHrClose().getString(2);
+                hr_abre = lojas.getHr_open()[2];
+                hr_fecha = lojas.getHr_close()[2];
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
         if (hr_abre.equals("00:00") || hr_fecha.equals("00:00"))
             return "Fechado";
 
