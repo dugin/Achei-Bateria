@@ -1,55 +1,54 @@
 package eliteapps.SOSBattery.domain;
 
-/**
- * Created by Rodrigo on 16/02/2016.
- */
 public class Estabelecimentos {
-    private String updatedAt;
+    private String cabo;
 
-    private String g;
+    private String imgURL;
 
-    private String wifi;
+    private String wifi_senha;
 
     private String bairro;
 
-    private String objectId;
+    private String cidade;
 
-    private String[] hr_open;
+    private String wifi;
+
+    private String estado;
 
     private String createdAt;
 
-    private Img img;
+    private String[] hr_open;
+
+    private String id;
 
     private String[] hr_close;
 
     private String nome;
 
-    private String[] l;
-
     private String end;
 
-    public String getUpdatedAt() {
-        return updatedAt;
+    public String getCabo() {
+        return cabo;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCabo(String cabo) {
+        this.cabo = cabo;
     }
 
-    public String getG() {
-        return g;
+    public String getImgURL() {
+        return imgURL;
     }
 
-    public void setG(String g) {
-        this.g = g;
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
     }
 
-    public String getWifi() {
-        return wifi;
+    public String getWifi_senha() {
+        return wifi_senha;
     }
 
-    public void setWifi(String wifi) {
-        this.wifi = wifi;
+    public void setWifi_senha(String wifi_senha) {
+        this.wifi_senha = wifi_senha;
     }
 
     public String getBairro() {
@@ -60,20 +59,28 @@ public class Estabelecimentos {
         this.bairro = bairro;
     }
 
-    public String getObjectId() {
-        return objectId;
+    public String getCidade() {
+        return cidade;
     }
 
-    public void setObjectId(String objectId) {
-        this.objectId = objectId;
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
     }
 
-    public String[] getHr_open() {
-        return hr_open;
+    public String getWifi() {
+        return wifi;
     }
 
-    public void setHr_open(String[] hr_open) {
-        this.hr_open = hr_open;
+    public void setWifi(String wifi) {
+        this.wifi = wifi;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getCreatedAt() {
@@ -84,12 +91,20 @@ public class Estabelecimentos {
         this.createdAt = createdAt;
     }
 
-    public Img getImg() {
-        return img;
+    public String[] getHr_open() {
+        return hr_open;
     }
 
-    public void setImg(Img img) {
-        this.img = img;
+    public void setHr_open(String[] hr_open) {
+        this.hr_open = hr_open;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String[] getHr_close() {
@@ -108,14 +123,6 @@ public class Estabelecimentos {
         this.nome = nome;
     }
 
-    public String[] getL() {
-        return l;
-    }
-
-    public void setL(String[] l) {
-        this.l = l;
-    }
-
     public String getEnd() {
         return end;
     }
@@ -126,6 +133,6 @@ public class Estabelecimentos {
 
     @Override
     public String toString() {
-        return "ClassPojo [updatedAt = " + updatedAt + ", g = " + g + ", wifi = " + wifi + ", bairro = " + bairro + ", objectId = " + objectId + ", hr_open = " + hr_open + ", createdAt = " + createdAt + ", img = " + img + ", hr_close = " + hr_close + ", nome = " + nome + ", l = " + l + ", end = " + end + "]";
+        return "ClassPojo [cabo = " + cabo + ", imgURL = " + imgURL + ", wifi_senha = " + wifi_senha + ", bairro = " + bairro + ", cidade = " + cidade + ", wifi = " + wifi + ", estado = " + estado + ", createdAt = " + createdAt + ", hr_open = " + hr_open + ", ID = " + id + ", hr_close = " + hr_close + ", nome = " + nome + ", end = " + end + "]";
     }
 }

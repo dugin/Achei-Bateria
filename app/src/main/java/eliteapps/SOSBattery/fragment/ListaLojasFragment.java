@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,7 @@ import eliteapps.SOSBattery.adapter.CustomAdapter;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.adapter.MyRecyclerAdapter;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
+import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.domain.Loja;
@@ -100,9 +100,9 @@ public class ListaLojasFragment extends Fragment {
 
         }
 
-        final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/results/results");
+        final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
 
-        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/results/results"));
+        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
 
 
            /* geoFire.setLocation("firebase-hq", new GeoLocation(lat,lon));
@@ -136,20 +136,24 @@ public class ListaLojasFragment extends Fragment {
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+
+                Location location1 = new Location("");
+                location1.setLatitude(location.latitude);
+                location1.setLongitude(location.longitude);
+
+                ListaDeCoordenadas.getInstance().addEstabelecimento(key, location1);
                 cont++;
 
 
                 myFirebaseRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.println(Log.ASSERT, TAG, "cont:  " + cont);
+
 
                         Estabelecimentos estabelecimentos = dataSnapshot.getValue(Estabelecimentos.class);
 
+                        l2 = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(dataSnapshot.getKey());
 
-                        l2 = new Location("");
-                        l2.setLatitude(Double.parseDouble(estabelecimentos.getL()[0]));
-                        l2.setLongitude(Double.parseDouble(estabelecimentos.getL()[1]));
 
                         map.put(l.distanceTo(l2), estabelecimentos);
 
@@ -167,17 +171,7 @@ public class ListaLojasFragment extends Fragment {
                             }
                         }
 
-
-                        Log.println(Log.ASSERT, TAG, "Nome da loja: " + estabelecimentos.getNome());
-                        if (DialogoDeProgresso.getDialog() != null)
-                            DialogoDeProgresso.getDialog().dismiss();
                         if (!NotificationUtils.isAppIsInBackground(getActivity())) {
-
-                            getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);
-                            getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
-                            view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
-                            getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
-
 
                             prefManager = new PrefManager(getActivity(), "LocationService");
 
@@ -192,23 +186,7 @@ public class ListaLojasFragment extends Fragment {
 
 
                         }
-                        if (adapter.getItemCount() == 0) {
-                            view.findViewById(R.id.textNenhumaLoja).setVisibility(View.VISIBLE);
-                            view.findViewById(R.id.imageSad).setVisibility(View.VISIBLE);
-                            view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.VISIBLE);
-                            view.findViewById(R.id.txtSemLoja).setVisibility(View.VISIBLE);
-                            PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
-                            pagerSlidingTabStrip.setVisibility(View.GONE);
-                            CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
-                            TextView t1 = (TextView) view.findViewById(R.id.txtSemLoja);
-                            TextView t2 = (TextView) view.findViewById(R.id.textNenhumaLoja);
-                            Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
-                            t1.setTypeface(type);
-                            t2.setTypeface(type);
-                            viewPager.setPagingEnabled(false);
 
-
-                        }
 
 
                     }
@@ -234,6 +212,32 @@ public class ListaLojasFragment extends Fragment {
             @Override
             public void onGeoQueryReady() {
 
+                if (DialogoDeProgresso.getDialog() != null)
+                    DialogoDeProgresso.getDialog().dismiss();
+
+                getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);
+                getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
+                view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
+
+                if (cont == 0) {
+
+                    view.findViewById(R.id.textNenhumaLoja).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.imageSad).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.VISIBLE);
+                    view.findViewById(R.id.txtSemLoja).setVisibility(View.VISIBLE);
+                    PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
+                    pagerSlidingTabStrip.setVisibility(View.GONE);
+                    CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+                    TextView t1 = (TextView) view.findViewById(R.id.txtSemLoja);
+                    TextView t2 = (TextView) view.findViewById(R.id.textNenhumaLoja);
+                    Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+                    t1.setTypeface(type);
+                    t2.setTypeface(type);
+                    viewPager.setPagingEnabled(false);
+
+
+                }
             }
 
             @Override

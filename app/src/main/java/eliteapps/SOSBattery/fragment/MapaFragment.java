@@ -2,6 +2,7 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -31,6 +32,7 @@ import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
+import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
@@ -134,13 +136,11 @@ public class MapaFragment extends Fragment {
             public View getInfoContents(Marker marker) {
                 estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
-                for (int i = 0; i < estabelecimentosList.size(); i++) {
-                    Log.println(Log.ASSERT, TAG, "nome na lista: " + estabelecimentosList.get(i).getNome());
-                }
+
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
                 int n = marker.getId().charAt(1) - '0';
-                Log.println(Log.ASSERT, TAG, "n pego: " + marker.getId());
+
                 TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
                 TextView hrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
 
@@ -150,8 +150,8 @@ public class MapaFragment extends Fragment {
                 String hrFunc2 = CalendarUtil.HrFuncionamento(estabelecimentosList.get(n));
                 hrFunc.setText(hrFunc2);
                 Picasso.with(getActivity())
-                        .load(estabelecimentosList.get(n).getImg().getUrl())
-                        .resize(50, 50)
+                        .load(estabelecimentosList.get(n).getImgURL())
+                        .resize(150, 150)
                         .transform(new CircleTransformation())
                         .centerCrop()
                         .into(image);
@@ -233,22 +233,27 @@ public class MapaFragment extends Fragment {
 
             int pos = event.getPos();
 
+            String ID = estabelecimentosList.get(pos).getId();
+            Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+
             ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
             CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(Double.parseDouble(estabelecimentosList.get(pos).getL()[0]),
-                            Double.parseDouble(estabelecimentosList.get(pos).getL()[1]))).zoom(15).build();
+                    .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).build();
             googleMap.moveCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
         } else if (event.getData().equals("ListaLojasFragment")) {
 
             estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
+
             for (int i = 0; i < estabelecimentosList.size(); i++) {
                 Estabelecimentos estabelecimentos = estabelecimentosList.get(i);
+                String ID = estabelecimentosList.get(i).getId();
+                Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
 
                 // create marker
                 MarkerOptions marker2 = new MarkerOptions().position(
-                        new LatLng(Double.parseDouble(estabelecimentos.getL()[0]), Double.parseDouble(estabelecimentos.getL()[1])))
+                        new LatLng(location.getLatitude(), location.getLongitude()))
                         .title(estabelecimentos.getNome())
                         .flat(true)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));

@@ -17,6 +17,7 @@ import java.util.List;
 
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
+import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.extras.CircleTransformation;
 import eliteapps.SOSBattery.extras.RecyclerViewOnClickListenerHack;
 import eliteapps.SOSBattery.util.CalendarUtil;
@@ -59,10 +60,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         myViewHolder.txtEnd.setText(estabelecimentos.getEnd());
         myViewHolder.txtBairro.setText(estabelecimentos.getBairro());
 
+        Location locationLojas = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(estabelecimentos.getId());
 
-        Location locationLojas = new Location("");
-        locationLojas.setLatitude(Double.parseDouble(estabelecimentos.getL()[0]));
-        locationLojas.setLongitude(Double.parseDouble(estabelecimentos.getL()[1]));
+
 
         float dist = locationLojas.distanceTo(minhaLocalizacao);
         Log.println(Log.ASSERT, TAG, "distancia km: " + dist);
@@ -80,8 +80,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             myViewHolder.txtHrFunc.setTextColor(Color.RED);
 
         Picasso.with(context)
-                .load(estabelecimentos.getImg().getUrl())
-                .resize(50, 50)
+                .load(estabelecimentos.getImgURL())
+                .resize(150, 150)
                 .transform(new CircleTransformation())
                 .centerCrop()
                 .into(myViewHolder.imgLoja);
