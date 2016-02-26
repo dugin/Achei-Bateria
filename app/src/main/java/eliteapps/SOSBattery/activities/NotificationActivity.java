@@ -6,25 +6,38 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.parse.ParseAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 
 import eliteapps.SOSBattery.R;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.fragment.CarregueiFragment;
 
 public class NotificationActivity extends AppCompatActivity {
 
     private final String TAG = this.getClass().getSimpleName();
+    Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
+        App application = (App) getApplication();
+        mTracker = application.getDefaultTracker();
 
         if (getIntent() != null)
             if (getIntent().getExtras() != null)
                 if (getIntent().getExtras().getBoolean("from_notification_charging")) {
-                    ParseAnalytics.trackEventInBackground("Carregando_Clicado");
+
+                    // Build and send an Event.
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Notification")
+                            .setAction("Charging Notification")
+                            .setLabel("Charging Notification")
+                            .build());
+
 
                 }
 

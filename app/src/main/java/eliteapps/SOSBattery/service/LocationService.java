@@ -7,8 +7,10 @@ import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.parse.ParseAnalytics;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +20,7 @@ import java.util.Set;
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.activities.NotificationActivity;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.util.Configuration;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
@@ -34,6 +37,7 @@ public class LocationService extends Service {
     PrefManager prefManager;
     NotificationUtils notificationUtils;
     GoogleApiClient mGoogleApiClient;
+    Tracker mTracker;
     public LocationService() {
 
     }
@@ -49,6 +53,9 @@ public class LocationService extends Service {
         boolean intervaloCerto = false;
         EventBus.getDefault().register(this);
         prefManager = new PrefManager(getApplicationContext(), TAG);
+
+        App application = (App) getApplication();
+        mTracker = application.getDefaultTracker();
 
         String currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
 
@@ -119,8 +126,13 @@ public class LocationService extends Service {
             locationLojas.setLongitude(Double.parseDouble(lon));
 
             if (location.distanceTo(locationLojas) < 25) {
+                // Build and send an Event.
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Core")
+                        .setAction("Charging on a Recommended Store")
+                        .setLabel("Charging")
+                        .build());
 
-                ParseAnalytics.trackEventInBackground("Carregando");
                 showNotificationMessage(getApplicationContext());
                 prefManager.apagar();
                 break;

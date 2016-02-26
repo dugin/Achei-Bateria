@@ -1,7 +1,7 @@
 package eliteapps.SOSBattery.domain;
 
 public class Estabelecimentos {
-    private String cabo;
+    private Boolean cabo;
 
     private String imgURL;
 
@@ -11,7 +11,7 @@ public class Estabelecimentos {
 
     private String cidade;
 
-    private String wifi;
+    private Boolean wifi;
 
     private String estado;
 
@@ -27,11 +27,11 @@ public class Estabelecimentos {
 
     private String end;
 
-    public String getCabo() {
+    public Boolean getCabo() {
         return cabo;
     }
 
-    public void setCabo(String cabo) {
+    public void setCabo(Boolean cabo) {
         this.cabo = cabo;
     }
 
@@ -67,11 +67,11 @@ public class Estabelecimentos {
         this.cidade = cidade;
     }
 
-    public String getWifi() {
+    public Boolean getWifi() {
         return wifi;
     }
 
-    public void setWifi(String wifi) {
+    public void setWifi(Boolean wifi) {
         this.wifi = wifi;
     }
 

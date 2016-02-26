@@ -65,13 +65,16 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
 
         float dist = locationLojas.distanceTo(minhaLocalizacao);
-        Log.println(Log.ASSERT, TAG, "distancia km: " + dist);
+        Log.println(Log.ASSERT, TAG, "distancia metros: " + dist);
         int minutos = calculaTempoMin(dist);
 
         myViewHolder.txtDist.setText(String.format("%d min", (int) minutos));
 
-        if (estabelecimentos.getWifi().equals("false"))
+        if (!estabelecimentos.getWifi())
             myViewHolder.wifi.setVisibility(View.GONE);
+
+        if (!estabelecimentos.getCabo())
+            myViewHolder.cabo.setVisibility(View.GONE);
 
 
         String hrFunc = CalendarUtil.HrFuncionamento(estabelecimentos);
@@ -124,7 +127,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
         private final String TAG = this.getClass().getSimpleName();
 
-        ImageView wifi, imgLoja;
+        ImageView wifi, cabo, imgLoja;
         private TextView txtEnd, txtDist, txtHrFunc, txtBairro, txtNome;
 
         public MyViewHolder(View itemView) {
@@ -138,6 +141,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             txtDist = (TextView) itemView.findViewById(R.id.txtDist);
             txtHrFunc = (TextView) itemView.findViewById(R.id.txtHrFunc);
             wifi = (ImageView) itemView.findViewById(R.id.imgWifi);
+            cabo = (ImageView) itemView.findViewById(R.id.imgCabo);
 
             imgLoja = (ImageView) itemView.findViewById(R.id.imgLoja);
 

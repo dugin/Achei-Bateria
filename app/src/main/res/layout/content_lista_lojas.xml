@@ -83,6 +83,21 @@
         />
 
 
+
+    <ImageView
+        android:id="@+id/imgCabo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignBottom="@+id/txtBairro"
+        android:layout_alignParentEnd="true"
+
+        android:layout_alignParentRight="true"
+        android:paddingLeft="10dp"
+        android:src="@drawable/ic_usb_cable_icon_36dp"
+
+        />
+
+
     <ImageView
         android:id="@+id/imgWalking"
         android:layout_width="wrap_content"

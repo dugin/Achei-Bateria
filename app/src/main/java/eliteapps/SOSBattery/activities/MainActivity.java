@@ -33,13 +33,15 @@ import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.firebase.client.Firebase;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.parse.ParseAnalytics;
+
 
 import java.lang.reflect.Field;
 import java.util.Timer;
@@ -48,8 +50,8 @@ import java.util.TimerTask;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.adapter.ViewPagerAdapter;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
-import eliteapps.SOSBattery.domain.ListaDeLojas;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
@@ -75,17 +77,31 @@ public class MainActivity extends AppCompatActivity {
     private GoogleAPIConnectionUtil googleAPIConnectionUtil;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
+    Tracker mTracker;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        App application = (App) getApplication();
+        mTracker = application.getDefaultTracker();
+
+
 
         Firebase.setAndroidContext(this);
         prefManager = new PrefManager(MainActivity.this, TAG);
         if (getIntent() != null) {
             if (getIntent().getExtras() != null) {
                 if (getIntent().getExtras().getBoolean("from_notification_low_battery")) {
-                    ParseAnalytics.trackEventInBackground("Sem_Bateria_Clicado");
+
+                    // Build and send an Event.
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Notification")
+                            .setAction("Notification Low Battery")
+                            .setLabel("Low Battery")
+                            .build());
+
 
                 }
 
@@ -97,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
                 !NotificationUtils.isAppIsInBackground(MainActivity.this))
             teste();
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
 
 
         setContentView(R.layout.activity_main);
@@ -125,7 +141,14 @@ public class MainActivity extends AppCompatActivity {
                 googleAPIConnectionUtil.setMinhaLocalizacao(null);
                 googleAPIConnectionUtil.startLocationUpdates();
                 changeSettings();
-                ParseAnalytics.trackEventInBackground("Refresh");
+
+
+                // Build and send an Event.
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Button")
+                        .setAction("Refresh")
+                        .setLabel("Refresh")
+                        .build());
                 new DialogoDeProgresso(MainActivity.this);
 
 
@@ -154,7 +177,14 @@ public class MainActivity extends AppCompatActivity {
         menu.add("Fale Conosco").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ParseAnalytics.trackEventInBackground("Menu_Email");
+
+
+                // Build and send an Event.
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Email")
+                        .setAction("Menu Email")
+                        .setLabel("Menu Email")
+                        .build());
 
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "hmdugin@gmail.com", null));
@@ -300,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                     pager.setCurrentItem(0);
                 else if (doubleBackToExitPressedOnce) {
                     finish();
-                    ListaDeLojas.getInstance().getListaDeCompras().clear();
+
                     super.onBackPressed();
 
                 } else {
@@ -319,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 if (doubleBackToExitPressedOnce) {
                     finish();
-                    ListaDeLojas.getInstance().getListaDeCompras().clear();
+
                     super.onBackPressed();
                     return;
                 } else {

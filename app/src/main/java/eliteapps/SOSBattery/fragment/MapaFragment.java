@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -23,7 +25,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.ParseAnalytics;
+
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.List;
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
 import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
@@ -54,6 +57,8 @@ public class MapaFragment extends Fragment {
     double longitude;
     private GoogleMap googleMap;
 
+    Tracker mTracker;
+
     private View view;
 
     public MapaFragment() {
@@ -65,6 +70,13 @@ public class MapaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        App application = (App) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
+
+
+
 
         if (aqui) {
             EventBus.getDefault().register(this);
@@ -120,7 +132,13 @@ public class MapaFragment extends Fragment {
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                    ParseAnalytics.trackEventInBackground("Marker_Loja");
+                // Build and send an Event.
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Marker")
+                        .setAction("Marker Selected")
+                        .setLabel("Marker "+ marker.getId())
+                        .build());
+
                 return false;
             }
         });
@@ -156,8 +174,13 @@ public class MapaFragment extends Fragment {
                         .centerCrop()
                         .into(image);
 
-                if (estabelecimentosList.get(n).getWifi().equals("false"))
-                            view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
+                if (!estabelecimentosList.get(n).getWifi())
+                    view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
+
+                if (!estabelecimentosList.get(n).getCabo())
+                    view.findViewById(R.id.imgCaboMapa).setVisibility(View.GONE);
+
+
 
                         System.gc();
 
@@ -180,10 +203,16 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 1)
+                if (position == 1) {
                     googleMap.setMyLocationEnabled(true);
-                else
+                    mTracker.setScreenName( "MapView");
+                    mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+                }
+                else {
                     googleMap.setMyLocationEnabled(false);
+                    mTracker.setScreenName( "ListView");
+                    mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+                }
 
             }
 

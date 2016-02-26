@@ -17,14 +17,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.parse.ParseAnalytics;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import eliteapps.SOSBattery.R;
+import eliteapps.SOSBattery.application.App;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CarregueiFragment extends Fragment {
+
+    Tracker mTracker;
 
 
     public CarregueiFragment() {
@@ -35,6 +40,11 @@ public class CarregueiFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
+        App application = (App) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_carreguei, container, false);
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.app_bar2); // Attaching the layout to the toolbar object
@@ -56,7 +66,15 @@ public class CarregueiFragment extends Fragment {
         v.findViewById(R.id.botãoFeedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseAnalytics.trackEventInBackground("Carregou_Email");
+
+                // Build and send an Event.
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Email")
+                        .setAction("Charging Email Send")
+                        .setLabel("Charging Email")
+                        .build());
+
+
 
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto", "hmdugin@gmail.com", null));

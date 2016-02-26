@@ -4,10 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.parse.ParseAnalytics;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.activities.MainActivity;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.util.Configuration;
 import eliteapps.SOSBattery.util.NotificationUtils;
 
@@ -15,11 +18,23 @@ public class BatteryLevelReceiver extends BroadcastReceiver {
 
     private final String TAG = this.getClass().getSimpleName();
     NotificationUtils notificationUtils;
+    Tracker mTracker;
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        ParseAnalytics.trackEventInBackground("Sem_Bateria");
+        App application = (App) context.getApplicationContext();
+        mTracker = application.getDefaultTracker();
+
+        // Build and send an Event.
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Core")
+                .setAction("Low Battery phone")
+                .setLabel("Low Battery")
+                .build());
+
+
+
         showNotificationMessage(context);
 
     }
