@@ -27,6 +27,37 @@ public class Estabelecimentos {
 
     private String end;
 
+    private String tipo;
+
+
+    public Estabelecimentos(String tipo, Boolean cabo, String imgURL, String wifi_senha, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
+        this.cabo = cabo;
+        this.imgURL = imgURL;
+        this.wifi_senha = wifi_senha;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.wifi = wifi;
+        this.estado = estado;
+        this.createdAt = createdAt;
+        this.hr_open = hr_open;
+        this.id = id;
+        this.hr_close = hr_close;
+        this.nome = nome;
+        this.end = end;
+    }
+
+    public Estabelecimentos() {
+
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
     public Boolean getCabo() {
         return cabo;
     }

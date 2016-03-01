@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,21 +38,23 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         this.minhaLocalizacao = minhaLocalizacao;
         context = c;
         mList = l;
+
         mLayoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        Log.i("LOG", "onCreateViewHolder()");
+
         View v = mLayoutInflater.inflate(R.layout.content_lista_lojas, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-        return mvh;
+
+        return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int position) {
-        Log.i("LOG", "onBindViewHolder()");
+
+
         Estabelecimentos estabelecimentos = mList.get(position);
 
         myViewHolder.txtNome.setText(estabelecimentos.getNome());
@@ -65,29 +66,48 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
 
         float dist = locationLojas.distanceTo(minhaLocalizacao);
-        Log.println(Log.ASSERT, TAG, "distancia metros: " + dist);
+        // Log.println(Log.ASSERT, TAG, "distancia metros: " + dist);
         int minutos = calculaTempoMin(dist);
 
         myViewHolder.txtDist.setText(String.format("%d min", (int) minutos));
 
         if (!estabelecimentos.getWifi())
-            myViewHolder.wifi.setVisibility(View.GONE);
+            myViewHolder.wifi.setVisibility(View.INVISIBLE);
+        else
+            myViewHolder.wifi.setVisibility(View.VISIBLE);
 
         if (!estabelecimentos.getCabo())
-            myViewHolder.cabo.setVisibility(View.GONE);
+            myViewHolder.cabo.setVisibility(View.INVISIBLE);
+        else
+            myViewHolder.cabo.setVisibility(View.VISIBLE);
 
 
         String hrFunc = CalendarUtil.HrFuncionamento(estabelecimentos);
         myViewHolder.txtHrFunc.setText(hrFunc);
-        if (hrFunc.equals("Fechado"))
-            myViewHolder.txtHrFunc.setTextColor(Color.RED);
+        if (hrFunc.equals("Fechado")) {
 
-        Picasso.with(context)
-                .load(estabelecimentos.getImgURL())
-                .resize(150, 150)
-                .transform(new CircleTransformation())
-                .centerCrop()
-                .into(myViewHolder.imgLoja);
+
+            myViewHolder.txtHrFunc.setTextColor(Color.RED);
+        } else {
+            myViewHolder.txtHrFunc.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+        }
+
+
+        if (estabelecimentos.getImgURL().length() > 2) {
+            Picasso.with(context)
+                    .load(estabelecimentos.getImgURL())
+                    .resize(150, 150)
+                    .transform(new CircleTransformation())
+                    .centerCrop()
+                    .into(myViewHolder.imgLoja);
+        } else {
+            Picasso.with(context)
+                    .load(R.drawable.no_image)
+                    .resize(150, 150)
+
+                    .into(myViewHolder.imgLoja);
+
+        }
 
 
     }

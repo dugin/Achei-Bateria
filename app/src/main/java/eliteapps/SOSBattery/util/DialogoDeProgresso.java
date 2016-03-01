@@ -11,9 +11,9 @@ import eliteapps.SOSBattery.R;
 public class DialogoDeProgresso {
     private static ProgressDialog dialog;
 
-    public DialogoDeProgresso(Context context) {
+    public DialogoDeProgresso(Context context, String texto) {
         dialog = new ProgressDialog(context, R.style.CustomAppCompatAlertDialogStyle);
-        dialog = ProgressDialog.show(context, "", "Carregando Lojas...", true, true);
+        dialog = ProgressDialog.show(context, "", texto, true, true);
 
 
 

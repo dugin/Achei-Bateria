@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -42,6 +42,7 @@ import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.extras.CircleTransformation;
 import eliteapps.SOSBattery.util.CalendarUtil;
+import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,14 +52,12 @@ public class MapaFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     MapView mMapView;
     RelativeLayout relativeLayout;
-    Localizacao localizacao = new Localizacao();
+    DrawerLayout mDrawerLayout = NavigationDrawerUtil.getDrawer().getDrawerLayout();
     List<Estabelecimentos> estabelecimentosList;
     double latitude;
     double longitude;
-    private GoogleMap googleMap;
-
     Tracker mTracker;
-
+    private GoogleMap googleMap;
     private View view;
 
     public MapaFragment() {
@@ -110,8 +109,8 @@ public class MapaFragment extends Fragment {
 
 
         try {
-            latitude = localizacao.getLocation().getLatitude();
-            longitude = localizacao.getLocation().getLongitude();
+            latitude = Localizacao.getLocation().getLatitude();
+            longitude = Localizacao.getLocation().getLongitude();
         } catch (NullPointerException e) {
             Log.println(Log.ASSERT, TAG, "Catch");
 
@@ -157,7 +156,11 @@ public class MapaFragment extends Fragment {
 
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
-                int n = marker.getId().charAt(1) - '0';
+                String pos = marker.getId().substring(1);
+
+                int n = Integer.parseInt(pos);
+
+                Log.println(Log.ASSERT, TAG, "posição: " + pos);
 
                 TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
                 TextView hrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
@@ -167,12 +170,19 @@ public class MapaFragment extends Fragment {
                 txtNome.setText(estabelecimentosList.get(n).getNome());
                 String hrFunc2 = CalendarUtil.HrFuncionamento(estabelecimentosList.get(n));
                 hrFunc.setText(hrFunc2);
-                Picasso.with(getActivity())
-                        .load(estabelecimentosList.get(n).getImgURL())
-                        .resize(150, 150)
-                        .transform(new CircleTransformation())
-                        .centerCrop()
-                        .into(image);
+                if (!estabelecimentosList.get(n).getImgURL().isEmpty()) {
+                    Picasso.with(getActivity())
+                            .load(estabelecimentosList.get(n).getImgURL())
+                            .resize(150, 150)
+                            .transform(new CircleTransformation())
+                            .centerCrop()
+                            .into(image);
+                } else {
+                    Picasso.with(getActivity())
+                            .load(R.drawable.no_image)
+                            .resize(150, 150)
+                            .into(image);
+                }
 
                 if (!estabelecimentosList.get(n).getWifi())
                     view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
@@ -194,7 +204,7 @@ public class MapaFragment extends Fragment {
             }
         });
 
-        CustomViewPager customViewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+        final CustomViewPager customViewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
         customViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -203,12 +213,18 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
+
+
                 if (position == 1) {
+
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                     googleMap.setMyLocationEnabled(true);
                     mTracker.setScreenName( "MapView");
                     mTracker.send(new HitBuilders.ScreenViewBuilder().build());
                 }
                 else {
+
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     googleMap.setMyLocationEnabled(false);
                     mTracker.setScreenName( "ListView");
                     mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -218,6 +234,36 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+                if (customViewPager.getCurrentItem() == 1)
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+                if (customViewPager.getCurrentItem() == 1)
+                    mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
 
             }
         });
@@ -262,6 +308,9 @@ public class MapaFragment extends Fragment {
 
             int pos = event.getPos();
 
+            estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
+
+
             String ID = estabelecimentosList.get(pos).getId();
             Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
 
@@ -270,32 +319,27 @@ public class MapaFragment extends Fragment {
                     .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).build();
             googleMap.moveCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
+
         } else if (event.getData().equals("ListaLojasFragment")) {
 
-            estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
+            Estabelecimentos e = event.getE();
+            String ID = e.getId();
+            Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+
+            // create marker
+            MarkerOptions marker2 = new MarkerOptions().position(
+                    new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title(e.getNome())
+                    .flat(true)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
 
 
-            for (int i = 0; i < estabelecimentosList.size(); i++) {
-                Estabelecimentos estabelecimentos = estabelecimentosList.get(i);
-                String ID = estabelecimentosList.get(i).getId();
-                Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+            Marker marker = googleMap.addMarker(marker2);
+            ListaMarker.getInstance().addMarker(marker);
 
-                // create marker
-                MarkerOptions marker2 = new MarkerOptions().position(
-                        new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(estabelecimentos.getNome())
-                        .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
-
-
-                Marker marker = googleMap.addMarker(marker2);
-                ListaMarker.getInstance().addMarker(marker);
-
-
-            }
-
-
+            if (relativeLayout.getVisibility() != View.VISIBLE)
             relativeLayout.setVisibility(View.VISIBLE);
+
         }
 
 

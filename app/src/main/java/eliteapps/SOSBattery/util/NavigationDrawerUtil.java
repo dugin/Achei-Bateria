@@ -2,10 +2,12 @@ package eliteapps.SOSBattery.util;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -14,11 +16,10 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import eliteapps.SOSBattery.R;
-import eliteapps.SOSBattery.fragment.LoginFragment;
+import eliteapps.SOSBattery.fragment.InsereEstabelecimentoFragment;
 
 /**
  * Created by Rodrigo on 26/12/2015.
@@ -29,8 +30,6 @@ public class NavigationDrawerUtil {
     private static Drawer drawer;
     private static AccountHeader headerNavigationLeft;
     private final String TAG = this.getClass().getSimpleName();
-    PrimaryDrawerItem item1 = new PrimaryDrawerItem().withName("home");
-    SecondaryDrawerItem item2 = new SecondaryDrawerItem().withName("settings");
 
     public NavigationDrawerUtil(final Activity activity, Toolbar toolbar) {
 
@@ -41,42 +40,47 @@ public class NavigationDrawerUtil {
                 .withSelectionListEnabled(false)
                 .withHeaderBackground(R.color.colorPrimary)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("Visitante")
+                        new ProfileDrawerItem().withName("Olá visitante")
                 )
-                .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
-                    @Override
-                    public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
 
-
-                        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-
-                        // Replace whatever is in the fragment_container view with this fragment,
-                        // and add the transaction to the back stack so the user can navigate back
-                        transaction.replace(R.id.drawer_container, new LoginFragment(), "LoginFragment");
-                        transaction.addToBackStack("MainFragment");
-
-                        // Commit the transaction
-                        transaction.commit();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
-                        return false;
-                    }
-                })
                 .withTextColor(Color.WHITE)
                 .build();
 
-        drawer = new DrawerBuilder()
-                .withActivity(activity)
-                .withToolbar(toolbar)
-                .withRootView(R.id.drawer_container)
+        drawer = new DrawerBuilder(activity)
+
+                .withRootView(R.id.main_container)
                 .withActionBarDrawerToggleAnimated(true)
-                .withDrawerGravity(Gravity.START)
-                .withSelectedItem(0)
-                .withActionBarDrawerToggle(true)
+                .withToolbar(toolbar)
                 .withAccountHeader(headerNavigationLeft)
+
+
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+
+                        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+
+                        switch (position) {
+                            case 2:
+                                transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
+                                transaction.addToBackStack("MainFragment");
+                                transaction.commit();
+                                break;
+                            case 3:
+                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                        "mailto", "hmdugin@gmail.com", null));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                activity.startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
+                                break;
+                            default:
+                        }
+
+
+                        return false;
+                    }
+                })
+
 
                 .withOnDrawerNavigationListener(new Drawer.OnDrawerNavigationListener() {
                     @Override
@@ -85,24 +89,32 @@ public class NavigationDrawerUtil {
                         return false;
                     }
                 })
-                .withOnDrawerListener(new Drawer.OnDrawerListener() {
-                    @Override
-                    public void onDrawerOpened(View drawerView) {
-                        activity.findViewById(R.id.refresh_button).setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onDrawerClosed(View drawerView) {
-                        activity.findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-
-                    }
-                })
                 .build();
+
+        drawer.addItem(new PrimaryDrawerItem()
+                .withName("Início")
+                .withIcon(R.drawable.inicio)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+        drawer.addItem(new PrimaryDrawerItem()
+                .withName("Sugerir estabelecimento")
+                .withIcon(R.drawable.sugest_store)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+        drawer.addItem(new PrimaryDrawerItem()
+                .withName("Fale conosco")
+                .withIcon(R.drawable.talk_to_us)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+        drawer.addItem(new PrimaryDrawerItem()
+                .withName("Termos e condições")
+                .withIcon(R.drawable.terms)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+        drawer.addItem(new PrimaryDrawerItem()
+                .withName("Sobre nós")
+                .withIcon(R.drawable.about_us)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
 
 
     }

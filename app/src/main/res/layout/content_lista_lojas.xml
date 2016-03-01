@@ -70,30 +70,32 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/imgWifi"
+        android:id="@+id/imgCabo"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_alignBottom="@+id/txtNome"
         android:layout_alignParentEnd="true"
-
         android:layout_alignParentRight="true"
-        android:paddingLeft="10dp"
-        android:src="@drawable/ic_wifi"
+
+        android:padding="5dp"
+
+
+        android:src="@drawable/ic_usb_cable_icon_36dp"
 
         />
 
-
-
     <ImageView
-        android:id="@+id/imgCabo"
+        android:id="@+id/imgWifi"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_alignBottom="@+id/txtBairro"
-        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/txtNome"
 
-        android:layout_alignParentRight="true"
-        android:paddingLeft="10dp"
-        android:src="@drawable/ic_usb_cable_icon_36dp"
+        android:layout_toLeftOf="@id/imgCabo"
+        android:layout_toStartOf="@id/imgCabo"
+
+
+        android:padding="5dp"
+        android:src="@drawable/ic_wifi"
 
         />
 

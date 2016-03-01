@@ -22,7 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -42,7 +42,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-
 import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,6 +56,7 @@ import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
+import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
 
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
     int Numboftabs = 2;
     ImageButton refreshBtn;
     PrefManager prefManager;
+    Tracker mTracker;
     private GoogleAPIConnectionUtil googleAPIConnectionUtil;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
-    Tracker mTracker;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Refresh")
                         .setLabel("Refresh")
                         .build());
-                new DialogoDeProgresso(MainActivity.this);
+                new DialogoDeProgresso(MainActivity.this, "Carregando lojas...");
 
 
                 firstUse = false;
@@ -168,36 +168,10 @@ public class MainActivity extends AppCompatActivity {
         Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
         t1.setTypeface(type);
 
+        new NavigationDrawerUtil(MainActivity.this, toolbar);
 
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-
-        menu.add("Fale Conosco").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-
-                // Build and send an Event.
-                mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Email")
-                        .setAction("Menu Email")
-                        .setLabel("Menu Email")
-                        .build());
-
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "hmdugin@gmail.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-                startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
-                return false;
-            }
-        });
-
-
-        return true;
-    }
 
     protected void onStart() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -245,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 }
                             })
-                            .setIcon(R.drawable.erro)
+                            .setIcon(R.drawable.ic_error_red_48dp)
                             .show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -318,22 +292,38 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (getFragmentManager().getBackStackEntryCount() > 1) {
-            if (getFragmentManager().getBackStackEntryCount() == 2) {
-                getSupportActionBar().setHomeButtonEnabled(false);
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            }
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            NavigationDrawerUtil.setIsDrawer(true);
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getFragmentManager().popBackStack();
+            if (tabs != null) {
+                Log.println(Log.ASSERT, TAG, "tabs != null");
+                Log.println(Log.ASSERT, TAG, "Current item: " + pager.getCurrentItem());
+                tabs.setViewPager(pager);
+
+                mudaCorTab(pager.getCurrentItem());
+            }
+            findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
+            NavigationDrawerUtil.getDrawer().getDrawerLayout().setVisibility(View.VISIBLE);
+            NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+
+
         } else {
             if (pager != null) {
-                if (pager.getCurrentItem() == 1)
+                if (NavigationDrawerUtil.getDrawer().isDrawerOpen())
+                    NavigationDrawerUtil.getDrawer().closeDrawer();
+
+                else if (pager.getCurrentItem() == 1)
                     pager.setCurrentItem(0);
+
                 else if (doubleBackToExitPressedOnce) {
                     finish();
-
                     super.onBackPressed();
 
                 } else {
+
                     this.doubleBackToExitPressedOnce = true;
                     Toast.makeText(this, "Pressione VOLTAR de novo para sair", Toast.LENGTH_SHORT).show();
 
@@ -345,11 +335,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, 2000);
 
+
                 }
             } else {
                 if (doubleBackToExitPressedOnce) {
                     finish();
-
                     super.onBackPressed();
                     return;
                 } else {
@@ -375,15 +365,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+
         switch (id) {
-            case R.id.home:
-                onBackPressed();
-                break;
-            case R.id.homeAsUp:
-                onBackPressed();
-                break;
+
             case android.R.id.home:
-                onBackPressed();
+                if (!NavigationDrawerUtil.isDrawer())
+                    onBackPressed();
+                else if (!NavigationDrawerUtil.getDrawer().isDrawerOpen())
+                    NavigationDrawerUtil.getDrawer().openDrawer();
+
+                else
+                    NavigationDrawerUtil.getDrawer().closeDrawer();
+
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -397,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
         new Localizacao(googleAPIConnectionUtil.minhaLocalizacao());
 
 
-        if (findViewById(R.id.main_layout) != null && !firstUse) {
+        if (findViewById(R.id.main_container) != null && !firstUse) {
 
             ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
             ListaMarker.getInstance().getListaMarker().clear();
@@ -414,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
             tabs.setViewPager(pager);
 
 
-            mudaCorTab();
+            mudaCorTab(pager.getCurrentItem());
 
 
             firstUse = true;
@@ -501,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 })
-                .setIcon(R.drawable.no_signal)
+                .setIcon(R.drawable.ic_no_signal)
                 .show();
 
 
@@ -517,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
                         changeSettings();
                     }
                 })
-                .setIcon(R.drawable.attention)
+                .setIcon(R.drawable.ic_warning_yellow_48dp)
                 .show();
     }
 
@@ -583,13 +577,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void mudaCorTab() {
+    protected void mudaCorTab(final int pos) {
         Field field = null;
         try {
             field = PagerSlidingTabStrip.class.getDeclaredField("tabsContainer");
             field.setAccessible(true);
             LinearLayout tabsContainer = (LinearLayout) field.get(tabs);
-            tabsContainer.getChildAt(0).setSelected(true);
+            tabsContainer.getChildAt(pos).setSelected(true);
 
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -599,7 +593,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-            private int currentPageSelected = 0;
+            private int currentPageSelected = pos;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

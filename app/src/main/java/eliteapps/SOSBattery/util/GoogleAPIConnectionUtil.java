@@ -58,6 +58,8 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+
+
         } else
             mGoogleApiClient.reconnect();
 

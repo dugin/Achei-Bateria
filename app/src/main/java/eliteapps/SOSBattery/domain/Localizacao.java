@@ -6,6 +6,8 @@ import android.location.Location;
  * Created by Rodrigo on 15/12/2015.
  */
 public class Localizacao {
+
+
     private static Location location;
 
     public Localizacao() {
@@ -16,7 +18,11 @@ public class Localizacao {
         Localizacao.location = location;
     }
 
-    public Location getLocation() {
+    public static Location getLocation() {
         return location;
+    }
+
+    public static void setLocation(Location location) {
+        Localizacao.location = location;
     }
 }

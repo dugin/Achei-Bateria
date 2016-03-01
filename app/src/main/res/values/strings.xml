@@ -26,37 +26,20 @@
 
     <string name="radioPFisica">Pessoa Física</string>
     <string name="radioPJuridica">Pessoa Jurídica</string>
-
-    <string-array name="estado">
-        <item>AC</item>
-        <item>AL</item>
-        <item>AP</item>
-        <item>AM</item>
-        <item>BA</item>
-        <item>CE</item>
-        <item>DF</item>
-        <item>GO</item>
-        <item>ES</item>
-        <item>MA</item>
-        <item>MT</item>
-        <item>MS</item>
-        <item>MG</item>
-        <item>PA</item>
-        <item>PB</item>
-        <item>PR</item>
-        <item>PE</item>
-        <item>PI</item>
-        <item>RJ</item>
-        <item>RN</item>
-        <item>RS</item>
-        <item>RO</item>
-        <item>RR</item>
-        <item>SP</item>
-        <item>SC</item>
-        <item>SE</item>
-        <item>TO</item>
+    <string name="end">Endereço</string>
+    <string name="local">Localidade</string>
+    <string name="email">E-mail</string>
+    <string name="nomeLoja">Nome da Empresa</string>
+    <string name="sugerir">Sugerir Estabelecimento</string>
+    <string name="num">N°</string>
+    <string name="extras">Extras</string>
+    <string name="tomada">Tomada para carregar celular</string>
+    <string name="cabo">Cabo Micro USB</string>
+    <string name="wifi">Wifi</string>
+    <string name="senha">Senha</string>
+    <string name="repSenha">Repetir Senha</string>
+    <string name="disclaimerSenha">*Não divulgaremos a senha do wifi à ninguém \n**Senha em branco = sem senha</string>
 
 
-    </string-array>
 
 </resources>

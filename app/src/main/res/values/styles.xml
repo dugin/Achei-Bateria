@@ -29,20 +29,6 @@
     </style>
 
 
-    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="MyTheme" parent="Theme.AppCompat.NoActionBar" />
-
-
-    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <item name="actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
-        <item name="actionOverflowMenuStyle">@style/CMOptionsMenu</item>
-        <item name="android:itemTextAppearance">@style/myCustomMenuTextApearance</item>
-    </style>
-
     <style name="myCustomMenuTextApearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/black</item>

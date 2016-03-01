@@ -42,7 +42,7 @@ public class CalendarUtil {
                 hr_fecha = lojas.getHr_close()[2];
             }
 
-        if (hr_abre.equals("00:00") || hr_fecha.equals("00:00"))
+        if (hr_abre.equals("00:00") && hr_fecha.equals("00:00"))
             return "Fechado";
 
 

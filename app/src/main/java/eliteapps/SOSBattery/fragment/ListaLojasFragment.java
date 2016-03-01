@@ -29,7 +29,6 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,7 +63,7 @@ public class ListaLojasFragment extends Fragment {
 
 
     private final String TAG = this.getClass().getSimpleName();
-    Localizacao localizacao = new Localizacao();
+
 
     PrefManager prefManager;
     TreeMap<Float, Estabelecimentos> map = new TreeMap<>();
@@ -98,8 +97,8 @@ public class ListaLojasFragment extends Fragment {
             ListaDeCoordenadas.getInstance().getListaDeCoordenadas().clear();
 
         try {
-            lat = localizacao.getLocation().getLatitude();
-            lon = localizacao.getLocation().getLongitude();
+            lat = Localizacao.getLocation().getLatitude();
+            lon = Localizacao.getLocation().getLongitude();
         } catch (NullPointerException e) {
 
             System.exit(1);
@@ -122,15 +121,14 @@ public class ListaLojasFragment extends Fragment {
         l = new Location("");
         l.setLatitude(lat);
         l.setLongitude(lon);
-        adapter = new MyRecyclerAdapter(getActivity(), ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos(), l);
 
-        mRecyclerView.setAdapter(adapter);
 
 
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat, lon), 2);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
+
 
                 Location location1 = new Location("");
                 location1.setLatitude(location.latitude);
@@ -139,10 +137,10 @@ public class ListaLojasFragment extends Fragment {
                 ListaDeCoordenadas.getInstance().addEstabelecimento(key, location1);
 
 
-
                 myFirebaseRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
 
 
                         Estabelecimentos estabelecimentos = dataSnapshot.getValue(Estabelecimentos.class);
@@ -152,18 +150,49 @@ public class ListaLojasFragment extends Fragment {
 
                         map.put(l.distanceTo(l2), estabelecimentos);
 
+                        if (map.size() == ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size()) {
 
-                        if (map.size() != ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().size()) {
+
+                            Log.println(Log.ASSERT, TAG, "map.size() != ListaDeEstabelecimentos.getInstance()");
 
                             ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
                             for (Map.Entry<Float, Estabelecimentos> entry : map.entrySet()) {
 
                                 Estabelecimentos value = entry.getValue();
                                 ListaDeEstabelecimentos.getInstance().addEstabelecimento(value);
-                                adapter.notifyDataSetChanged();
+                                MessageEB m = new MessageEB(TAG);
+                                m.setE(value);
+                                EventBus.getDefault().post(m);
+
 
 
                             }
+                            map.clear();
+
+                            adapter = new MyRecyclerAdapter(getActivity(), ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos(), l);
+
+                            mRecyclerView.setAdapter(adapter);
+
+                            adapter.setRecyclerViewOnClickListenerHack(new RecyclerViewOnClickListenerHack() {
+                                @Override
+                                public void onClickListener(View view, int position) {
+
+
+                                    MessageEB m = new MessageEB("MapaFragment");
+                                    m.setPos(position);
+
+                                    // Build and send an Event.
+                                    mTracker.send(new HitBuilders.EventBuilder()
+                                            .setCategory("Button")
+                                            .setAction("Store Selected on the List position: " + position)
+                                            .setLabel("Store List")
+                                            .build());
+
+                                    EventBus.getDefault().post(m);
+                                    ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
+                                    viewPager.setCurrentItem(1);
+                                }
+                            });
                         }
 
                         if (!NotificationUtils.isAppIsInBackground(getActivity())) {
@@ -171,14 +200,13 @@ public class ListaLojasFragment extends Fragment {
 
                             if (ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().size() == ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size()) {
 
+
                                 prefManager = new PrefManager(getActivity(), "LocationService");
 
                                 prefManager.pegaDataEHora(new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date()));
 
                                 toTreeset(ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos());
-                                MessageEB m = new MessageEB(TAG);
 
-                                EventBus.getDefault().post(m);
 
                             }
 
@@ -208,6 +236,7 @@ public class ListaLojasFragment extends Fragment {
 
             @Override
             public void onGeoQueryReady() {
+
 
                 if (DialogoDeProgresso.getDialog() != null)
                     DialogoDeProgresso.getDialog().dismiss();
@@ -251,25 +280,7 @@ public class ListaLojasFragment extends Fragment {
 
         });
 
-        adapter.setRecyclerViewOnClickListenerHack(new RecyclerViewOnClickListenerHack() {
-            @Override
-            public void onClickListener(View view, int position) {
 
-                MessageEB m = new MessageEB("MapaFragment");
-                m.setPos(position);
-
-                // Build and send an Event.
-                mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Button")
-                        .setAction("Store Selected on the List position: "+position)
-                        .setLabel("Store List")
-                        .build());
-
-                EventBus.getDefault().post(m);
-                ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.pager);
-                viewPager.setCurrentItem(1);
-            }
-        });
 
         view.findViewById(R.id.botãoFeedback).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,7 +315,7 @@ public class ListaLojasFragment extends Fragment {
         for (int i = 0; i < object.size(); i++) {
 
             String coord = hashMap.get(object.get(i).getId()).getLatitude() + "_" + hashMap.get(object.get(i).getId()).getLongitude();
-            Log.println(Log.ASSERT,TAG,"toTreeset : "+coord);
+            //  Log.println(Log.ASSERT,TAG,"toTreeset : "+coord);
             latlong.add(coord);
         }
         prefManager.setlat(latlong);

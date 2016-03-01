@@ -43,6 +43,7 @@
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/txtNomeMapa"
             android:layout_toRightOf="@+id/txtNomeMapa"
+            android:paddingBottom="3dp"
             android:src="@drawable/ic_wifi" />
 
         <ImageView
@@ -52,6 +53,7 @@
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/imgWifiMapa"
             android:layout_toRightOf="@+id/imgWifiMapa"
+            android:paddingBottom="3dp"
             android:src="@drawable/ic_usb_cable_icon_36dp" />
 
         <TextView
@@ -64,8 +66,8 @@
             android:layout_below="@+id/txtNomeMapa"
             android:layout_toEndOf="@+id/imgLojaMapa"
             android:layout_toRightOf="@+id/imgLojaMapa"
-            android:paddingTop="5dp"
             android:paddingLeft="2dp"
+            android:paddingTop="5dp"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp" />
 
