@@ -243,45 +243,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-
-        if (googleAPIConnectionUtil.minhaLocalizacao() == null && prefManager.getVeiodoPause()) {
-
-            if (googleAPIConnectionUtil.getLastKnownLocation() != null)
-                new Localizacao(googleAPIConnectionUtil.getLastKnownLocation());
-
-            else {
-                if (prefManager.getMinhaCoord() != null) {
-                    Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
-                    Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
-
-                    Location minhaLocalizacao = new Location("");
-                    minhaLocalizacao.setLatitude(lat);
-                    minhaLocalizacao.setLongitude(lon);
-
-                    new Localizacao(minhaLocalizacao);
-                }
-
-
-            }
-
-            prefManager.apagar();
-
-        }
-
-
-        super.onResume();
-    }
 
     @Override
     protected void onPause() {
 
-
-        prefManager.setVeiodoPause(true);
         Location location = googleAPIConnectionUtil.minhaLocalizacao();
         if (location != null)
         prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
+
 
         super.onPause();
 
@@ -388,7 +357,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void comecaListaLojasFragment() {
 
-        new Localizacao(googleAPIConnectionUtil.minhaLocalizacao());
+        Localizacao.getInstance().setLocation(googleAPIConnectionUtil.minhaLocalizacao());
+
+
 
 
         if (findViewById(R.id.main_container) != null && !firstUse) {

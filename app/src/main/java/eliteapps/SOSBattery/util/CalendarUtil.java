@@ -28,25 +28,47 @@ public class CalendarUtil {
         Calendar calendar = Calendar.getInstance();
         String hr_abre = "";
         String hr_fecha = "";
+        String resp = "";
 
         int day = calendar.get(Calendar.DAY_OF_WEEK);
 
             if (day > 1 && day < 7) {
-                hr_abre = lojas.getHr_open()[0];
-                hr_fecha = lojas.getHr_close()[0];
+                hr_abre = lojas.getHr_open()[0].substring(0, 2) + "h às ";
+                hr_fecha = lojas.getHr_close()[0].substring(0, 2) + "h";
+                resp = hr_abre + "" + hr_fecha;
+
+                if (lojas.getHr_open().length > 3 && lojas.getHr_close().length > 3) {
+                    resp += "\n" + lojas.getHr_open()[3].substring(0, 2) + "h às ";
+                    resp += lojas.getHr_close()[3].substring(0, 2) + "h";
+
+                }
             } else if (day == 7) {
-                hr_abre = lojas.getHr_open()[1];
-                hr_fecha = lojas.getHr_close()[1];
+                hr_abre = lojas.getHr_open()[1].substring(0, 2) + "h às ";
+                hr_fecha = lojas.getHr_close()[1].substring(0, 2) + "h";
+                resp = hr_abre + "" + hr_fecha;
+
+                if (lojas.getHr_open().length > 4 && lojas.getHr_close().length > 4) {
+                    resp += "\n" + lojas.getHr_open()[4].substring(0, 2) + "h às ";
+                    resp += lojas.getHr_close()[4].substring(0, 2) + "h";
+
+                }
             } else if (day == 1) {
-                hr_abre = lojas.getHr_open()[2];
-                hr_fecha = lojas.getHr_close()[2];
+                hr_abre = lojas.getHr_open()[2].substring(0, 2) + "h às ";
+                hr_fecha = lojas.getHr_close()[2].substring(0, 2) + "h";
+                resp = hr_abre + "" + hr_fecha;
+
+                if (lojas.getHr_open().length > 5 && lojas.getHr_close().length > 5) {
+                    resp += "\n" + lojas.getHr_open()[5].substring(0, 2) + "h às ";
+                    resp += lojas.getHr_close()[5].substring(0, 2) + "h";
+
+                }
             }
 
-        if (hr_abre.equals("00:00") && hr_fecha.equals("00:00"))
+        if (hr_abre.equals("00h às ") && hr_fecha.equals("00h"))
             return "Fechado";
 
 
-        return hr_abre.substring(0, 2) + "h às " + hr_fecha.substring(0, 2) + "h";
+        return resp;
     }
 
     public static String diaDaSemana() {

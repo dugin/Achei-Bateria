@@ -67,9 +67,9 @@ public class StoreLocationUtil {
         if (DialogoDeProgresso.getDialog() != null)
             DialogoDeProgresso.getDialog().dismiss();
 
-        final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
+        final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentosTemp");
 
-        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
+        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadasTemp"));
 
         Firebase dbRef = myFirebaseRef.push();
         e.setId(dbRef.getKey());
@@ -290,7 +290,8 @@ public class StoreLocationUtil {
 
                         else if (weekday[i].getOpen().getDay().equals("6"))
                             hr_open[1] = weekday[i].getOpen().getTime().substring(0, 2) + ":" + weekday[i].getOpen().getTime().substring(2, 4);
-                    } else if (weekday[i].getClose() != null) {
+                    }
+                    if (weekday[i].getClose() != null) {
 
                         if (weekday[i].getClose().getDay().equals("0"))
                             hr_close[2] = weekday[i].getClose().getTime().substring(0, 2) + ":" + weekday[i].getClose().getTime().substring(2, 4);

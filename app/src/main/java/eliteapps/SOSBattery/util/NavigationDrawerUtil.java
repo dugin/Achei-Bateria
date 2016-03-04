@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -19,6 +21,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import eliteapps.SOSBattery.R;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.fragment.InsereEstabelecimentoFragment;
 
 /**
@@ -30,8 +33,16 @@ public class NavigationDrawerUtil {
     private static Drawer drawer;
     private static AccountHeader headerNavigationLeft;
     private final String TAG = this.getClass().getSimpleName();
+    Tracker mTracker;
+
 
     public NavigationDrawerUtil(final Activity activity, Toolbar toolbar) {
+
+
+        App application = (App) activity.getApplication();
+        mTracker = application.getDefaultTracker();
+
+
 
         headerNavigationLeft = new AccountHeaderBuilder()
                 .withActivity(activity)
@@ -49,10 +60,10 @@ public class NavigationDrawerUtil {
         drawer = new DrawerBuilder(activity)
 
                 .withRootView(R.id.main_container)
-                .withActionBarDrawerToggleAnimated(true)
+
                 .withToolbar(toolbar)
                 .withAccountHeader(headerNavigationLeft)
-
+                .withSelectedItemByPosition(1)
 
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -65,8 +76,22 @@ public class NavigationDrawerUtil {
                                 transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
                                 transaction.addToBackStack("MainFragment");
                                 transaction.commit();
+                                // Build and send an Event.
+                                mTracker.send(new HitBuilders.EventBuilder()
+                                        .setCategory("Drawer")
+                                        .setAction("Suggest Store")
+                                        .setLabel("Sugest Store")
+                                        .build());
                                 break;
                             case 3:
+
+                                // Build and send an Event.
+                                mTracker.send(new HitBuilders.EventBuilder()
+                                        .setCategory("Drawer")
+                                        .setAction("Drawer Send Email")
+                                        .setLabel("Drawer Send Email")
+                                        .build());
+
                                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                                         "mailto", "hmdugin@gmail.com", null));
                                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
@@ -105,7 +130,7 @@ public class NavigationDrawerUtil {
                 .withName("Fale conosco")
                 .withIcon(R.drawable.talk_to_us)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
-
+/*
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Termos e condições")
                 .withIcon(R.drawable.terms)
@@ -116,7 +141,7 @@ public class NavigationDrawerUtil {
                 .withIcon(R.drawable.about_us)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
 
-
+ */
     }
 
     public static boolean isDrawer() {

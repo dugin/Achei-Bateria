@@ -3,26 +3,25 @@ package eliteapps.SOSBattery.domain;
 import android.location.Location;
 
 /**
- * Created by Rodrigo on 15/12/2015.
+ * Created by Rodrigo on 03/03/2016.
  */
 public class Localizacao {
+    private static Localizacao ourInstance = new Localizacao();
 
+    private Location location;
 
-    private static Location location;
-
-    public Localizacao() {
-
+    private Localizacao() {
     }
 
-    public Localizacao(Location location) {
-        Localizacao.location = location;
+    public static Localizacao getInstance() {
+        return ourInstance;
     }
 
-    public static Location getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public static void setLocation(Location location) {
-        Localizacao.location = location;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

@@ -29,8 +29,10 @@ public class Estabelecimentos {
 
     private String tipo;
 
+    private String modifiedAt;
 
-    public Estabelecimentos(String tipo, Boolean cabo, String imgURL, String wifi_senha, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
+
+    public Estabelecimentos(String modifiedAt, String tipo, Boolean cabo, String imgURL, String wifi_senha, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
         this.cabo = cabo;
         this.imgURL = imgURL;
         this.wifi_senha = wifi_senha;
@@ -48,6 +50,14 @@ public class Estabelecimentos {
 
     public Estabelecimentos() {
 
+    }
+
+    public String getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void setModifiedAt(String modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 
     public String getTipo() {

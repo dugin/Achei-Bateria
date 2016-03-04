@@ -96,6 +96,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         if (estabelecimentos.getImgURL().length() > 2) {
             Picasso.with(context)
                     .load(estabelecimentos.getImgURL())
+                    .error(R.drawable.no_image)
                     .resize(150, 150)
                     .transform(new CircleTransformation())
                     .centerCrop()

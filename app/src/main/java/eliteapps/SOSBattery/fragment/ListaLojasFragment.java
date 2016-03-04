@@ -2,19 +2,20 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
-import android.content.Intent;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -52,6 +53,7 @@ import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.extras.RecyclerViewOnClickListenerHack;
 import eliteapps.SOSBattery.extras.SimpleDividerItemDecoration;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
+import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
 
@@ -67,6 +69,7 @@ public class ListaLojasFragment extends Fragment {
 
     PrefManager prefManager;
     TreeMap<Float, Estabelecimentos> map = new TreeMap<>();
+    TreeMap<Float, Estabelecimentos> mapComcabo = new TreeMap<>();
     MyRecyclerAdapter adapter;
     RecyclerView mRecyclerView;
     Location l;
@@ -84,6 +87,8 @@ public class ListaLojasFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_lista_lojas, container, false);
 
+        prefManager = new PrefManager(getActivity(), "MainActivity");
+
         App application = (App) getActivity().getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -93,17 +98,36 @@ public class ListaLojasFragment extends Fragment {
         if (!map.isEmpty())
             map.clear();
 
+        if (!mapComcabo.isEmpty())
+            mapComcabo.clear();
+
         if(!ListaDeCoordenadas.getInstance().getListaDeCoordenadas().isEmpty())
             ListaDeCoordenadas.getInstance().getListaDeCoordenadas().clear();
 
-        try {
-            lat = Localizacao.getLocation().getLatitude();
-            lon = Localizacao.getLocation().getLongitude();
-        } catch (NullPointerException e) {
+        if (Localizacao.getInstance().getLocation() == null) {
 
-            System.exit(1);
+            if (prefManager.getMinhaCoord() != null) {
+
+                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
+                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
+
+                this.lat = lat;
+                this.lon = lon;
+
+
+            } else {
+
+                lat = -22.982271;
+                lon = -43.217286;
+            }
+
+        } else {
+
+            lat = Localizacao.getInstance().getLocation().getLatitude();
+            lon = Localizacao.getInstance().getLocation().getLongitude();
 
         }
+
 
         final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
 
@@ -137,10 +161,9 @@ public class ListaLojasFragment extends Fragment {
                 ListaDeCoordenadas.getInstance().addEstabelecimento(key, location1);
 
 
-                myFirebaseRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                myFirebaseRef.child(key).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
 
 
                         Estabelecimentos estabelecimentos = dataSnapshot.getValue(Estabelecimentos.class);
@@ -148,30 +171,33 @@ public class ListaLojasFragment extends Fragment {
                         l2 = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(dataSnapshot.getKey());
 
 
-                        map.put(l.distanceTo(l2), estabelecimentos);
+                        if (estabelecimentos.getCabo())
+                            mapComcabo.put(l.distanceTo(l2), estabelecimentos);
+                        else
+                            map.put(l.distanceTo(l2), estabelecimentos);
 
-                        if (map.size() == ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size()) {
 
+                        if (map.size() + mapComcabo.size() == ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size()) {
 
-                            Log.println(Log.ASSERT, TAG, "map.size() != ListaDeEstabelecimentos.getInstance()");
 
                             ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
-                            for (Map.Entry<Float, Estabelecimentos> entry : map.entrySet()) {
 
-                                Estabelecimentos value = entry.getValue();
-                                ListaDeEstabelecimentos.getInstance().addEstabelecimento(value);
-                                MessageEB m = new MessageEB(TAG);
-                                m.setE(value);
-                                EventBus.getDefault().post(m);
+                            populaListaDeEstabelecimento(mapComcabo);
+                            populaListaDeEstabelecimento(map);
 
+                            if (DialogoDeProgresso.getDialog() != null)
+                                DialogoDeProgresso.getDialog().dismiss();
 
+                            getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);
+                            getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
+                            view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
+                            getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
 
-                            }
-                            map.clear();
 
                             adapter = new MyRecyclerAdapter(getActivity(), ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos(), l);
 
                             mRecyclerView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
 
                             adapter.setRecyclerViewOnClickListenerHack(new RecyclerViewOnClickListenerHack() {
                                 @Override
@@ -219,6 +245,7 @@ public class ListaLojasFragment extends Fragment {
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
 
+
                     }
                 });
 
@@ -238,15 +265,32 @@ public class ListaLojasFragment extends Fragment {
             public void onGeoQueryReady() {
 
 
-                if (DialogoDeProgresso.getDialog() != null)
-                    DialogoDeProgresso.getDialog().dismiss();
+                if (!InternetConnectionUtil.isNetworkAvailable(getActivity())) {
+                    if (DialogoDeProgresso.getDialog() != null)
+                        DialogoDeProgresso.getDialog().dismiss();
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Falha na conexão")
+                            .setMessage("Verifique se o seu dispositivo está conectado à rede e tente novamente")
+                            .setPositiveButton("Reconectar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ImageButton refreshBtn = (ImageButton) getActivity().findViewById(R.id.refresh_button);
+                                    refreshBtn.callOnClick();
+                                }
+                            })
+                            .setIcon(R.drawable.ic_no_signal)
+                            .show();
 
-                getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
-                view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
+                }
 
                 if (ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size() == 0) {
+
+                    if (DialogoDeProgresso.getDialog() != null)
+                        DialogoDeProgresso.getDialog().dismiss();
+
+                    getActivity().findViewById(R.id.barraLoading).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
+                    view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
 
                     // Build and send an Event.
                     mTracker.send(new HitBuilders.EventBuilder()
@@ -267,6 +311,7 @@ public class ListaLojasFragment extends Fragment {
                     Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
                     t1.setTypeface(type);
                     t2.setTypeface(type);
+                    viewPager.setCurrentItem(0);
                     viewPager.setPagingEnabled(false);
 
 
@@ -275,6 +320,7 @@ public class ListaLojasFragment extends Fragment {
 
             @Override
             public void onGeoQueryError(FirebaseError error) {
+
 
             }
 
@@ -288,17 +334,17 @@ public class ListaLojasFragment extends Fragment {
 
                 // Build and send an Event.
                 mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Email")
-                        .setAction("No Store Send Email")
-                        .setLabel("No Store Email")
+                        .setCategory("Button")
+                        .setAction("No Store available")
+                        .setLabel("No Store suggest")
                         .build());
 
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
+                transaction.addToBackStack("MainFragment");
+                transaction.commit();
 
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", "hmdugin@gmail.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Sugestão/Comentário para SOS Battery");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
-                startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
+
             }
         });
 
@@ -309,13 +355,29 @@ public class ListaLojasFragment extends Fragment {
     }
 
 
+    private void populaListaDeEstabelecimento(TreeMap<Float, Estabelecimentos> map) {
+
+        for (Map.Entry<Float, Estabelecimentos> entry : map.entrySet()) {
+
+            Estabelecimentos value = entry.getValue();
+            ListaDeEstabelecimentos.getInstance().addEstabelecimento(value);
+            MessageEB m = new MessageEB(TAG);
+            m.setE(value);
+            EventBus.getDefault().post(m);
+
+
+        }
+        map.clear();
+    }
+
+
     private void toTreeset(List<Estabelecimentos> object) {
         Set<String> latlong = new TreeSet<>();
         HashMap<String,Location> hashMap = ListaDeCoordenadas.getInstance().getListaDeCoordenadas();
         for (int i = 0; i < object.size(); i++) {
 
             String coord = hashMap.get(object.get(i).getId()).getLatitude() + "_" + hashMap.get(object.get(i).getId()).getLongitude();
-            //  Log.println(Log.ASSERT,TAG,"toTreeset : "+coord);
+
             latlong.add(coord);
         }
         prefManager.setlat(latlong);

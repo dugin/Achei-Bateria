@@ -11,7 +11,7 @@
     <RelativeLayout
 
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="56dp"
 
         >
 
@@ -21,6 +21,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_marginRight="3dp"
 
 
             />
@@ -63,9 +64,8 @@
             android:layout_alignLeft="@+id/txtNomeMapa"
             android:layout_alignParentBottom="true"
             android:layout_alignStart="@+id/txtNomeMapa"
-            android:layout_below="@+id/txtNomeMapa"
-            android:layout_toEndOf="@+id/imgLojaMapa"
-            android:layout_toRightOf="@+id/imgLojaMapa"
+
+            android:paddingBottom="3dp"
             android:paddingLeft="2dp"
             android:paddingTop="5dp"
             android:textColor="@color/colorPrimary"

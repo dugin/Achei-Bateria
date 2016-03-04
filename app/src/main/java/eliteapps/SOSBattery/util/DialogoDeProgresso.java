@@ -14,6 +14,8 @@ public class DialogoDeProgresso {
     public DialogoDeProgresso(Context context, String texto) {
         dialog = new ProgressDialog(context, R.style.CustomAppCompatAlertDialogStyle);
         dialog = ProgressDialog.show(context, "", texto, true, true);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
 
 
 

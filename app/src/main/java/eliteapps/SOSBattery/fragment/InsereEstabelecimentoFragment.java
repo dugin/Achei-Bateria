@@ -17,7 +17,11 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import eliteapps.SOSBattery.R;
+import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 import eliteapps.SOSBattery.util.StoreLocationUtil;
@@ -31,7 +35,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     EditText nome, end, numero, email, senha, senhaRep;
     TextView senhaDiscplaimer;
-
+    Tracker mTracker;
     FancyButton sugerirBtn;
     CheckBox isWifi, isCabo;
 
@@ -46,6 +50,9 @@ public class InsereEstabelecimentoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_insere_estabelecimento, container, false);
 
         NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+
+        App application = (App) getActivity().getApplication();
+        mTracker = application.getDefaultTracker();
 
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
@@ -140,6 +147,12 @@ public class InsereEstabelecimentoFragment extends Fragment {
         sugerirBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Button")
+                        .setAction("Suggest Store")
+                        .setLabel("Sugest Store button")
+                        .build());
 
                 String password;
 

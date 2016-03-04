@@ -6,7 +6,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +39,9 @@ import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.eventBus.MessageEB;
-import eliteapps.SOSBattery.extras.CircleTransformation;
 import eliteapps.SOSBattery.util.CalendarUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
+import eliteapps.SOSBattery.util.PrefManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,11 +51,14 @@ public class MapaFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     MapView mMapView;
     RelativeLayout relativeLayout;
-    DrawerLayout mDrawerLayout = NavigationDrawerUtil.getDrawer().getDrawerLayout();
+    DrawerLayout mDrawerLayout;
     List<Estabelecimentos> estabelecimentosList;
-    double latitude;
-    double longitude;
+    double lat;
+    double lon;
     Tracker mTracker;
+    boolean not_first_time_showing_info_window = false;
+    boolean not_first_time_showing_info_window_2 = false;
+    PrefManager prefManager;
     private GoogleMap googleMap;
     private View view;
 
@@ -75,7 +77,7 @@ public class MapaFragment extends Fragment {
         mTracker = application.getDefaultTracker();
 
 
-
+        prefManager = new PrefManager(getActivity(), "MainActivity");
 
         if (aqui) {
             EventBus.getDefault().register(this);
@@ -107,15 +109,27 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
+        if (Localizacao.getInstance().getLocation() == null) {
 
-        try {
-            latitude = Localizacao.getLocation().getLatitude();
-            longitude = Localizacao.getLocation().getLongitude();
-        } catch (NullPointerException e) {
-            Log.println(Log.ASSERT, TAG, "Catch");
+            if (prefManager.getMinhaCoord() != null) {
 
-            System.exit(1);
+                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
+                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
 
+                this.lat = lat;
+                this.lon = lon;
+
+
+            } else {
+
+                lat = -22.982271;
+                lon = -43.217286;
+            }
+
+        } else {
+
+            lat = Localizacao.getInstance().getLocation().getLatitude();
+            lon = Localizacao.getInstance().getLocation().getLongitude();
 
         }
 
@@ -123,7 +137,7 @@ public class MapaFragment extends Fragment {
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(latitude, longitude)).zoom(15).build();
+                .target(new LatLng(lat, lon)).zoom(15).build();
         googleMap.moveCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
 
@@ -150,7 +164,8 @@ public class MapaFragment extends Fragment {
             }
 
             @Override
-            public View getInfoContents(Marker marker) {
+            public View getInfoContents(final Marker marker) {
+
                 estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
 
@@ -160,29 +175,84 @@ public class MapaFragment extends Fragment {
 
                 int n = Integer.parseInt(pos);
 
-                Log.println(Log.ASSERT, TAG, "posição: " + pos);
 
                 TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
                 TextView hrFunc = (TextView) view.findViewById(R.id.txtHrFuncMapa);
 
-                ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
+                final ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
 
                 txtNome.setText(estabelecimentosList.get(n).getNome());
                 String hrFunc2 = CalendarUtil.HrFuncionamento(estabelecimentosList.get(n));
                 hrFunc.setText(hrFunc2);
+
+
                 if (!estabelecimentosList.get(n).getImgURL().isEmpty()) {
-                    Picasso.with(getActivity())
-                            .load(estabelecimentosList.get(n).getImgURL())
-                            .resize(150, 150)
-                            .transform(new CircleTransformation())
-                            .centerCrop()
-                            .into(image);
+
+                    // set image view like this:
+                    if (not_first_time_showing_info_window) {
+                        not_first_time_showing_info_window = false;
+                        Picasso.with(getActivity())
+
+                                .load(estabelecimentosList.get(n).getImgURL())
+                                .resize(100, 100)
+                                .error(R.drawable.no_image)
+                                .into(image);
+
+                    } else { // if it's the first time, load the image with the callback set
+                        not_first_time_showing_info_window = true;
+                        Picasso.with(getActivity())
+
+                                .load(estabelecimentosList.get(n).getImgURL())
+                                .resize(100, 100)
+                                .error(R.drawable.no_image)
+                                .into(image, new com.squareup.picasso.Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                        marker.showInfoWindow();
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
+                                    }
+                                });
+                    }
+
                 } else {
-                    Picasso.with(getActivity())
-                            .load(R.drawable.no_image)
-                            .resize(150, 150)
-                            .into(image);
+                    if (not_first_time_showing_info_window_2) {
+                        not_first_time_showing_info_window_2 = false;
+                        Picasso.with(getActivity())
+
+                                .load(R.drawable.no_image)
+                                .resize(100, 100)
+                                .error(R.drawable.no_image)
+                                .into(image);
+
+                    } else { // if it's the first time, load the image with the callback set
+                        not_first_time_showing_info_window_2 = true;
+                        Picasso.with(getActivity())
+
+                                .load(R.drawable.no_image)
+                                .resize(100, 100)
+                                .error(R.drawable.no_image)
+                                .into(image, new com.squareup.picasso.Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                        marker.showInfoWindow();
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
+                                    }
+                                });
+                    }
+
+
                 }
+
 
                 if (!estabelecimentosList.get(n).getWifi())
                     view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
@@ -213,7 +283,7 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-
+                mDrawerLayout = NavigationDrawerUtil.getDrawer().getDrawerLayout();
 
                 if (position == 1) {
 
@@ -238,6 +308,8 @@ public class MapaFragment extends Fragment {
             }
         });
 
+        mDrawerLayout = NavigationDrawerUtil.getDrawer().getDrawerLayout();
+
         mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -246,6 +318,12 @@ public class MapaFragment extends Fragment {
 
             @Override
             public void onDrawerOpened(View drawerView) {
+
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Drawer")
+                        .setAction("Open Drawer")
+                        .setLabel("Open Drawer")
+                        .build());
 
                 if (customViewPager.getCurrentItem() == 1)
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
