@@ -73,6 +73,8 @@ public class NavigationDrawerUtil {
 
                         switch (position) {
                             case 2:
+
+
                                 transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
                                 transaction.addToBackStack("MainFragment");
                                 transaction.commit();

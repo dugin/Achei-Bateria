@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -166,8 +167,9 @@ public class ListaLojasFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
 
+                        if (dataSnapshot.exists()) {
                         Estabelecimentos estabelecimentos = dataSnapshot.getValue(Estabelecimentos.class);
-
+                            Log.println(Log.ASSERT, TAG, estabelecimentos.getNome());
                         l2 = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(dataSnapshot.getKey());
 
 
@@ -192,6 +194,15 @@ public class ListaLojasFragment extends Fragment {
                             getActivity().findViewById(R.id.textLoading).setVisibility(View.GONE);
                             view.findViewById(R.id.lista_lojas_fragment).setVisibility(View.VISIBLE);
                             getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
+
+                            view.findViewById(R.id.textNenhumaLoja).setVisibility(View.GONE);
+                            view.findViewById(R.id.imageSad).setVisibility(View.GONE);
+                            view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.GONE);
+                            view.findViewById(R.id.txtSemLoja).setVisibility(View.GONE);
+                            PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
+                            pagerSlidingTabStrip.setVisibility(View.VISIBLE);
+                            CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+                            viewPager.setPagingEnabled(true);
 
 
                             adapter = new MyRecyclerAdapter(getActivity(), ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos(), l);
@@ -235,8 +246,7 @@ public class ListaLojasFragment extends Fragment {
 
 
                             }
-
-
+                        }
                         }
 
 
