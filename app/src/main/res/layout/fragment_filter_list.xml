@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="15dp"
     android:weightSum="1"
     tools:context="eliteapps.SOSBattery.fragment.FilterListFragment">
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/t"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -41,24 +41,26 @@
         app:dsb_value="12" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/t1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="15dp"
         android:text="Categoria"
         android:textSize="18sp" />
 
     <Spinner
         android:id="@+id/spinnerCategoria"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
 
-        android:spinnerMode="dialog" />
+
+        android:spinnerMode="dropdown" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/t2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -69,15 +71,16 @@
         android:id="@+id/checkBoxCabo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:buttonTint="@color/colorPrimary"
         android:checked="false"
-        android:text="Cabo" />
+        android:text="Cabo Micro USB" />
 
     <CheckBox
         android:id="@+id/checkBoxWifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:buttonTint="@color/colorPrimary"
         android:checked="false"
         android:text="Wifi" />

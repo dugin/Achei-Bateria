@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
@@ -61,6 +64,10 @@ public class MapaFragment extends Fragment {
     PrefManager prefManager;
     private GoogleMap googleMap;
     private View view;
+
+
+    static HashMap<String, Estabelecimentos> mHashMap;
+
 
     public MapaFragment() {
         // Required empty public constructor
@@ -145,14 +152,21 @@ public class MapaFragment extends Fragment {
             @Override
             public View getInfoContents(final Marker marker) {
 
+
                 estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
+
+                Location l = new Location("");
+                l.setLatitude(marker.getPosition().latitude);
+                l.setLongitude(marker.getPosition().longitude);
+
+
+
 
 
 
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
-                String pos = marker.getId().substring(1);
 
-                int n = Integer.parseInt(pos);
+
 
 
                 TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
@@ -160,19 +174,23 @@ public class MapaFragment extends Fragment {
 
                 final ImageView image = (ImageView) view.findViewById(R.id.imgLojaMapa);
 
-                txtNome.setText(estabelecimentosList.get(n).getNome());
-                String hrFunc2 = CalendarUtil.HrFuncionamento(estabelecimentosList.get(n));
+
+                Estabelecimentos e = mHashMap.get(l.getLatitude() + "_" + l.getLongitude());
+
+
+                txtNome.setText(e.getNome());
+                String hrFunc2 = CalendarUtil.HrFuncionamento(e);
                 hrFunc.setText(hrFunc2);
 
 
-                if (!estabelecimentosList.get(n).getImgURL().isEmpty()) {
+                if (!e.getImgURL().isEmpty()) {
 
                     // set image view like this:
                     if (not_first_time_showing_info_window) {
                         not_first_time_showing_info_window = false;
                         Picasso.with(getActivity())
 
-                                .load(estabelecimentosList.get(n).getImgURL())
+                                .load(e.getImgURL())
                                 .resize(100, 100)
                                 .error(R.drawable.no_image)
                                 .into(image);
@@ -181,7 +199,7 @@ public class MapaFragment extends Fragment {
                         not_first_time_showing_info_window = true;
                         Picasso.with(getActivity())
 
-                                .load(estabelecimentosList.get(n).getImgURL())
+                                .load(e.getImgURL())
                                 .resize(100, 100)
                                 .error(R.drawable.no_image)
                                 .into(image, new com.squareup.picasso.Callback() {
@@ -233,10 +251,10 @@ public class MapaFragment extends Fragment {
                 }
 
 
-                if (!estabelecimentosList.get(n).getWifi())
+                if (!e.getWifi())
                     view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
 
-                if (!estabelecimentosList.get(n).getCabo())
+                if (!e.getCabo())
                     view.findViewById(R.id.imgCaboMapa).setVisibility(View.GONE);
 
 
@@ -379,20 +397,38 @@ public class MapaFragment extends Fragment {
 
         } else if (event.getData().equals("ListaLojasFragment")) {
 
-            Estabelecimentos e = event.getE();
-            String ID = e.getId();
-            Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
 
-            // create marker
-            MarkerOptions marker2 = new MarkerOptions().position(
-                    new LatLng(location.getLatitude(), location.getLongitude()))
-                    .title(e.getNome())
-                    .flat(true)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
+            googleMap.clear();
+            ListaMarker.getInstance().getListaMarker().clear();
 
 
-            Marker marker = googleMap.addMarker(marker2);
-            ListaMarker.getInstance().addMarker(marker);
+            List<Estabelecimentos> l = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
+
+
+            mHashMap = new HashMap<>();
+
+            for (int i = 0; i < l.size(); i++) {
+
+
+                String ID = l.get(i).getId();
+
+                Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+
+                mHashMap.put(location.getLatitude() + "_" + location.getLongitude(), l.get(i));
+                // create marker
+                MarkerOptions marker2 = new MarkerOptions().position(
+                        new LatLng(location.getLatitude(), location.getLongitude()))
+                        .title(l.get(i).getNome())
+                        .flat(true)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
+
+
+                Marker marker = googleMap.addMarker(marker2);
+
+                ListaMarker.getInstance().addMarker(marker);
+
+            }
+
 
             if (relativeLayout.getVisibility() != View.VISIBLE)
             relativeLayout.setVisibility(View.VISIBLE);

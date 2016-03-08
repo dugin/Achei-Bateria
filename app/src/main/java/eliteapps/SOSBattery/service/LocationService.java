@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -120,7 +121,10 @@ public class LocationService extends Service {
 
         for (String s : coord) {
             String lat = s.substring(0, s.lastIndexOf("_"));
-            String lon = s.substring(s.lastIndexOf("_") + 1);
+            String lon = s.substring(s.lastIndexOf("_") + 1, s.lastIndexOf("="));
+            String key = s.substring(s.lastIndexOf("=") + 1, s.length());
+
+
             Location locationLojas = new Location("");
             locationLojas.setLatitude(Double.parseDouble(lat));
             locationLojas.setLongitude(Double.parseDouble(lon));
@@ -129,7 +133,7 @@ public class LocationService extends Service {
                 // Build and send an Event.
                 mTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("Core")
-                        .setAction("Charging on a Recommended Store")
+                        .setAction("Charging on ID: " + key)
                         .setLabel("Charging")
                         .build());
 

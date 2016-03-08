@@ -4,6 +4,7 @@ package eliteapps.SOSBattery.fragment;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +58,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
         getActivity().findViewById(R.id.refresh_button).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.filter_list).setVisibility(View.GONE);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);

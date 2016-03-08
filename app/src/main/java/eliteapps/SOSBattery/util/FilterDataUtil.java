@@ -11,6 +11,7 @@ public class FilterDataUtil {
     int categoria;
     int progresso;
     String distancia;
+    String nomeCategoria;
 
     private FilterDataUtil() {
     }
@@ -19,10 +20,11 @@ public class FilterDataUtil {
         return ourInstance;
     }
 
-    public void setAll(boolean cabo, boolean wifi, int categoria, int progresso, String distancia) {
+    public void setAll(boolean cabo, boolean wifi, int categoria, String nomeCategoria, int progresso, String distancia) {
         this.cabo = cabo;
         this.wifi = wifi;
         this.categoria = categoria;
+        this.nomeCategoria = nomeCategoria;
         this.progresso = progresso;
         this.distancia = distancia;
     }
@@ -45,5 +47,9 @@ public class FilterDataUtil {
 
     public String getDistancia() {
         return distancia;
+    }
+
+    public String getNomeCategoria() {
+        return nomeCategoria;
     }
 }

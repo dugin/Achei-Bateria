@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -20,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -28,9 +31,11 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.firebase.geofire.LocationCallback;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +60,7 @@ import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.extras.RecyclerViewOnClickListenerHack;
 import eliteapps.SOSBattery.extras.SimpleDividerItemDecoration;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
+import eliteapps.SOSBattery.util.FilterDataUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
@@ -77,8 +83,12 @@ public class ListaLojasFragment extends Fragment {
     Location l2;
     Tracker mTracker;
     Firebase myFirebaseRef;
+    GeoFire geoFire;
     View view;
+    long tam;
     private double lat, lon;
+    static boolean fromFilter = false;
+
 
 
     public ListaLojasFragment() {
@@ -108,8 +118,7 @@ public class ListaLojasFragment extends Fragment {
         limpaTreeMapa(map);
         limpaTreeMapa(mapComcabo);
 
-        if(!ListaDeCoordenadas.getInstance().getListaDeCoordenadas().isEmpty())
-            ListaDeCoordenadas.getInstance().getListaDeCoordenadas().clear();
+
 
         lat = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLatitude();
         lon = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLongitude();
@@ -153,16 +162,12 @@ public class ListaLojasFragment extends Fragment {
 
         List<Estabelecimentos> list = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
-        Log.println(Log.ASSERT, TAG, "-------------Lista1-----------------");
-
-        for (int i = 0; i < list.size(); i++)
-            Log.println(Log.ASSERT, TAG, "" + list.get(i).getNome());
-
 
         Iterator<Estabelecimentos> it = list.iterator();
 
         while (it.hasNext()) {
             Estabelecimentos e = it.next();
+
             if (isCabo) {
                 if (!e.getCabo()) {
                     it.remove();
@@ -200,17 +205,28 @@ public class ListaLojasFragment extends Fragment {
         }
 
 
-        semLoja(view, true);
+        if (list.isEmpty()) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Atenção")
+                    .setMessage("Nenhum estabelecimento encontrado com esses filtros")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            getActivity().findViewById(R.id.refresh_button).callOnClick();
+                        }
+                    })
+                    .setIcon(R.drawable.ic_warning_yellow_48dp)
+                    .show();
+        } else {
 
+            semLoja(view, true);
 
-        attachAdapter();
+            MessageEB m = new MessageEB(TAG);
 
+            EventBus.getDefault().post(m);
 
-        if (!NotificationUtils.isAppIsInBackground(getActivity())) {
+            attachAdapter();
 
-
-            if (ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().size() == ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size()) {
-
+            if (!NotificationUtils.isAppIsInBackground(getActivity())) {
 
                 prefManager = new PrefManager(getActivity(), "LocationService");
 
@@ -221,6 +237,7 @@ public class ListaLojasFragment extends Fragment {
 
             }
         }
+
 
     }
 
@@ -257,16 +274,17 @@ public class ListaLojasFragment extends Fragment {
 
         myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
 
-        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
+        geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
 
+
+        if (!ListaDeCoordenadas.getInstance().getListaDeCoordenadas().isEmpty())
+            ListaDeCoordenadas.getInstance().getListaDeCoordenadas().clear();
 
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat, lon), raio);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
 
-
-                Log.println(Log.ASSERT, TAG, "onKeyEntered");
 
                 Location location1 = new Location("");
                 location1.setLatitude(location.latitude);
@@ -303,6 +321,25 @@ public class ListaLojasFragment extends Fragment {
 
                                 semLoja(view, true);
 
+                                if (FilterDataUtil.getInstance().getDistancia() != null)
+                                    filtraDados(FilterDataUtil.getInstance().isCabo(),
+                                            FilterDataUtil.getInstance().isWifi(), FilterDataUtil.getInstance().getNomeCategoria());
+
+                                else {
+                                    if (!NotificationUtils.isAppIsInBackground(getActivity())) {
+
+                                        prefManager = new PrefManager(getActivity(), "LocationService");
+
+                                        prefManager.pegaDataEHora(new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date()));
+
+                                        toTreeset(ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos());
+
+                                    }
+                                }
+
+                                MessageEB m = new MessageEB(TAG);
+
+                                EventBus.getDefault().post(m);
 
                                 attachAdapter();
 
@@ -356,7 +393,6 @@ public class ListaLojasFragment extends Fragment {
                 if (ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size() == 0) {
 
 
-
                     // Build and send an Event.
                     mTracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Screen")
@@ -364,7 +400,22 @@ public class ListaLojasFragment extends Fragment {
                             .setLabel("No Store")
                             .build());
 
+
+                    if (!fromFilter)
                     semLoja(view, false);
+
+                    else {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Atenção")
+                                .setMessage("Nenhum estabelecimento encontrado com esses filtros")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        getActivity().findViewById(R.id.refresh_button).callOnClick();
+                                    }
+                                })
+                                .setIcon(R.drawable.ic_warning_yellow_48dp)
+                                .show();
+                    }
 
 
                 }
@@ -377,7 +428,6 @@ public class ListaLojasFragment extends Fragment {
             }
 
         });
-
 
 
         view.findViewById(R.id.botãoFeedback).setOnClickListener(new View.OnClickListener() {
@@ -451,14 +501,11 @@ public class ListaLojasFragment extends Fragment {
         for (Map.Entry<Float, Estabelecimentos> entry : map.entrySet()) {
 
             Estabelecimentos value = entry.getValue();
+            value.setDistancia(entry.getKey());
             ListaDeEstabelecimentos.getInstance().addEstabelecimento(value);
-            MessageEB m = new MessageEB(TAG);
-            m.setE(value);
-            EventBus.getDefault().post(m);
-
 
         }
-        //limpaTreeMapa(map);
+        limpaTreeMapa(map);
     }
 
     private void limpaTreeMapa(TreeMap<Float, Estabelecimentos> e) {
@@ -470,10 +517,11 @@ public class ListaLojasFragment extends Fragment {
 
     private void toTreeset(List<Estabelecimentos> object) {
         Set<String> latlong = new TreeSet<>();
-        HashMap<String,Location> hashMap = ListaDeCoordenadas.getInstance().getListaDeCoordenadas();
+        HashMap<String, Location> hashMap = ListaDeCoordenadas.getInstance().getListaDeCoordenadas();
         for (int i = 0; i < object.size(); i++) {
 
-            String coord = hashMap.get(object.get(i).getId()).getLatitude() + "_" + hashMap.get(object.get(i).getId()).getLongitude();
+            String coord = hashMap.get(object.get(i).getId()).getLatitude() + "_" + hashMap.get(object.get(i).getId()).getLongitude() + '=' + object.get(i).getId();
+
 
             latlong.add(coord);
         }
@@ -485,16 +533,105 @@ public class ListaLojasFragment extends Fragment {
 
         if (event.getData().equals("FilterListFragment")) {
 
-            filtraDados(event.isCabo(), event.isWifi(), event.getCategoria());
-            getActivity().onBackPressed();
 
-            Log.println(Log.ASSERT, TAG, "Categoria: " + event.getCategoria());
-            Log.println(Log.ASSERT, TAG, "Raio: " + event.getRaio());
-            Log.println(Log.ASSERT, TAG, "wifi: " + event.isWifi());
-            Log.println(Log.ASSERT, TAG, "cabo: " + event.isCabo());
+            fromFilter = true;
+
+            ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
+            if (event.getRaio() == 20) {
+                wholeCityQuery();
+
+            } else {
+
+                conectaAoFirebase(event.getRaio());
+            }
+
+
+            getActivity().onBackPressed();
 
 
         }
     }
 
+    private void wholeCityQuery() {
+        String cidade = "";
+
+        Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = gcd.getFromLocation(lat, lon, 1);
+            if (addresses.size() > 0)
+                cidade = addresses.get(0).getLocality();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.println(Log.ASSERT, TAG, "cidade: " + cidade);
+
+
+        if (!ListaDeCoordenadas.getInstance().getListaDeCoordenadas().isEmpty())
+            ListaDeCoordenadas.getInstance().getListaDeCoordenadas().clear();
+
+
+        myFirebaseRef.orderByChild("cidade").equalTo(cidade).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                tam = dataSnapshot.getChildrenCount();
+
+
+                Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator();
+
+
+                while (it.hasNext()) {
+                    Estabelecimentos estabelecimentos = it.next().getValue(Estabelecimentos.class);
+
+                    Location location1 = new Location("");
+
+                    location1.setLatitude(Double.parseDouble(estabelecimentos.getCoordenadas()[0]));
+                    location1.setLongitude(Double.parseDouble(estabelecimentos.getCoordenadas()[1]));
+
+                    ListaDeCoordenadas.getInstance().addEstabelecimento(estabelecimentos.getId(), location1);
+
+
+                    if (estabelecimentos.getCabo())
+                        mapComcabo.put(l.distanceTo(location1), estabelecimentos);
+                    else
+                        map.put(l.distanceTo(location1), estabelecimentos);
+
+
+                    if (map.size() + mapComcabo.size() == tam) {
+
+                        Log.println(Log.ASSERT, TAG, "(map.size() + mapComcabo.size() == tam");
+
+                        ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
+
+                        populaListaDeEstabelecimento(mapComcabo);
+                        populaListaDeEstabelecimento(map);
+
+                        semLoja(view, true);
+
+                        filtraDados(FilterDataUtil.getInstance().isCabo(),
+                                FilterDataUtil.getInstance().isWifi(), FilterDataUtil.getInstance().getNomeCategoria());
+
+                        MessageEB m = new MessageEB(TAG);
+
+                        EventBus.getDefault().post(m);
+
+
+                        attachAdapter();
+
+                    }
+
+                }
+
+
+            }
+
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
 }
+

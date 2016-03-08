@@ -237,6 +237,7 @@ public class StoreLocationUtil {
             String estado = null;
             String[] hr_open = {"00:00", "00:00", "00:00"};
             String[] hr_close = {"00:00", "00:00", "00:00"};
+            String[] coord = {"", ""};
             String numero = null;
             String nomeLoja;
             String end = null;
@@ -310,6 +311,11 @@ public class StoreLocationUtil {
 
             lat = response.getResult().getGeometry().getLocation().getLat();
             lon = response.getResult().getGeometry().getLocation().getLng();
+
+            coord[0] = response.getResult().getGeometry().getLocation().getLat();
+            coord[1] = response.getResult().getGeometry().getLocation().getLng();
+
+            e.setCoordenadas(coord);
 
             DateFormat dateFormat = new SimpleDateFormat("d/M/yyyy - H:m", Locale.FRANCE);
             Date date = new Date();

@@ -31,6 +31,11 @@ public class Estabelecimentos {
 
     private String modifiedAt;
 
+    private float distancia;
+
+
+    private String[] coordenadas;
+
 
     public Estabelecimentos(String modifiedAt, String tipo, Boolean cabo, String imgURL, String wifi_senha, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
         this.cabo = cabo;
@@ -170,6 +175,22 @@ public class Estabelecimentos {
 
     public void setEnd(String end) {
         this.end = end;
+    }
+
+    public float getDistancia() {
+        return distancia;
+    }
+
+    public void setDistancia(float distancia) {
+        this.distancia = distancia;
+    }
+
+    public String[] getCoordenadas() {
+        return coordenadas;
+    }
+
+    public void setCoordenadas(String[] coordenadas) {
+        this.coordenadas = coordenadas;
     }
 
     @Override

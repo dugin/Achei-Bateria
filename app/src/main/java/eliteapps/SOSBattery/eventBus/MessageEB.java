@@ -14,6 +14,7 @@ public class MessageEB {
     private boolean isCabo, isWifi;
     private String categoria;
     private int raio;
+    private int difDist;
 
 
     public MessageEB(String nomeClasse) {
@@ -78,5 +79,13 @@ public class MessageEB {
 
     public void setRaio(int raio) {
         this.raio = raio;
+    }
+
+    public int getDifDist() {
+        return difDist;
+    }
+
+    public void setDifDist(int difDist) {
+        this.difDist = difDist;
     }
 }

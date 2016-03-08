@@ -31,5 +31,7 @@ public class ListaDeEstabelecimentos {
     public void addEstabelecimento(Estabelecimentos estabelecimento) {
         this.listaDeEstabelecimentos.add(estabelecimento);
     }
+
+
 }
 

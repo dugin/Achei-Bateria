@@ -2,9 +2,11 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,7 @@ public class FilterListFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     Spinner categoria;
     Tracker mTracker;
+    int distIni;
 
     public FilterListFragment() {
         // Required empty public constructor
@@ -82,11 +85,17 @@ public class FilterListFragment extends Fragment {
         txtDistancia = (TextView) v.findViewById(R.id.textViewDistancia);
 
 
+        changeTextFont(txtDistancia);
+        changeTextFont((TextView) v.findViewById(R.id.t));
+        changeTextFont((TextView) v.findViewById(R.id.t1));
+        changeTextFont((TextView) v.findViewById(R.id.t2));
+
+
         distancia.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
             public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
 
-                if (value == 100)
+                if (value > 93)
                     txtDistancia.setText("Cidade");
 
                 else if (value < 6)
@@ -121,9 +130,19 @@ public class FilterListFragment extends Fragment {
                 m.setIsCabo(cabo.isChecked());
                 m.setIsWifi(wifi.isChecked());
                 m.setCategoria(categoria.getSelectedItem().toString());
-                m.setRaio(Integer.parseInt(txtDistancia.getText().subSequence(0, txtDistancia.getText().length() - 3).toString()));
 
-                FilterDataUtil.getInstance().setAll(cabo.isChecked(), wifi.isChecked(), categoria.getSelectedItemPosition(), distancia.getProgress(), txtDistancia.getText().toString());
+                if (txtDistancia.getText().toString().equals("Cidade")) {
+                    m.setRaio(20);
+                    m.setDifDist(20 - distIni);
+                } else {
+                    int distFim = Integer.parseInt(txtDistancia.getText().subSequence(0, txtDistancia.getText().length() - 3).toString());
+                    m.setRaio(distFim);
+                    m.setDifDist(distFim - distIni);
+                    Log.println(Log.ASSERT, TAG, "distIni: " + distIni + " - distFim: " + distFim);
+                }
+
+
+                FilterDataUtil.getInstance().setAll(cabo.isChecked(), wifi.isChecked(), categoria.getSelectedItemPosition(), categoria.getSelectedItem().toString(), distancia.getProgress(), txtDistancia.getText().toString());
                 EventBus.getDefault().post(m);
 
 
@@ -142,8 +161,24 @@ public class FilterListFragment extends Fragment {
 
         }
 
+        if (txtDistancia.getText().toString().equals("Cidade"))
+            distIni = 20;
+
+        else
+            distIni = Integer.parseInt(txtDistancia.getText().subSequence(0, txtDistancia.getText().length() - 3).toString());
+
+
+
+
+
 
         return v;
     }
+
+    private void changeTextFont(TextView t) {
+        Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+        t.setTypeface(type);
+    }
+
 
 }

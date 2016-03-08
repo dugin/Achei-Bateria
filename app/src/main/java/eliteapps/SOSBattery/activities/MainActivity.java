@@ -57,6 +57,7 @@ import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
+import eliteapps.SOSBattery.util.FilterDataUtil;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 googleAPIConnectionUtil.setMinhaLocalizacao(null);
                 googleAPIConnectionUtil.startLocationUpdates();
                 changeSettings();
-
+                FilterDataUtil.getInstance().setAll(false, false, 0, null, 12, null);
 
                 // Build and send an Event.
                 mTracker.send(new HitBuilders.EventBuilder()
@@ -279,8 +280,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getFragmentManager().popBackStack();
             if (tabs != null) {
-                Log.println(Log.ASSERT, TAG, "tabs != null");
-                Log.println(Log.ASSERT, TAG, "Current item: " + pager.getCurrentItem());
+
                 tabs.setViewPager(pager);
 
                 mudaCorTab(pager.getCurrentItem());
