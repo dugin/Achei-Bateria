@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.crashlytics.android.Crashlytics;
 import com.firebase.client.Firebase;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -61,6 +62,7 @@ import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         App application = (App) getApplication();
         mTracker = application.getDefaultTracker();
 
+        Fabric.with(this, new Crashlytics());
 
 
         Firebase.setAndroidContext(this);
@@ -283,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
                 mudaCorTab(pager.getCurrentItem());
             }
             findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.filter_list).setVisibility(View.VISIBLE);
             NavigationDrawerUtil.getDrawer().getDrawerLayout().setVisibility(View.VISIBLE);
             NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
 

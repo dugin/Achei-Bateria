@@ -41,5 +41,13 @@
     <string name="disclaimerSenha">*Não divulgaremos a senha do wifi à ninguém \n**Senha em branco = sem senha</string>
 
 
+    <string-array name="categoria_array">
+        <item>Tudo</item>
+        <item>Loja</item>
+        <item>Bar</item>
+        <item>Restaurante</item>
+
+    </string-array>
+
 
 </resources>

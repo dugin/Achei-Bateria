@@ -34,6 +34,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/googleAPIKey" />
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2b298f965c81cb944c8b29f989f492aef3b123cb" />
+
 
         <service android:name="eliteapps.SOSBattery.service.LocationService" />
 

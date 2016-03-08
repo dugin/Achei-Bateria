@@ -11,6 +11,10 @@ public class MessageEB {
     private int pos;
     private Location location;
     private Estabelecimentos e;
+    private boolean isCabo, isWifi;
+    private String categoria;
+    private int raio;
+
 
     public MessageEB(String nomeClasse) {
         this.nomeClasse = nomeClasse;
@@ -42,5 +46,37 @@ public class MessageEB {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isCabo() {
+        return isCabo;
+    }
+
+    public void setIsCabo(boolean isCabo) {
+        this.isCabo = isCabo;
+    }
+
+    public boolean isWifi() {
+        return isWifi;
+    }
+
+    public void setIsWifi(boolean isWifi) {
+        this.isWifi = isWifi;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public int getRaio() {
+        return raio;
+    }
+
+    public void setRaio(int raio) {
+        this.raio = raio;
     }
 }

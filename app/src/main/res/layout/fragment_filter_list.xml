@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:weightSum="1"
+    tools:context="eliteapps.SOSBattery.fragment.FilterListFragment">
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Distância"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textViewDistancia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="2 km"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp" />
+
+    <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+        android:id="@+id/seekBarDist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        app:dsb_indicatorPopupEnabled="false"
+        app:dsb_progressColor="@color/colorPrimary"
+
+        app:dsb_rippleColor="@color/colorPrimaryDark"
+        app:dsb_value="12" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Categoria"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spinnerCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+
+        android:spinnerMode="dialog" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="O estabelecimento disponibliza:"
+        android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/checkBoxCabo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:buttonTint="@color/colorPrimary"
+        android:checked="false"
+        android:text="Cabo" />
+
+    <CheckBox
+        android:id="@+id/checkBoxWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/colorPrimary"
+        android:checked="false"
+        android:text="Wifi" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <mehdi.sakout.fancybuttons.FancyButton xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:fancy="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/botaoFiltrar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            fancy:fb_borderColor="#000"
+            fancy:fb_borderWidth="2dp"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_focusColor="@color/colorPrimaryDark"
+            fancy:fb_radius="5dp"
+            fancy:fb_text="Filtrar"
+            fancy:fb_textColor="@color/colorBackground"
+
+            fancy:fb_textSize="22dp" />
+    </RelativeLayout>
+
+</LinearLayout>

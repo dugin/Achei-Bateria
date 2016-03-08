@@ -109,29 +109,8 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
-        if (Localizacao.getInstance().getLocation() == null) {
-
-            if (prefManager.getMinhaCoord() != null) {
-
-                Double lat = Double.parseDouble(prefManager.getMinhaCoord().substring(0, prefManager.getMinhaCoord().lastIndexOf('_') - 1));
-                Double lon = Double.parseDouble(prefManager.getMinhaCoord().substring(prefManager.getMinhaCoord().lastIndexOf('_') + 1));
-
-                this.lat = lat;
-                this.lon = lon;
-
-
-            } else {
-
-                lat = -22.982271;
-                lon = -43.217286;
-            }
-
-        } else {
-
-            lat = Localizacao.getInstance().getLocation().getLatitude();
-            lon = Localizacao.getInstance().getLocation().getLongitude();
-
-        }
+        lat = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLatitude();
+        lon = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLongitude();
 
 
 

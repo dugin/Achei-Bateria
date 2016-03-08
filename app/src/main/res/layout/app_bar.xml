@@ -45,13 +45,28 @@
 
         <ImageButton
 
-            android:id="@+id/refresh_button"
+            android:id="@+id/filter_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_filter_list_white_24dp"
+            android:visibility="gone"
+
+            />
+
+
+        <ImageButton
+
+            android:id="@+id/refresh_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@+id/filter_list"
             android:background="?android:selectableItemBackground"
             android:src="@drawable/refresh_button"
             android:visibility="gone"
