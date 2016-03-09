@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -31,7 +30,6 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.firebase.geofire.LocationCallback;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -73,6 +71,7 @@ public class ListaLojasFragment extends Fragment {
 
 
     static boolean aqui = true;
+    static boolean fromFilter = false;
     private final String TAG = this.getClass().getSimpleName();
     PrefManager prefManager;
     TreeMap<Float, Estabelecimentos> map = new TreeMap<>();
@@ -87,7 +86,6 @@ public class ListaLojasFragment extends Fragment {
     View view;
     long tam;
     private double lat, lon;
-    static boolean fromFilter = false;
 
 
 
@@ -136,7 +134,14 @@ public class ListaLojasFragment extends Fragment {
         l.setLongitude(lon);
 
 
-        conectaAoFirebase(2);
+        if (FilterDataUtil.getInstance().getDistancia() != null) {
+            if (FilterDataUtil.getInstance().getDistancia().equals("Cidade"))
+                wholeCityQuery();
+            else
+                conectaAoFirebase(Integer.parseInt(FilterDataUtil.getInstance().getDistancia().substring(0, FilterDataUtil.getInstance().getDistancia().length() - 3)));
+
+        } else
+            conectaAoFirebase(2);
 
         ImageButton filterListBtn = (ImageButton) getActivity().findViewById(R.id.filter_list);
 
@@ -223,6 +228,10 @@ public class ListaLojasFragment extends Fragment {
             MessageEB m = new MessageEB(TAG);
 
             EventBus.getDefault().post(m);
+
+
+            if (DialogoDeProgresso.getDialog() != null)
+                DialogoDeProgresso.getDialog().dismiss();
 
             attachAdapter();
 
@@ -338,6 +347,10 @@ public class ListaLojasFragment extends Fragment {
                                 }
 
                                 MessageEB m = new MessageEB(TAG);
+
+
+                                if (DialogoDeProgresso.getDialog() != null)
+                                    DialogoDeProgresso.getDialog().dismiss();
 
                                 EventBus.getDefault().post(m);
 
@@ -533,6 +546,8 @@ public class ListaLojasFragment extends Fragment {
 
         if (event.getData().equals("FilterListFragment")) {
 
+            getActivity().onBackPressed();
+            new DialogoDeProgresso(getActivity(), "Carregando Lojas...");
 
             fromFilter = true;
 
@@ -546,7 +561,7 @@ public class ListaLojasFragment extends Fragment {
             }
 
 
-            getActivity().onBackPressed();
+
 
 
         }
@@ -616,7 +631,8 @@ public class ListaLojasFragment extends Fragment {
 
                         EventBus.getDefault().post(m);
 
-
+                        if (DialogoDeProgresso.getDialog() != null)
+                            DialogoDeProgresso.getDialog().dismiss();
                         attachAdapter();
 
                     }

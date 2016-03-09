@@ -74,7 +74,8 @@
         android:layout_marginTop="15dp"
         android:buttonTint="@color/colorPrimary"
         android:checked="false"
-        android:text="Cabo Micro USB" />
+        android:text="Cabo Micro USB"
+        android:textColor="@color/colorPrimary" />
 
     <CheckBox
         android:id="@+id/checkBoxWifi"
@@ -83,7 +84,8 @@
         android:layout_marginTop="5dp"
         android:buttonTint="@color/colorPrimary"
         android:checked="false"
-        android:text="Wifi" />
+        android:text="Wifi"
+        android:textColor="@color/colorPrimary" />
 
 
     <RelativeLayout
@@ -107,7 +109,7 @@
             fancy:fb_defaultColor="@color/colorPrimary"
             fancy:fb_focusColor="@color/colorPrimaryDark"
             fancy:fb_radius="5dp"
-            fancy:fb_text="Filtrar"
+            fancy:fb_text="Aplicar Filtros"
             fancy:fb_textColor="@color/colorBackground"
 
             fancy:fb_textSize="22dp" />

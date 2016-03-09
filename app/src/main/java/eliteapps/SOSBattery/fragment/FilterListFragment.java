@@ -2,6 +2,7 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,6 +43,9 @@ public class FilterListFragment extends Fragment {
     Spinner categoria;
     Tracker mTracker;
     int distIni;
+    // Declaring the String Array with the Text Data for the Spinners
+    String[] categorias = {"Tudo", "Loja", "Bar",
+            "Restaurante"};
 
     public FilterListFragment() {
         // Required empty public constructor
@@ -71,14 +76,12 @@ public class FilterListFragment extends Fragment {
 
         categoria = (Spinner) v.findViewById(R.id.spinnerCategoria);
 // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.categoria_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categoria.setAdapter(new MyAdapter(getActivity(), R.layout.spinner_rows, categorias
+        ));
+
 
         categoria.setPrompt("Selecione uma Categoria");
-// Apply the adapter to the spinner
-        categoria.setAdapter(adapter);
+
 
 
         distancia = (DiscreteSeekBar) v.findViewById(R.id.seekBarDist);
@@ -180,5 +183,65 @@ public class FilterListFragment extends Fragment {
         t.setTypeface(type);
     }
 
+    // Creating an Adapter Class
+    private class MyAdapter extends ArrayAdapter {
+
+        // Declaring the String Array with the Text Data for the Spinners
+        String[] categorias = {"Tudo", "Loja", "Bar",
+                "Restaurante"};
+        // Declaring the Integer Array with resourse Id's of Images for the Spinners
+        Integer[] images = {0, R.drawable.ic_action_shop, R.drawable.ic_action_beer,
+                R.drawable.ic_action_restaurant};
+
+        public MyAdapter(Context context, int textViewResourceId,
+                         String[] objects) {
+            super(context, textViewResourceId, objects);
+        }
+
+        public View getCustomView(int position, View convertView,
+                                  ViewGroup parent) {
+
+// Inflating the layout for the custom Spinner
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View layout = inflater.inflate(R.layout.spinner_rows, parent, false);
+
+// Declaring and Typecasting the textview in the inflated layout
+            TextView txtCategoria = (TextView) layout
+                    .findViewById(R.id.txtCategorySpinner);
+
+// Setting the text using the array
+            txtCategoria.setText(categorias[position]);
+
+
+// Declaring and Typecasting the imageView in the inflated layout
+            ImageView img = (ImageView) layout.findViewById(R.id.imageSpinner);
+
+// Setting an image using the id's in the array
+            img.setImageResource(images[position]);
+
+// Setting Special atrributes for 1st element
+            if (position == 0) {
+// Removing the image view
+                img.setVisibility(View.GONE);
+
+
+            }
+
+            return layout;
+        }
+
+        // It gets a View that displays in the drop down popup the data at the specified position
+        @Override
+        public View getDropDownView(int position, View convertView,
+                                    ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        // It gets a View that displays the data at the specified position
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+    }
 
 }

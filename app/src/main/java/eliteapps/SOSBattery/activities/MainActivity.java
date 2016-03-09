@@ -23,7 +23,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -57,7 +56,6 @@ import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
-import eliteapps.SOSBattery.util.FilterDataUtil;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 googleAPIConnectionUtil.setMinhaLocalizacao(null);
                 googleAPIConnectionUtil.startLocationUpdates();
                 changeSettings();
-                FilterDataUtil.getInstance().setAll(false, false, 0, null, 12, null);
+
 
                 // Build and send an Event.
                 mTracker.send(new HitBuilders.EventBuilder()
