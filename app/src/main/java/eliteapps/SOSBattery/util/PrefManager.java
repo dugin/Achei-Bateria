@@ -15,9 +15,13 @@ public class PrefManager {
     // Shared pref file name
     private static final String PREF_NAME_1 = "LocationService";
     private static final String PREF_NAME_2 = "MainActivity";
+    private static final String PREF_NAME_3 = "FacebookUtil";
     private static final String DATA_E_HORA = "data";
     private static final String MINHA_COORD = "coord";
-    private static final String APP_PAUSED = "pause";
+
+    private static final String MEU_NOME = "nome";
+    private static final String MINHA_IMG = "imgURL";
+
     private static final Set<String> COORD = new TreeSet<>();
 
     private static final String LATLONG = "latlong";
@@ -39,6 +43,8 @@ public class PrefManager {
             pref = _context.getSharedPreferences(PREF_NAME_1, PRIVATE_MODE);
         else if (nomeDaClasse.equals(PREF_NAME_2))
             pref = _context.getSharedPreferences(PREF_NAME_2, PRIVATE_MODE);
+        else if (nomeDaClasse.equals(PREF_NAME_3))
+            pref = _context.getSharedPreferences(PREF_NAME_3, PRIVATE_MODE);
 
         editor = pref.edit();
     }
@@ -68,18 +74,36 @@ public class PrefManager {
         editor.commit();
     }
 
-    public boolean getVeiodoPause() {
+    public String getNomeFacebook() {
 
-        return pref.getBoolean(APP_PAUSED, false);
+        return pref.getString(MEU_NOME, null);
     }
 
-    public void setVeiodoPause(boolean trueFalse) {
+    public void setNomeFacebook(String meuNome) {
 
-        editor.putBoolean(APP_PAUSED, trueFalse);
+        editor.putString(MEU_NOME, meuNome);
         editor.commit();
+
     }
+
+    public String getImgURLFacebook() {
+
+        return pref.getString(MINHA_IMG, null);
+    }
+
+    public void setImgURLFacebook(String imgURLFacebook) {
+
+        editor.putString(MINHA_IMG, imgURLFacebook);
+        editor.commit();
+
+    }
+
+
+
+
 
     public String getMinhaCoord() {
+
         return pref.getString(MINHA_COORD, null);
     }
 

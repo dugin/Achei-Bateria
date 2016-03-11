@@ -30,9 +30,9 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
     static String nome;
+    static Location mCurrentLocation;
     private static boolean locationChanged = false;
     private final String TAG = this.getClass().getSimpleName();
-    Location mCurrentLocation;
     LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     // Bool to track whether the app is already resolving an error

@@ -23,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +35,7 @@ import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -56,6 +58,7 @@ import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
+import eliteapps.SOSBattery.util.FacebookUtil;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     CustomViewPager pager;
     ViewPagerAdapter adapter;
     PagerSlidingTabStrip tabs;
-    int Numboftabs = 2;
+    int Numboftabs = 3;
     ImageButton refreshBtn;
     PrefManager prefManager;
     Tracker mTracker;
@@ -127,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.barraLoading);
 
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Refresh")
                         .setLabel("Refresh")
                         .build());
-                new DialogoDeProgresso(MainActivity.this, "Carregando lojas...");
+                new DialogoDeProgresso(MainActivity.this, "Carregando Lojas...");
 
 
                 firstUse = false;
@@ -237,6 +239,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        // Logs 'install' and 'app activate' App Events.
+        AppEventsLogger.activateApp(this);
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
 
         finish();
@@ -250,6 +259,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+
+        // Logs 'app deactivate' App Event.
+        AppEventsLogger.deactivateApp(this);
 
         Location location = googleAPIConnectionUtil.minhaLocalizacao();
         if (location != null)
@@ -273,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (getFragmentManager().getBackStackEntryCount() > 0) {
+
             NavigationDrawerUtil.setIsDrawer(true);
             getSupportActionBar().setHomeButtonEnabled(false);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -296,6 +309,9 @@ public class MainActivity extends AppCompatActivity {
                     NavigationDrawerUtil.getDrawer().closeDrawer();
 
                 else if (pager.getCurrentItem() == 1)
+                    pager.setCurrentItem(0);
+
+                else if (pager.getCurrentItem() == 2)
                     pager.setCurrentItem(0);
 
                 else if (doubleBackToExitPressedOnce) {
@@ -446,6 +462,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        if (FacebookUtil.getDialog() != null) {
+            Log.println(Log.ASSERT, TAG, "facebookUtil.getDialog() !=null");
+            FacebookUtil.getCallbackManager().onActivityResult(requestCode, resultCode, data);
+            FacebookUtil.getDialog().dismiss();
+        }
 
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
@@ -612,6 +635,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -622,7 +646,9 @@ public class MainActivity extends AppCompatActivity {
                 googleAPIConnectionUtil.getmGoogleApiClient().reconnect();
 
 
-            while (googleAPIConnectionUtil.minhaLocalizacao() == null) {
+            while (true) {
+                if (googleAPIConnectionUtil.minhaLocalizacao() != null)
+                    break;
 
             }
 

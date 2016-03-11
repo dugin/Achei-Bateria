@@ -1,6 +1,7 @@
 package eliteapps.SOSBattery.fragment;
 
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -8,7 +9,9 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -72,6 +75,7 @@ public class ListaLojasFragment extends Fragment {
 
     static boolean aqui = true;
     static boolean fromFilter = false;
+    private static double lat, lon;
     private final String TAG = this.getClass().getSimpleName();
     PrefManager prefManager;
     TreeMap<Float, Estabelecimentos> map = new TreeMap<>();
@@ -85,8 +89,8 @@ public class ListaLojasFragment extends Fragment {
     GeoFire geoFire;
     View view;
     long tam;
-    private double lat, lon;
-
+    TextView txtSemLoja;
+    String cidade;
 
 
     public ListaLojasFragment() {
@@ -94,6 +98,7 @@ public class ListaLojasFragment extends Fragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -106,6 +111,7 @@ public class ListaLojasFragment extends Fragment {
         }
 
         prefManager = new PrefManager(getActivity(), "MainActivity");
+        txtSemLoja = (TextView) view.findViewById(R.id.txtSemLoja);
 
         App application = (App) getActivity().getApplication();
         mTracker = application.getDefaultTracker();
@@ -117,9 +123,19 @@ public class ListaLojasFragment extends Fragment {
         limpaTreeMapa(mapComcabo);
 
 
-
         lat = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLatitude();
         lon = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLongitude();
+
+
+        Geocoder gcd = new Geocoder(getActivity(), Locale.FRENCH);
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(lat, lon, 1);
+            if (addresses.size() > 0)
+                cidade = addresses.get(0).getLocality();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
         mRecyclerView.setHasFixedSize(true);
@@ -150,6 +166,8 @@ public class ListaLojasFragment extends Fragment {
             public void onClick(View v) {
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim,
+                        android.R.animator.fade_in, android.R.animator.fade_out);
                 transaction.replace(R.id.drawer_container, new FilterListFragment(), "FilterListFragment");
                 transaction.addToBackStack(TAG);
                 transaction.commit();
@@ -211,16 +229,10 @@ public class ListaLojasFragment extends Fragment {
 
 
         if (list.isEmpty()) {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Atenção")
-                    .setMessage("Nenhum estabelecimento encontrado com esses filtros")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            getActivity().findViewById(R.id.refresh_button).callOnClick();
-                        }
-                    })
-                    .setIcon(R.drawable.ic_warning_yellow_48dp)
-                    .show();
+
+
+            semLoja(view, false);
+
         } else {
 
             semLoja(view, true);
@@ -406,6 +418,7 @@ public class ListaLojasFragment extends Fragment {
                 if (ListaDeCoordenadas.getInstance().getListaDeCoordenadas().size() == 0) {
 
 
+
                     // Build and send an Event.
                     mTracker.send(new HitBuilders.EventBuilder()
                             .setCategory("Screen")
@@ -414,21 +427,7 @@ public class ListaLojasFragment extends Fragment {
                             .build());
 
 
-                    if (!fromFilter)
                     semLoja(view, false);
-
-                    else {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Atenção")
-                                .setMessage("Nenhum estabelecimento encontrado com esses filtros")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        getActivity().findViewById(R.id.refresh_button).callOnClick();
-                                    }
-                                })
-                                .setIcon(R.drawable.ic_warning_yellow_48dp)
-                                .show();
-                    }
 
 
                 }
@@ -455,6 +454,8 @@ public class ListaLojasFragment extends Fragment {
                         .build());
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim,
+                        android.R.animator.fade_in, android.R.animator.fade_out);
                 transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
                 transaction.addToBackStack("MainFragment");
                 transaction.commit();
@@ -468,6 +469,10 @@ public class ListaLojasFragment extends Fragment {
 
     private void semLoja(View view, boolean isStoreAvailble) {
 
+        TextView textNenhumaLoja = (TextView) view.findViewById(R.id.textNenhumaLoja);
+        TextView txtMudaFiltro = (TextView) view.findViewById(R.id.txtMudaFiltro);
+
+
         if (DialogoDeProgresso.getDialog() != null)
             DialogoDeProgresso.getDialog().dismiss();
 
@@ -477,31 +482,40 @@ public class ListaLojasFragment extends Fragment {
         getActivity().findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.filter_list).setVisibility(View.VISIBLE);
 
+        MessageEB m = new MessageEB("WifiFragment");
+        EventBus.getDefault().post(m);
+
 
         if (isStoreAvailble) {
 
-            view.findViewById(R.id.textNenhumaLoja).setVisibility(View.GONE);
+            txtMudaFiltro.setVisibility(View.GONE);
+            textNenhumaLoja.setVisibility(View.GONE);
             view.findViewById(R.id.imageSad).setVisibility(View.GONE);
             view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.GONE);
-            view.findViewById(R.id.txtSemLoja).setVisibility(View.GONE);
+            txtSemLoja.setVisibility(View.GONE);
             PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
             pagerSlidingTabStrip.setVisibility(View.VISIBLE);
             CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
             viewPager.setPagingEnabled(true);
 
         } else {
-            view.findViewById(R.id.textNenhumaLoja).setVisibility(View.VISIBLE);
+            txtMudaFiltro.setVisibility(View.VISIBLE);
+            textNenhumaLoja.setVisibility(View.VISIBLE);
             view.findViewById(R.id.imageSad).setVisibility(View.VISIBLE);
             view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.txtSemLoja).setVisibility(View.VISIBLE);
+            txtSemLoja.setVisibility(View.VISIBLE);
+
             PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
             pagerSlidingTabStrip.setVisibility(View.GONE);
             CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
-            TextView t1 = (TextView) view.findViewById(R.id.txtSemLoja);
-            TextView t2 = (TextView) view.findViewById(R.id.textNenhumaLoja);
-            Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
-            t1.setTypeface(type);
-            t2.setTypeface(type);
+
+            // Typeface typeArrial = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Bodoni MT.ttf");
+            Typeface typeLeelawadee = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+
+            //   txtMudaFiltro.setTypeface(typeArrial);
+            txtSemLoja.setTypeface(typeLeelawadee);
+            textNenhumaLoja.setTypeface(typeLeelawadee);
+
             viewPager.setCurrentItem(0);
             viewPager.setPagingEnabled(false);
 
@@ -568,17 +582,6 @@ public class ListaLojasFragment extends Fragment {
     }
 
     private void wholeCityQuery() {
-        String cidade = "";
-
-        Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            addresses = gcd.getFromLocation(lat, lon, 1);
-            if (addresses.size() > 0)
-                cidade = addresses.get(0).getLocality();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         Log.println(Log.ASSERT, TAG, "cidade: " + cidade);
 
@@ -589,54 +592,74 @@ public class ListaLojasFragment extends Fragment {
 
         myFirebaseRef.orderByChild("cidade").equalTo(cidade).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(final DataSnapshot dataSnapshot) {
                 tam = dataSnapshot.getChildrenCount();
 
 
-                Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator();
+                if (dataSnapshot.exists()) {
+
+                    Handler handler = new Handler(getActivity().getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Iterator<DataSnapshot> it = dataSnapshot.getChildren().iterator();
 
 
-                while (it.hasNext()) {
-                    Estabelecimentos estabelecimentos = it.next().getValue(Estabelecimentos.class);
+                            while (it.hasNext()) {
+                                Estabelecimentos estabelecimentos = it.next().getValue(Estabelecimentos.class);
 
-                    Location location1 = new Location("");
+                                Location location1 = new Location("");
 
-                    location1.setLatitude(Double.parseDouble(estabelecimentos.getCoordenadas()[0]));
-                    location1.setLongitude(Double.parseDouble(estabelecimentos.getCoordenadas()[1]));
+                                location1.setLatitude(Double.parseDouble(estabelecimentos.getCoordenadas()[0]));
+                                location1.setLongitude(Double.parseDouble(estabelecimentos.getCoordenadas()[1]));
 
-                    ListaDeCoordenadas.getInstance().addEstabelecimento(estabelecimentos.getId(), location1);
-
-
-                    if (estabelecimentos.getCabo())
-                        mapComcabo.put(l.distanceTo(location1), estabelecimentos);
-                    else
-                        map.put(l.distanceTo(location1), estabelecimentos);
+                                ListaDeCoordenadas.getInstance().addEstabelecimento(estabelecimentos.getId(), location1);
 
 
-                    if (map.size() + mapComcabo.size() == tam) {
+                                if (estabelecimentos.getCabo())
+                                    mapComcabo.put(l.distanceTo(location1), estabelecimentos);
+                                else
+                                    map.put(l.distanceTo(location1), estabelecimentos);
 
-                        Log.println(Log.ASSERT, TAG, "(map.size() + mapComcabo.size() == tam");
 
-                        ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
+                                if (map.size() + mapComcabo.size() == tam) {
 
-                        populaListaDeEstabelecimento(mapComcabo);
-                        populaListaDeEstabelecimento(map);
+                                    Log.println(Log.ASSERT, TAG, "(map.size() + mapComcabo.size() == tam");
 
-                        semLoja(view, true);
+                                    ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
 
-                        filtraDados(FilterDataUtil.getInstance().isCabo(),
-                                FilterDataUtil.getInstance().isWifi(), FilterDataUtil.getInstance().getNomeCategoria());
+                                    populaListaDeEstabelecimento(mapComcabo);
+                                    populaListaDeEstabelecimento(map);
 
-                        MessageEB m = new MessageEB(TAG);
+                                    semLoja(view, true);
 
-                        EventBus.getDefault().post(m);
+                                    filtraDados(FilterDataUtil.getInstance().isCabo(),
+                                            FilterDataUtil.getInstance().isWifi(), FilterDataUtil.getInstance().getNomeCategoria());
 
-                        if (DialogoDeProgresso.getDialog() != null)
-                            DialogoDeProgresso.getDialog().dismiss();
-                        attachAdapter();
+                                    MessageEB m = new MessageEB(TAG);
 
-                    }
+                                    EventBus.getDefault().post(m);
 
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (DialogoDeProgresso.getDialog() != null)
+                                                DialogoDeProgresso.getDialog().dismiss();
+                                        }
+                                    });
+
+
+                                    attachAdapter();
+
+                                }
+
+                            }
+
+                        }
+                    });
+                } else {
+                    semLoja(view, false);
                 }
 
 

@@ -33,6 +33,8 @@ public class Estabelecimentos {
 
     private float distancia;
 
+    private String wifi_ssid;
+
 
     private String[] coordenadas;
 
@@ -191,6 +193,14 @@ public class Estabelecimentos {
 
     public void setCoordenadas(String[] coordenadas) {
         this.coordenadas = coordenadas;
+    }
+
+    public String getWifi_ssid() {
+        return wifi_ssid;
+    }
+
+    public void setWifi_ssid(String wifi_ssid) {
+        this.wifi_ssid = wifi_ssid;
     }
 
     @Override

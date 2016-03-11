@@ -22,7 +22,7 @@
             android:id="@+id/textViewTituloEst"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
             android:text="@string/sugerir"
             android:textColor="#000000"
@@ -36,22 +36,12 @@
             android:textColor="#50000000"
             android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:text="@string/email"
-            android:textColor="#50000000"
-            android:textSize="14sp" />
-
 
         <TextView
             android:id="@+id/textViewLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:text="@string/local"
             android:textColor="#000000"
             android:textSize="18sp" />
@@ -92,6 +82,7 @@
             android:id="@+id/textViewExtras"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:text="@string/extras"
             android:textColor="#000000"
             android:textSize="18sp" />
@@ -126,16 +117,32 @@
                 android:id="@+id/checkBoxWifi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:checked="false"
                 android:text="@string/wifi"
                 android:textSize="14sp" />
 
-            <EditText
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/editTextNomeWifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wifiNome"
+            android:textColor="#50000000"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <EditText
                 android:id="@+id/editTextSenha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:text="@string/senha"
                 android:textColor="#50000000"
@@ -151,8 +158,6 @@
                 android:textColor="#50000000"
                 android:textSize="14sp"
                 android:visibility="gone" />
-
-
         </LinearLayout>
 
         <TextView
@@ -160,6 +165,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
             android:text="@string/disclaimerSenha"
             android:textColor="#ff0000"
             android:textSize="12sp"

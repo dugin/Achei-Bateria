@@ -2,11 +2,11 @@ package eliteapps.SOSBattery.fragment;
 
 
 import android.app.Fragment;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +30,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
@@ -51,6 +50,7 @@ import eliteapps.SOSBattery.util.PrefManager;
  */
 public class MapaFragment extends Fragment {
     static boolean aqui = true;
+    static HashMap<String, Estabelecimentos> mHashMap;
     private final String TAG = this.getClass().getSimpleName();
     MapView mMapView;
     RelativeLayout relativeLayout;
@@ -64,9 +64,6 @@ public class MapaFragment extends Fragment {
     PrefManager prefManager;
     private GoogleMap googleMap;
     private View view;
-
-
-    static HashMap<String, Estabelecimentos> mHashMap;
 
 
     public MapaFragment() {
@@ -179,6 +176,9 @@ public class MapaFragment extends Fragment {
 
 
                 txtNome.setText(e.getNome());
+
+                Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Leelawadee.ttf");
+                txtNome.setTypeface(type);
                 String hrFunc2 = CalendarUtil.HrFuncionamento(e);
                 hrFunc.setText(hrFunc2);
 

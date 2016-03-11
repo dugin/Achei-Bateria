@@ -1,9 +1,11 @@
 package eliteapps.SOSBattery.fragment;
 
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +54,7 @@ public class FilterListFragment extends Fragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -1,10 +1,11 @@
 package eliteapps.SOSBattery.fragment;
 
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 public class InsereEstabelecimentoFragment extends Fragment {
 
     private final String TAG = this.getClass().getSimpleName();
-    EditText nome, end, numero, email, senha, senhaRep;
+    EditText nome, end, numero, senha, senhaRep, nomeWifi;
     TextView senhaDiscplaimer;
     Tracker mTracker;
     FancyButton sugerirBtn;
@@ -45,6 +46,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
 
         App application = (App) getActivity().getApplication();
         mTracker = application.getDefaultTracker();
+
 
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
@@ -67,12 +70,13 @@ public class InsereEstabelecimentoFragment extends Fragment {
         nome = (EditText) view.findViewById(R.id.editTextNome);
         end = (EditText) view.findViewById(R.id.editTextEnd);
         numero = (EditText) view.findViewById(R.id.editTextNum);
-        email = (EditText) view.findViewById(R.id.editTextEmail);
+
         isWifi = (CheckBox) view.findViewById(R.id.checkBoxWifi);
         isCabo = (CheckBox) view.findViewById(R.id.checkBoxCabo);
         senhaDiscplaimer = (TextView) view.findViewById(R.id.textViewSenha);
         senha = (EditText) view.findViewById(R.id.editTextSenha);
         senhaRep = (EditText) view.findViewById(R.id.editTextRepSenha);
+        nomeWifi = (EditText) view.findViewById(R.id.editTextNomeWifi);
 
 
         nome.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -80,6 +84,15 @@ public class InsereEstabelecimentoFragment extends Fragment {
             public void onFocusChange(View v, boolean hasFocus) {
 
                 editText(nome, "Nome da Empresa", hasFocus);
+
+            }
+        });
+
+        nomeWifi.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                editText(nomeWifi, "Nome do Wifi", hasFocus);
 
             }
         });
@@ -96,20 +109,17 @@ public class InsereEstabelecimentoFragment extends Fragment {
                 editText(numero, "N°", hasFocus);
             }
         });
-        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                editText(email, "E-mail", hasFocus);
-            }
-        });
+
 
         isWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    nomeWifi.setVisibility(View.VISIBLE);
                     senha.setVisibility(View.VISIBLE);
                     senhaDiscplaimer.setVisibility(View.VISIBLE);
                 } else {
+                    nomeWifi.setVisibility(View.GONE);
                     senha.setVisibility(View.GONE);
                     senhaDiscplaimer.setVisibility(View.GONE);
                     senhaRep.setVisibility(View.GONE);
@@ -173,20 +183,21 @@ public class InsereEstabelecimentoFragment extends Fragment {
                             .setIcon(R.drawable.ic_error_red_48dp)
                             .show();
 
-                } else if (!email.getText().toString().contains("@") || !email.getText().toString().contains(".com")) {
+                } else if (isWifi.isChecked()) {
 
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Erro")
-                            .setMessage("E-mail inválido")
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+                    if (nomeWifi.getText().toString().equals("Nome do Wifi")) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Erro")
+                                .setMessage("O campo nome do wifi não pode ficar em branco")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            })
-                            .setIcon(R.drawable.ic_error_red_48dp)
-                            .show();
+                                    }
+                                })
+                                .setIcon(R.drawable.ic_error_red_48dp)
+                                .show();
 
-                } else if ((!senha.getText().toString().equals("Senha") && !senha.getText().toString().isEmpty()) &&
+                    } else if ((!senha.getText().toString().equals("Senha") && !senha.getText().toString().isEmpty()) &&
                         (!senhaRep.getText().toString().equals("Repetir Senha") && !senhaRep.getText().toString().isEmpty())) {
 
 
@@ -213,8 +224,10 @@ public class InsereEstabelecimentoFragment extends Fragment {
                         new StoreLocationUtil(getActivity(), search,
                                 isWifi.isChecked(),
                                 isCabo.isChecked(),
-                                password
+                                password,
+                                nomeWifi.getText().toString()
                         );
+                    }
                     }
                 } else {
 
@@ -234,7 +247,8 @@ public class InsereEstabelecimentoFragment extends Fragment {
                     new StoreLocationUtil(getActivity(), search,
                             isWifi.isChecked(),
                             isCabo.isChecked(),
-                            password
+                            password,
+                            nomeWifi.getText().toString()
                     );
                 }
 

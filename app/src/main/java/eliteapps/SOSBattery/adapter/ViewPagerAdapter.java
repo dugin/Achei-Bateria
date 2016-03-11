@@ -11,13 +11,14 @@ import com.astuetz.PagerSlidingTabStrip;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.fragment.ListaLojasFragment;
 import eliteapps.SOSBattery.fragment.MapaFragment;
+import eliteapps.SOSBattery.fragment.WifiFragment;
 
 
 public class ViewPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
 
     private final String TAG = this.getClass().getSimpleName();
 
-    int switch_icons[] = {R.drawable.lista, R.drawable.mapa};
+    int switch_icons[] = {R.drawable.lista, R.drawable.mapa, R.drawable.wifi};
 
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
     Context context;
@@ -41,14 +42,14 @@ public class ViewPagerAdapter extends FragmentPagerAdapter implements PagerSlidi
             return new ListaLojasFragment();
 
 
-        } else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+        } else if (position == 1)        // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
 
 
             return new MapaFragment();
 
 
-        }
+        } else return new WifiFragment();
 
 
     }

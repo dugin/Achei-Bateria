@@ -50,12 +50,14 @@ public class StoreLocationUtil {
     Estabelecimentos e;
     String lat;
     String lon;
+    String nomeWifi;
 
-    public StoreLocationUtil(Context context, String search, Boolean isWifi, Boolean isCabo, String wifiSenha) {
+    public StoreLocationUtil(Context context, String search, Boolean isWifi, Boolean isCabo, String wifiSenha, String nomeWifi) {
         this.mContext = context;
         this.isCabo = isCabo;
         this.isWifi = isWifi;
         this.wifiSenha = wifiSenha;
+        this.nomeWifi = nomeWifi;
 
 
         buildAndInitiateSearchTask(search);
@@ -94,7 +96,7 @@ public class StoreLocationUtil {
 
                                     }
                                 })
-
+                                .setIcon(R.drawable.ic_success)
                                 .show();
                     }
                 });
@@ -231,6 +233,7 @@ public class StoreLocationUtil {
 
             e.setCabo(isCabo);
             e.setWifi_senha(wifiSenha);
+            e.setWifi_ssid(nomeWifi);
             String bairro = null;
             String cidade = null;
             e.setWifi(isWifi);

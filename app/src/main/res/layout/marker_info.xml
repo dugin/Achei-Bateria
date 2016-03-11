@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
+
 
     >
 
     <RelativeLayout
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="56dp"
+
 
         >
 
@@ -21,26 +21,42 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginRight="3dp"
+            android:layout_marginRight="10dp"
 
 
             />
 
-        <TextView
+        <RelativeLayout
+            android:id="@+id/rLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@+id/imgLojaMapa"
+            android:layout_toRightOf="@+id/imgLojaMapa"
+            android:background="@color/colorPrimary"
+            android:paddingLeft="2dp"
+
+
+            >
+
+            <TextView
             android:id="@+id/txtNomeMapa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/imgLojaMapa"
-            android:layout_toRightOf="@+id/imgLojaMapa"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="2dp"
             android:paddingLeft="2dp"
             android:text="@null"
-            android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imgWifiMapa"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/txtNomeMapa"
             android:layout_toRightOf="@+id/txtNomeMapa"
@@ -48,22 +64,24 @@
             android:src="@drawable/ic_wifi" />
 
         <ImageView
+
             android:id="@+id/imgCaboMapa"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/imgWifiMapa"
             android:layout_toRightOf="@+id/imgWifiMapa"
             android:paddingBottom="3dp"
             android:src="@drawable/ic_usb_cable_icon_36dp" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/txtHrFuncMapa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/txtNomeMapa"
+            android:layout_alignLeft="@+id/rLayout"
             android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/txtNomeMapa"
+            android:layout_alignStart="@+id/rLayout"
 
             android:paddingBottom="3dp"
             android:paddingLeft="2dp"
@@ -75,4 +93,4 @@
     </RelativeLayout>
 
 
-</LinearLayout>
+</FrameLayout>

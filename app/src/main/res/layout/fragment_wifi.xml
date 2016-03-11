@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/wifi_search"
+    android:padding="15dp"
+    tools:context="eliteapps.SOSBattery.fragment.WifiFragment">
+
+
+    <TextView
+        android:id="@+id/textViewConecta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.3"
+        android:paddingBottom="40dp"
+        android:text="Entre num estabelecimento parceiro que disponibilize wifi, e pressione o botão conectar e pronto, é só aproveitar!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <mehdi.sakout.fancybuttons.FancyButton xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fancy="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/botaoConecta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="visible"
+        fancy:fb_borderColor="#000"
+        fancy:fb_borderWidth="2dp"
+        fancy:fb_defaultColor="@color/colorPrimary"
+        fancy:fb_focusColor="@color/colorPrimaryDark"
+        fancy:fb_radius="5dp"
+        fancy:fb_text="Conectar!"
+        fancy:fb_textColor="@color/colorBackground"
+        fancy:fb_textSize="22dp" />
+</RelativeLayout>

@@ -19,6 +19,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.application.App;
@@ -34,6 +35,7 @@ public class NavigationDrawerUtil {
     private static AccountHeader headerNavigationLeft;
     private final String TAG = this.getClass().getSimpleName();
     Tracker mTracker;
+    PrefManager prefManager;
 
 
     public NavigationDrawerUtil(final Activity activity, Toolbar toolbar) {
@@ -42,39 +44,81 @@ public class NavigationDrawerUtil {
         App application = (App) activity.getApplication();
         mTracker = application.getDefaultTracker();
 
-
+        prefManager = new PrefManager(activity, "FacebookUtil");
 
         headerNavigationLeft = new AccountHeaderBuilder()
                 .withActivity(activity)
-                .withCompactStyle(true)
+                .withCompactStyle(false)
                 .withOnlyMainProfileImageVisible(true)
                 .withSelectionListEnabled(false)
-                .withHeaderBackground(R.color.colorPrimary)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("Olá visitante")
-                )
+
+                .withHeaderBackground(R.drawable.drawer_bg)
+
+                .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
+                    @Override
+                    public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
+
+
+                        new FacebookUtil(activity);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
+                        return false;
+                    }
+                })
 
                 .withTextColor(Color.WHITE)
                 .build();
 
+        if (prefManager.getImgURLFacebook() == null || prefManager.getNomeFacebook() == null) {
+
+            headerNavigationLeft.addProfiles(
+                    new ProfileDrawerItem().withName("Olá visitante!")
+
+            );
+
+        } else {
+            headerNavigationLeft.removeProfile(0);
+            headerNavigationLeft.addProfiles(
+                    new ProfileDrawerItem().withName(prefManager.getNomeFacebook())
+                            .withIcon(prefManager.getImgURLFacebook())
+                            .withTextColorRes(R.color.primary)
+            );
+        }
+
+
+
+
+
+
+
+
+
+
         drawer = new DrawerBuilder(activity)
 
-                .withRootView(R.id.main_container)
 
+                .withActionBarDrawerToggleAnimated(true)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerNavigationLeft)
                 .withSelectedItemByPosition(1)
-
+                .withSliderBackgroundColorRes(R.color.colorBackground)
+                .withActionBarDrawerToggleAnimated(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
-                        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+
 
                         switch (position) {
                             case 2:
 
-
+                                FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+                                transaction.setCustomAnimations(R.animator.enter_anim, R.animator.exit_anim,
+                                        android.R.animator.fade_in, android.R.animator.fade_out);
                                 transaction.replace(R.id.drawer_container, new InsereEstabelecimentoFragment(), "InsereEstabelecimentoFragment");
                                 transaction.addToBackStack("MainFragment");
                                 transaction.commit();
@@ -100,6 +144,11 @@ public class NavigationDrawerUtil {
                                 emailIntent.putExtra(Intent.EXTRA_TEXT, "");
                                 activity.startActivity(Intent.createChooser(emailIntent, "Enviando Email..."));
                                 break;
+
+                            case -1:
+                                new FacebookUtil(activity);
+                                break;
+
                             default:
                         }
 
@@ -118,32 +167,48 @@ public class NavigationDrawerUtil {
                 })
                 .build();
 
+
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Início")
                 .withIcon(R.drawable.inicio)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
 
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Sugerir estabelecimento")
                 .withIcon(R.drawable.sugest_store)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
 
+
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Fale conosco")
                 .withIcon(R.drawable.talk_to_us)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+
 /*
+
+
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Termos e condições")
                 .withIcon(R.drawable.terms)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
+
+
 
         drawer.addItem(new PrimaryDrawerItem()
                 .withName("Sobre nós")
                 .withIcon(R.drawable.about_us)
                 .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
 
+
+
  */
+
+        drawer.addStickyFooterItem(new PrimaryDrawerItem()
+                .withName("Login com o Facebook")
+                .withIcon(R.drawable.ic_social_facebook_box_blue)
+                .withTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/Leelawadee.ttf")));
     }
 
     public static boolean isDrawer() {
