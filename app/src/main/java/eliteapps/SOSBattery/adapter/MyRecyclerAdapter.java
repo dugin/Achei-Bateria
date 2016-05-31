@@ -4,10 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -24,104 +27,150 @@ import eliteapps.SOSBattery.util.CalendarUtil;
 /**
  * Created by Rodrigo on 16/02/2016.
  */
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.MyViewHolder> {
+public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final String TAG = this.getClass().getSimpleName();
     Context context;
     private List<Estabelecimentos> mList;
-    private LayoutInflater mLayoutInflater;
+    private List<Estabelecimentos> mListFechados;
+
     private RecyclerViewOnClickListenerHack mRecyclerViewOnClickListenerHack;
     private Location minhaLocalizacao;
 
 
-    public MyRecyclerAdapter(Context c, List<Estabelecimentos> l, Location minhaLocalizacao) {
+    public MyRecyclerAdapter(Context c, List<Estabelecimentos> l, List<Estabelecimentos> listaFechados, Location minhaLocalizacao) {
         this.minhaLocalizacao = minhaLocalizacao;
+        mListFechados = listaFechados;
         context = c;
         mList = l;
 
-        mLayoutInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
 
-
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-
-        View v = mLayoutInflater.inflate(R.layout.content_lista_lojas, viewGroup, false);
-
-        return new MyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder myViewHolder, int position) {
+    public int getItemViewType(int position) {
 
 
-        Estabelecimentos estabelecimentos = mList.get(position);
-
-        myViewHolder.txtNome.setText(estabelecimentos.getNome());
-        myViewHolder.txtEnd.setText(estabelecimentos.getEnd());
-        myViewHolder.txtBairro.setText(estabelecimentos.getBairro());
-
-        Location locationLojas = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(estabelecimentos.getId());
-
-
-
-        float dist = locationLojas.distanceTo(minhaLocalizacao);
-        // Log.println(Log.ASSERT, TAG, "distancia metros: " + dist);
-        int minutos = calculaTempoMin(dist);
-
-        myViewHolder.txtDist.setText(String.format("%d min", (int) minutos));
-
-        if (!estabelecimentos.getWifi())
-            myViewHolder.wifi.setVisibility(View.INVISIBLE);
+        if (mList.size() < position)
+            return VIEW_TYPES.Fechados;
+        else if (mList.size() == position)
+            return VIEW_TYPES.TituloFechados;
         else
-            myViewHolder.wifi.setVisibility(View.VISIBLE);
+            return VIEW_TYPES.Normal;
 
-        if (!estabelecimentos.getCabo())
-            myViewHolder.cabo.setVisibility(View.INVISIBLE);
-        else
-            myViewHolder.cabo.setVisibility(View.VISIBLE);
+    }
 
-
-        String hrFunc = CalendarUtil.HrFuncionamento(estabelecimentos);
-        myViewHolder.txtHrFunc.setText(hrFunc);
-        if (hrFunc.equals("Fechado")) {
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
 
-            myViewHolder.txtHrFunc.setTextColor(Color.RED);
-        } else {
-            myViewHolder.txtHrFunc.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+        if (viewType == VIEW_TYPES.TituloFechados) {
+
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_item, viewGroup, false);
+
+            return new FooterViewHolder(v);
+
+
+        } else if (viewType == VIEW_TYPES.Fechados || viewType == VIEW_TYPES.Normal) {
+
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.content_lista_lojas, viewGroup, false);
+            return new MyViewHolder(v, viewType);
         }
 
 
-        if (estabelecimentos.getImgURL().length() > 2) {
-            Picasso.with(context)
-                    .load(estabelecimentos.getImgURL())
-                    .error(R.drawable.no_image)
-                    .resize(150, 150)
-                    .transform(new CircleTransformation())
-                    .centerCrop()
-                    .into(myViewHolder.imgLoja);
-        } else {
-            Picasso.with(context)
-                    .load(R.drawable.no_image)
-                    .resize(150, 150)
+        return null;
+    }
 
-                    .into(myViewHolder.imgLoja);
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder myViewHolder, int position) {
 
+        if (myViewHolder instanceof MyViewHolder) {
+            List<Estabelecimentos> list = null;
+            Estabelecimentos estabelecimentos = null;
+
+            MyViewHolder genericViewHolder = (MyViewHolder) myViewHolder;
+            if (genericViewHolder.viewType == VIEW_TYPES.Normal) {
+                list = mList;
+                estabelecimentos = list.get(position);
+            } else if (genericViewHolder.viewType == VIEW_TYPES.Fechados) {
+                genericViewHolder.contentLayout.setAlpha((float) 0.6);
+                list = mListFechados;
+                estabelecimentos = list.get(position - mList.size() - 1);
+            }
+
+
+            genericViewHolder.txtNome.setText(estabelecimentos.getNome());
+            genericViewHolder.txtEnd.setText(estabelecimentos.getEnd());
+            genericViewHolder.txtBairro.setText(estabelecimentos.getBairro());
+
+            Location locationLojas = new Location("");
+            locationLojas.setLatitude(Double.parseDouble(estabelecimentos.getCoordenadas()[0]));
+            locationLojas.setLongitude(Double.parseDouble(estabelecimentos.getCoordenadas()[1]));
+
+
+            float dist = locationLojas.distanceTo(minhaLocalizacao);
+            // Log.println(Log.ASSERT, TAG, "distancia metros: " + dist);
+            int minutos = calculaTempoMin(dist);
+
+            genericViewHolder.txtDist.setText(String.format("%d min", (int) minutos));
+
+            if (!estabelecimentos.getWifi())
+                genericViewHolder.wifi.setVisibility(View.INVISIBLE);
+            else
+                genericViewHolder.wifi.setVisibility(View.VISIBLE);
+
+            if (!estabelecimentos.getCabo())
+                genericViewHolder.cabo.setVisibility(View.INVISIBLE);
+            else
+                genericViewHolder.cabo.setVisibility(View.VISIBLE);
+
+
+            String hrFunc = CalendarUtil.HrFuncionamento(estabelecimentos);
+            genericViewHolder.txtHrFunc.setText(hrFunc);
+            if (hrFunc.equals("Não abre")) {
+
+
+                genericViewHolder.txtHrFunc.setTextColor(Color.RED);
+            } else {
+                genericViewHolder.txtHrFunc.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+            }
+
+
+            if (estabelecimentos.getImgURL().length() > 2) {
+                Picasso.with(context)
+                        .load(estabelecimentos.getImgURL())
+                        .error(R.drawable.no_image)
+                        .resize(150, 150)
+                        .transform(new CircleTransformation())
+                        .centerCrop()
+                        .into(genericViewHolder.imgLoja);
+            } else {
+                Picasso.with(context)
+                        .load(R.drawable.no_image)
+                        .resize(150, 150)
+
+                        .into(genericViewHolder.imgLoja);
+
+            }
         }
+
 
 
     }
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        if (mListFechados.isEmpty())
+            return mList.size();
+
+        return mList.size() + 1 + mListFechados.size();
     }
 
 
     public void setRecyclerViewOnClickListenerHack(RecyclerViewOnClickListenerHack r) {
         mRecyclerViewOnClickListenerHack = r;
     }
+
 
 
     public void addListItem(Estabelecimentos e, int position) {
@@ -144,18 +193,34 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     }
 
+    class FooterViewHolder extends RecyclerView.ViewHolder {
+        TextView txtTitleFooter;
+        FrameLayout footerLayout;
+
+        public FooterViewHolder(View itemView) {
+            super(itemView);
+            this.txtTitleFooter = (TextView) itemView.findViewById(R.id.txtFooter);
+            footerLayout = (FrameLayout) itemView.findViewById(R.id.footer_layout);
+        }
+    }
+
+
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final String TAG = this.getClass().getSimpleName();
 
         ImageView wifi, cabo, imgLoja;
         private TextView txtEnd, txtDist, txtHrFunc, txtBairro, txtNome;
+        private int viewType;
+        private RelativeLayout contentLayout;
 
-        public MyViewHolder(View itemView) {
+        public MyViewHolder(View itemView, int viewType) {
             super(itemView);
 
+            this.viewType = viewType;
 
             // Add the title view
+            contentLayout = (RelativeLayout) itemView.findViewById(R.id.content_layout);
             txtNome = (TextView) itemView.findViewById(R.id.txtNome);
             txtEnd = (TextView) itemView.findViewById(R.id.txtEnd);
             txtBairro = (TextView) itemView.findViewById(R.id.txtBairro);
@@ -175,5 +240,13 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
                 mRecyclerViewOnClickListenerHack.onClickListener(v, getPosition());
             }
         }
+
+
+    }
+
+    private class VIEW_TYPES {
+        public static final int Normal = 1;
+        public static final int TituloFechados = 2;
+        public static final int Fechados = 3;
     }
 }

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +32,8 @@ import eliteapps.SOSBattery.activities.MainActivity;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
+import eliteapps.SOSBattery.util.FirebaseUtil;
+import eliteapps.SOSBattery.util.GeoFireUtil;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import mehdi.sakout.fancybuttons.FancyButton;
 
@@ -39,15 +42,15 @@ import mehdi.sakout.fancybuttons.FancyButton;
  */
 public class WifiFragment extends Fragment {
 
-    static boolean aqui = true;
+
     static boolean temWifi = false;
     private final String TAG = this.getClass().getSimpleName();
     FancyButton btnConectar;
     TextView txtExplicaCon;
     Double lat, lon;
     ValueEventListener valueEventListener;
-    Firebase myFirebaseRef;
-    GeoFire geoFire;
+    Firebase myFirebaseRef = FirebaseUtil.getFirebase();
+    GeoFire geoFire = GeoFireUtil.getFirebase();
     GoogleAPIConnectionUtil googleAPIConnectionUtil;
     GoogleApiClient mGoogleApiClient;
 
@@ -59,6 +62,7 @@ public class WifiFragment extends Fragment {
     @Override
     public void onDestroy() {
         mGoogleApiClient.disconnect();
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -66,6 +70,18 @@ public class WifiFragment extends Fragment {
     public void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        EventBus.getDefault().register(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Override
@@ -78,10 +94,6 @@ public class WifiFragment extends Fragment {
         mGoogleApiClient = googleAPIConnectionUtil.getmGoogleApiClient();
 
 
-        if (aqui) {
-            EventBus.getDefault().register(this);
-            aqui = false;
-        }
 
 
         txtExplicaCon = (TextView) v.findViewById(R.id.textViewConecta);
@@ -109,94 +121,8 @@ public class WifiFragment extends Fragment {
                 googleAPIConnectionUtil.startLocationUpdates();
 
 
-                myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
-                geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
-
                 new DialogoDeProgresso(getActivity(), "Conectando-se ao Wifi do Estabelecimento...");
-
-                Handler handler = new Handler(getActivity().getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (true)
-                            if (googleAPIConnectionUtil.minhaLocalizacao() != null)
-                                break;
-
-
-                        firebaseValueListener();
-
-
-                        lat = googleAPIConnectionUtil.minhaLocalizacao().getLatitude();
-                        lon = googleAPIConnectionUtil.minhaLocalizacao().getLongitude();
-
-                        Log.println(Log.ASSERT, TAG, "lat: " + lat);
-                        Log.println(Log.ASSERT, TAG, "lon: " + lon);
-
-
-                        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat, lon), 0.040);
-                        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-                            @Override
-                            public void onKeyEntered(String key, GeoLocation location) {
-
-                                temWifi = true;
-
-                                Log.println(Log.ASSERT, TAG, "key: " + key);
-
-
-                                myFirebaseRef.child(key).addValueEventListener(valueEventListener);
-
-
-                            }
-
-                            @Override
-                            public void onKeyExited(String key) {
-
-                            }
-
-                            @Override
-                            public void onKeyMoved(String key, GeoLocation location) {
-
-                            }
-
-                            @Override
-                            public void onGeoQueryReady() {
-
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-
-                                        if (!temWifi) {
-                                            if (DialogoDeProgresso.getDialog() != null)
-                                                DialogoDeProgresso.getDialog().dismiss();
-
-                                            new AlertDialog.Builder(getActivity())
-                                                    .setTitle("Erro")
-                                                    .setMessage("Nenhum estabelecimento com Wifi encontrado")
-                                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int which) {
-
-                                                        }
-                                                    })
-                                                    .setIcon(R.drawable.ic_error_red_48dp)
-                                                    .show();
-
-                                        }
-                                    }
-                                });
-
-
-                            }
-
-                            @Override
-                            public void onGeoQueryError(FirebaseError error) {
-
-                            }
-                        });
-
-
-                    }
-                });
+                new MyTask().execute();
 
 
             }
@@ -249,7 +175,7 @@ public class WifiFragment extends Fragment {
 
                                 new AlertDialog.Builder(getActivity())
                                         .setTitle("Sucesso")
-                                        .setMessage("Dentro de alguns segundos o dispositivo se conectará ao Wifi")
+                                        .setMessage("Aguarde alguns segundos enquanto conectamos ao Wi-Fi")
                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
 
@@ -280,8 +206,8 @@ public class WifiFragment extends Fragment {
                                 DialogoDeProgresso.getDialog().dismiss();
 
                             new AlertDialog.Builder(getActivity())
-                                    .setTitle("Erro")
-                                    .setMessage("Nenhuma conexão Wifi disponível")
+                                    .setTitle("Ops")
+                                    .setMessage("Nenhuma conexão Wi-Fi disponível")
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
 
@@ -307,7 +233,6 @@ public class WifiFragment extends Fragment {
         };
     }
 
-
     public void onEvent(MessageEB event) {
 
         if (event.getData().equals(TAG)) {
@@ -315,6 +240,101 @@ public class WifiFragment extends Fragment {
             btnConectar.setVisibility(View.VISIBLE);
             txtExplicaCon.setVisibility(View.VISIBLE);
         }
+
+
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            while (true)
+                if (googleAPIConnectionUtil.minhaLocalizacao() != null)
+                    break;
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            firebaseValueListener();
+
+
+            lat = googleAPIConnectionUtil.minhaLocalizacao().getLatitude();
+            lon = googleAPIConnectionUtil.minhaLocalizacao().getLongitude();
+
+            Log.println(Log.ASSERT, TAG, "lat: " + lat);
+            Log.println(Log.ASSERT, TAG, "lon: " + lon);
+
+
+            GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(lat, lon), 0.040);
+            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+
+                    temWifi = true;
+
+                    Log.println(Log.ASSERT, TAG, "key: " + key);
+
+
+                    myFirebaseRef.child(key).addValueEventListener(valueEventListener);
+
+
+                }
+
+                @Override
+                public void onKeyExited(String key) {
+
+                }
+
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+
+                }
+
+                @Override
+                public void onGeoQueryReady() {
+
+
+                    if (!temWifi) {
+                        if (DialogoDeProgresso.getDialog() != null)
+                            DialogoDeProgresso.getDialog().dismiss();
+
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Erro")
+                                .setMessage("Nenhum estabelecimento com Wifi encontrado")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .setIcon(R.drawable.ic_error_red_48dp)
+                                .show();
+
+
+                    }
+
+
+                }
+
+                @Override
+                public void onGeoQueryError(FirebaseError error) {
+
+                }
+            });
+
+
+        }
+
+
+
+
+
+
 
     }
 }

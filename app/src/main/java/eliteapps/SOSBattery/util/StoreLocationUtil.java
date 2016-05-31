@@ -66,8 +66,7 @@ public class StoreLocationUtil {
 
     public void saveToFirebase() {
 
-        if (DialogoDeProgresso.getDialog() != null)
-            DialogoDeProgresso.getDialog().dismiss();
+
 
         final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentosTemp");
 
@@ -84,6 +83,9 @@ public class StoreLocationUtil {
                 new GeoFire.CompletionListener() {
                     @Override
                     public void onComplete(String key, FirebaseError error) {
+                        if (DialogoDeProgresso.getDialog() != null)
+                            DialogoDeProgresso.getDialog().dismiss();
+
                         new AlertDialog.Builder(mContext)
                                 .setTitle("Obrigado!")
                                 .setMessage("Sugestão enviada com sucesso!")

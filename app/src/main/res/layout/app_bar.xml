@@ -2,11 +2,13 @@
 
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_bar"
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:background="@color/colorPrimary"
-
     android:theme="@style/ToolbarTheme"
+
+    app:layout_collapseMode="pin"
     app:popupTheme="@style/ToolbarTheme">
 
     <RelativeLayout
@@ -24,7 +26,7 @@
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
         android:fontFamily="sans-serif"
-
+        android:paddingBottom="2dp"
         android:paddingLeft="5dp"
         android:text="@string/bateria"
         android:textColor="@android:color/white"
@@ -40,7 +42,7 @@
 
             android:layout_gravity="center"
 
-            android:src="@drawable/ic_action_sos" />
+            android:src="@drawable/ic_nome_36dp" />
 
 
         <ImageButton
@@ -53,8 +55,8 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:background="?android:selectableItemBackground"
-            android:src="@drawable/ic_filter_list_white_24dp"
-            android:visibility="gone"
+            android:src="@drawable/ic_filter"
+            android:visibility="visible"
 
             />
 

@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
@@ -29,7 +30,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-
+        Firebase.setAndroidContext(this);
 
         //initialize and create the image loader logic
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {

@@ -2,9 +2,13 @@ package eliteapps.SOSBattery.activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -27,6 +31,21 @@ public class NotificationActivity extends AppCompatActivity {
         App application = (App) getApplication();
         mTracker = application.getDefaultTracker();
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
+
+        toolbar.findViewById(R.id.refresh_button).setVisibility(View.GONE);
+        toolbar.findViewById(R.id.filter_list).setVisibility(View.GONE);
+
+        TextView t1 = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
+        t1.setTypeface(type);
+
+        setSupportActionBar(toolbar);
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         if (getIntent() != null)
             if (getIntent().getExtras() != null)
                 if (getIntent().getExtras().getBoolean("from_notification_charging")) {
@@ -42,7 +61,7 @@ public class NotificationActivity extends AppCompatActivity {
                 }
 
         getFragmentManager().beginTransaction()
-                .add(R.id.notification_layout, new CarregueiFragment())
+                .add(R.id.notification_container, new CarregueiFragment())
                 .addToBackStack(null)
                 .commit();
 

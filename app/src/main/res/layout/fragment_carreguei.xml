@@ -2,20 +2,12 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/lista_lojas_fragment"
 
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
 
 
-    android:background="@color/colorBackground"
-
     tools:context="eliteapps.SOSBattery.fragment.CarregueiFragment">
-
-    <include
-        android:id="@+id/app_bar2"
-        layout="@layout/app_bar" />
 
 
     <ImageView

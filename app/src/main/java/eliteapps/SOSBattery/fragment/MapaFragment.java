@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import eliteapps.SOSBattery.util.PrefManager;
  * A simple {@link Fragment} subclass.
  */
 public class MapaFragment extends Fragment {
+
     static boolean aqui = true;
     static HashMap<String, Estabelecimentos> mHashMap;
     private final String TAG = this.getClass().getSimpleName();
@@ -71,7 +73,6 @@ public class MapaFragment extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,10 +84,9 @@ public class MapaFragment extends Fragment {
 
         prefManager = new PrefManager(getActivity(), "MainActivity");
 
-        if (aqui) {
-            EventBus.getDefault().register(this);
-            aqui = false;
-        }
+        Log.println(Log.ASSERT, TAG, "onCreateView");
+
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_mapa, container, false);
 
@@ -97,12 +97,12 @@ public class MapaFragment extends Fragment {
         mMapView.onResume();// needed to get the map to display immediately
 
 
-
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         googleMap = mMapView.getMap();
         googleMap.setMyLocationEnabled(true);
@@ -113,17 +113,14 @@ public class MapaFragment extends Fragment {
         uiSettings.setMyLocationButtonEnabled(true);
 
 
-        lat = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLatitude();
-        lon = Localizacao.getInstance().localizacaoAppBackground(getActivity()).getLongitude();
-
-
+        lat = getArguments().getDouble("lat");
+        lon = getArguments().getDouble("lon");
 
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(lat, lon)).zoom(15).build();
         googleMap.moveCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
-
 
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -132,7 +129,7 @@ public class MapaFragment extends Fragment {
                 mTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("Marker")
                         .setAction("Marker Selected")
-                        .setLabel("Marker "+ marker.getId())
+                        .setLabel("Marker " + marker.getId())
                         .build());
 
                 return false;
@@ -157,13 +154,7 @@ public class MapaFragment extends Fragment {
                 l.setLongitude(marker.getPosition().longitude);
 
 
-
-
-
-
                 view = getActivity().getLayoutInflater().inflate(R.layout.marker_info, null);
-
-
 
 
                 TextView txtNome = (TextView) view.findViewById(R.id.txtNomeMapa);
@@ -258,13 +249,7 @@ public class MapaFragment extends Fragment {
                     view.findViewById(R.id.imgCaboMapa).setVisibility(View.GONE);
 
 
-
-                        System.gc();
-
-
-
-
-
+                System.gc();
 
 
                 return view;
@@ -286,14 +271,13 @@ public class MapaFragment extends Fragment {
 
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                     googleMap.setMyLocationEnabled(true);
-                    mTracker.setScreenName( "MapView");
+                    mTracker.setScreenName("MapView");
                     mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-                }
-                else {
+                } else {
 
                     mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                     googleMap.setMyLocationEnabled(false);
-                    mTracker.setScreenName( "ListView");
+                    mTracker.setScreenName("ListView");
                     mTracker.send(new HitBuilders.ScreenViewBuilder().build());
                 }
 
@@ -352,12 +336,14 @@ public class MapaFragment extends Fragment {
     public void onResume() {
 
         super.onResume();
+        EventBus.getDefault().register(this);
         mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        EventBus.getDefault().unregister(this);
         mMapView.onPause();
     }
 
@@ -367,6 +353,7 @@ public class MapaFragment extends Fragment {
         super.onDestroy();
         mMapView.onDestroy();
 
+        EventBus.getDefault().unregister(this);
 
 
     }
@@ -380,16 +367,33 @@ public class MapaFragment extends Fragment {
     public void onEvent(MessageEB event) {
 
         if (event.getData().equals(TAG)) {
+            String ID;
+            Location location;
 
             int pos = event.getPos();
 
+            List<Estabelecimentos> lFechados = event.getEstabelecimentosList();
+
+            Log.println(Log.ASSERT, TAG, "pos1: " + pos);
             estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
+            if (pos <= estabelecimentosList.size()) {
+                ID = estabelecimentosList.get(pos).getId();
+                location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+                ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
 
-            String ID = estabelecimentosList.get(pos).getId();
-            Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+            } else {
+                int posicao = pos - 1 - estabelecimentosList.size();
 
-            ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
+                ID = lFechados.get(posicao).getId();
+
+                location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+                ListaMarker.getInstance().getListaMarker().get(pos - 1).showInfoWindow();
+
+
+            }
+
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).build();
             googleMap.moveCamera(CameraUpdateFactory
@@ -404,37 +408,67 @@ public class MapaFragment extends Fragment {
 
             List<Estabelecimentos> l = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
+            List<Estabelecimentos> lFechados = event.getEstabelecimentosList();
+
 
             mHashMap = new HashMap<>();
 
-            for (int i = 0; i < l.size(); i++) {
+            populaMapa(l, true);
+            populaMapa(lFechados, false);
 
 
-                String ID = l.get(i).getId();
+            if (relativeLayout.getVisibility() != View.VISIBLE)
+                relativeLayout.setVisibility(View.VISIBLE);
 
-                Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+        } else if (event.getData().equals("All")) {
 
-                mHashMap.put(location.getLatitude() + "_" + location.getLongitude(), l.get(i));
-                // create marker
-                MarkerOptions marker2 = new MarkerOptions().position(
+            lat = event.getLocation().getLatitude();
+            lon = event.getLocation().getLongitude();
+
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(lat, lon)).zoom(15).build();
+            googleMap.moveCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+
+        }
+
+    }
+
+
+    private void populaMapa(List<Estabelecimentos> l, boolean isStoreOpen) {
+        MarkerOptions marker2;
+
+        for (int i = 0; i < l.size(); i++) {
+
+            String ID = l.get(i).getId();
+
+            Location location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
+
+            mHashMap.put(location.getLatitude() + "_" + location.getLongitude(), l.get(i));
+            // create marker
+
+            if (isStoreOpen) {
+                marker2 = new MarkerOptions().position(
                         new LatLng(location.getLatitude(), location.getLongitude()))
                         .title(l.get(i).getNome())
                         .flat(true)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
-
-
-                Marker marker = googleMap.addMarker(marker2);
-
-                ListaMarker.getInstance().addMarker(marker);
-
+            } else {
+                marker2 = new MarkerOptions().position(
+                        new LatLng(location.getLatitude(), location.getLongitude()))
+                        .title(l.get(i).getNome())
+                        .flat(true)
+                        .alpha((float) .6)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
             }
 
 
-            if (relativeLayout.getVisibility() != View.VISIBLE)
-            relativeLayout.setVisibility(View.VISIBLE);
+            Marker marker = googleMap.addMarker(marker2);
+
+            ListaMarker.getInstance().addMarker(marker);
 
         }
-
 
     }
 

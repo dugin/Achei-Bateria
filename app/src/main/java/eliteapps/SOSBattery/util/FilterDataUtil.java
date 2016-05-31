@@ -7,11 +7,14 @@ public class FilterDataUtil {
 
     private static FilterDataUtil ourInstance = new FilterDataUtil();
     boolean wifi;
+    boolean restaurante;
+    boolean bar;
+    boolean loja;
     boolean cabo;
-    int categoria;
+
     int progresso;
     String distancia;
-    String nomeCategoria;
+
 
     private FilterDataUtil() {
     }
@@ -20,11 +23,13 @@ public class FilterDataUtil {
         return ourInstance;
     }
 
-    public void setAll(boolean cabo, boolean wifi, int categoria, String nomeCategoria, int progresso, String distancia) {
+    public void setAll(boolean restaurante, boolean bar, boolean loja, boolean cabo, boolean wifi, int progresso, String distancia) {
         this.cabo = cabo;
         this.wifi = wifi;
-        this.categoria = categoria;
-        this.nomeCategoria = nomeCategoria;
+        this.restaurante = restaurante;
+        this.bar = bar;
+        this.loja = loja;
+
         this.progresso = progresso;
         this.distancia = distancia;
     }
@@ -37,9 +42,6 @@ public class FilterDataUtil {
         return cabo;
     }
 
-    public int getCategoria() {
-        return categoria;
-    }
 
     public int getProgresso() {
         return progresso;
@@ -49,7 +51,15 @@ public class FilterDataUtil {
         return distancia;
     }
 
-    public String getNomeCategoria() {
-        return nomeCategoria;
+    public boolean isRestaurante() {
+        return restaurante;
+    }
+
+    public boolean isBar() {
+        return bar;
+    }
+
+    public boolean isLoja() {
+        return loja;
     }
 }

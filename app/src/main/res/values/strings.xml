@@ -2,7 +2,7 @@
     <string name="app_name">SOS Battery</string>
     <string name="bateria">Battery</string>
     <string name="feedback">Conte para a gente!</string>
-    <string name="loading">Carregando Lojas</string>
+    <string name="loading">Carregando...</string>
     <string name="listaVazia">Conhece alguma loja que gostaria de participar?</string>
     <string name="semLojas">Nenhum estabelecimento encontrado</string>
 
@@ -15,7 +15,7 @@
     <string name="nao">Não</string>
 
     <!--  Google maps Key RELEASE
-  <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string> -->
+  <string name="googleAPIKey">AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI</string>  -->
 
     <!--  Google maps Key DEBUG -->
 

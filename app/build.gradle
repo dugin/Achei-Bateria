@@ -33,11 +33,16 @@ android {
         applicationId "eliteapps.SOSBattery"
         minSdkVersion 16
         targetSdkVersion 23
-        versionName '1.2'
-        versionCode 7
+        versionName '1.2.1'
+        versionCode 8
     }
     buildTypes {
+
+        debug {
+            resValue "string", "google_maps_api_key", "AIzaSyDRde4JwXO2u-8bZgXc8HFpqllc7aigBSI"
+        }
         release {
+            resValue "string", "google_maps_api_key", "AIzaSyBnsHhLMRub_AemH3VhVZRwksVnicXcJkI"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
@@ -61,22 +66,22 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-
-    compile 'com.android.support:support-v13:23.1.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services-maps:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v13:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.0'
+    compile 'com.google.android.gms:play-services-location:9.0.0'
+    compile 'com.google.android.gms:play-services-analytics:9.0.0'
     compile 'com.github.medyo:fancybuttons:1.5@aar'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:design:23.4.0'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'org.adw.library:discrete-seekbar:1.0.1'
     compile 'com.facebook.android:facebook-android-sdk:4.6.0'
-    compile 'com.android.support:support-v4:23.1.1'
+
     compile 'com.google.code.gson:gson:2.6.1'
     compile 'com.firebase:firebase-client-android:2.5.0'
     compile 'com.firebase:geofire:1.1.0'
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
 }

@@ -42,14 +42,7 @@ public class CarregueiFragment extends Fragment {
         mTracker = application.getDefaultTracker();
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_carreguei, container, false);
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.app_bar2); // Attaching the layout to the toolbar object
 
-
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         TextView t1 = (TextView) v.findViewById(R.id.textMsgCarregar);
         TextView t2 = (TextView) v.findViewById(R.id.textMsgCarregar2);

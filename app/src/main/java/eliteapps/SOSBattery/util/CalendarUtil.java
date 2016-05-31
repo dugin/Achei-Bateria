@@ -20,6 +20,7 @@ public class CalendarUtil {
     }
 
     public static String getCurrentDateandTime() {
+        currentDateandTime = new SimpleDateFormat("dd-MM-yy HH:mm", Locale.FRENCH).format(new Date());
         return currentDateandTime;
     }
 
@@ -65,7 +66,7 @@ public class CalendarUtil {
             }
 
         if (hr_abre.equals("00h às ") && hr_fecha.equals("00h"))
-            return "Fechado";
+            return "Não abre";
 
 
         return resp;
@@ -93,4 +94,6 @@ public class CalendarUtil {
         }
         return "Erro";
     }
+
+
 }
