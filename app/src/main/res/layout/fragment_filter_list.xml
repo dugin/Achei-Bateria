@@ -1,8 +1,16 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:layout_below="@id/app_bar"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
     android:background="@color/colorBackground"
     android:orientation="vertical"
     android:padding="15dp"
@@ -24,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="2 km"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp" />
 
     <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
@@ -49,17 +57,78 @@
         android:text="Categoria"
         android:textSize="18sp" />
 
-    <Spinner
-        android:id="@+id/spinnerCategoria"
-        android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+            android:layout_marginTop="10dp">
 
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_action_beer_black" />
 
-        android:spinnerMode="dropdown" />
+            <CheckBox
+                android:id="@+id/checkBoxBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/imageView4"
+                android:layout_toRightOf="@+id/imageView4"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:checked="false"
+                android:text="Bar" />
 
-    <TextView
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/imageView4"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/ic_action_restaurant_black" />
+
+            <CheckBox
+                android:id="@+id/checkBoxRestaurante"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/checkBoxBar"
+                android:layout_alignStart="@+id/checkBoxBar"
+                android:layout_alignTop="@+id/imageView5"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:checked="false"
+                android:text="Restaurante" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="60dp"
+                android:layout_marginStart="60dp"
+                android:layout_toEndOf="@+id/checkBoxRestaurante"
+                android:layout_toRightOf="@+id/checkBoxRestaurante"
+                android:background="@drawable/ic_action_shop_black" />
+
+            <CheckBox
+                android:id="@+id/checkBoxLoja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toEndOf="@+id/imageView6"
+                android:layout_toRightOf="@+id/imageView6"
+                android:buttonTint="@color/colorPrimaryDark"
+                android:checked="false"
+                android:text="Loja" />
+        </RelativeLayout>
+
+        <TextView
         android:id="@+id/t2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,30 +136,38 @@
         android:text="O estabelecimento disponibliza:"
         android:textSize="18sp" />
 
-    <CheckBox
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp">
+
+
+            <CheckBox
         android:id="@+id/checkBoxCabo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:buttonTint="@color/colorPrimary"
+                android:layout_alignLeft="@+id/checkBoxWifi"
+                android:layout_alignStart="@+id/checkBoxWifi"
+                android:layout_alignTop="@+id/imageView3"
+                android:buttonTint="@color/colorPrimaryDark"
         android:checked="false"
-        android:text="Cabo Micro USB"
-        android:textColor="@color/colorPrimary" />
+                android:text="Cabo Micro USB" />
 
     <CheckBox
         android:id="@+id/checkBoxWifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:buttonTint="@color/colorPrimary"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_marginLeft="5dp"
+        android:layout_toEndOf="@+id/imageView2"
+
+        android:layout_toRightOf="@+id/imageView2"
+        android:buttonTint="@color/colorPrimaryDark"
         android:checked="false"
-        android:text="Wifi"
-        android:textColor="@color/colorPrimary" />
+        android:text="Wifi" />
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <mehdi.sakout.fancybuttons.FancyButton xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:fancy="http://schemas.android.com/apk/res-auto"
@@ -113,6 +190,24 @@
             fancy:fb_textColor="@color/colorBackground"
 
             fancy:fb_textSize="22dp" />
+
+            <ImageView
+
+                android:id="@+id/imageView2"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/ic_wifi" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/imageView2"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/ic_usb_cable_icon_36dp" />
     </RelativeLayout>
 
 </LinearLayout>
+</ScrollView>

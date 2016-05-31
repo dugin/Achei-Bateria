@@ -4,9 +4,11 @@ package eliteapps.SOSBattery.fragment;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,12 +25,17 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.util.FilterDataUtil;
+import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
+import eliteapps.SOSBattery.util.NotificationUtils;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -40,11 +47,12 @@ public class FilterListFragment extends Fragment {
     static DiscreteSeekBar distancia;
     static TextView txtDistancia;
     static FancyButton filtrarBtn;
-    static CheckBox cabo, wifi;
+    static CheckBox cabo, wifi, restaurante, bar, loja;
     private final String TAG = this.getClass().getSimpleName();
-    Spinner categoria;
+    AlertDialog alertDialog;
     Tracker mTracker;
     int distIni;
+
     // Declaring the String Array with the Text Data for the Spinners
     String[] categorias = {"Tudo", "Loja", "Bar",
             "Restaurante"};
@@ -52,6 +60,7 @@ public class FilterListFragment extends Fragment {
     public FilterListFragment() {
         // Required empty public constructor
     }
+
 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -77,13 +86,6 @@ public class FilterListFragment extends Fragment {
         NavigationDrawerUtil.setIsDrawer(false);
 
 
-        categoria = (Spinner) v.findViewById(R.id.spinnerCategoria);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        categoria.setAdapter(new MyAdapter(getActivity(), R.layout.spinner_rows, categorias
-        ));
-
-
-        categoria.setPrompt("Selecione uma Categoria");
 
 
 
@@ -125,6 +127,9 @@ public class FilterListFragment extends Fragment {
 
         cabo = (CheckBox) v.findViewById(R.id.checkBoxCabo);
         wifi = (CheckBox) v.findViewById(R.id.checkBoxWifi);
+        restaurante = (CheckBox) v.findViewById(R.id.checkBoxRestaurante);
+        bar = (CheckBox) v.findViewById(R.id.checkBoxBar);
+        loja = (CheckBox) v.findViewById(R.id.checkBoxLoja);
 
         filtrarBtn = (FancyButton) v.findViewById(R.id.botaoFiltrar);
 
@@ -132,10 +137,14 @@ public class FilterListFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                Log.println(Log.ASSERT, TAG, "filtrarBtn onClick");
+
                 MessageEB m = new MessageEB(TAG);
                 m.setIsCabo(cabo.isChecked());
                 m.setIsWifi(wifi.isChecked());
-                m.setCategoria(categoria.getSelectedItem().toString());
+                m.setIsBar(bar.isChecked());
+                m.setIsRestaurant(restaurante.isChecked());
+                m.setIsStore(loja.isChecked());
 
                 if (txtDistancia.getText().toString().equals("Cidade")) {
                     m.setRaio(20);
@@ -144,12 +153,20 @@ public class FilterListFragment extends Fragment {
                     int distFim = Integer.parseInt(txtDistancia.getText().subSequence(0, txtDistancia.getText().length() - 3).toString());
                     m.setRaio(distFim);
                     m.setDifDist(distFim - distIni);
-                    Log.println(Log.ASSERT, TAG, "distIni: " + distIni + " - distFim: " + distFim);
+
                 }
 
 
-                FilterDataUtil.getInstance().setAll(cabo.isChecked(), wifi.isChecked(), categoria.getSelectedItemPosition(), categoria.getSelectedItem().toString(), distancia.getProgress(), txtDistancia.getText().toString());
-                EventBus.getDefault().post(m);
+                FilterDataUtil.getInstance().setAll(restaurante.isChecked(), bar.isChecked(), loja.isChecked()
+                        , cabo.isChecked(), wifi.isChecked(), distancia.getProgress(), txtDistancia.getText().toString());
+
+                if (!InternetConnectionUtil.isNetworkAvailable(getActivity())
+                        && !NotificationUtils.isAppIsInBackground(getActivity()))
+                    semConexao();
+
+                else
+                    EventBus.getDefault().post(m);
+
 
 
             }
@@ -161,7 +178,9 @@ public class FilterListFragment extends Fragment {
 
             cabo.setChecked(f.isCabo());
             wifi.setChecked(f.isWifi());
-            categoria.setSelection(f.getCategoria());
+            bar.setChecked(f.isBar());
+            restaurante.setChecked(f.isRestaurante());
+            loja.setChecked(f.isLoja());
             distancia.setProgress(f.getProgresso());
             txtDistancia.setText(f.getDistancia());
 
@@ -186,65 +205,37 @@ public class FilterListFragment extends Fragment {
         t.setTypeface(type);
     }
 
-    // Creating an Adapter Class
-    private class MyAdapter extends ArrayAdapter {
+    protected void semConexao() {
 
-        // Declaring the String Array with the Text Data for the Spinners
-        String[] categorias = {"Tudo", "Loja", "Bar",
-                "Restaurante"};
-        // Declaring the Integer Array with resourse Id's of Images for the Spinners
-        Integer[] images = {0, R.drawable.ic_action_shop, R.drawable.ic_action_beer,
-                R.drawable.ic_action_restaurant};
+        if (!InternetConnectionUtil.isNetworkAvailable(getActivity())
+                && !NotificationUtils.isAppIsInBackground(getActivity())) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-        public MyAdapter(Context context, int textViewResourceId,
-                         String[] objects) {
-            super(context, textViewResourceId, objects);
-        }
+                    estaConectado();
+                }
+            });
 
-        public View getCustomView(int position, View convertView,
-                                  ViewGroup parent) {
-
-// Inflating the layout for the custom Spinner
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View layout = inflater.inflate(R.layout.spinner_rows, parent, false);
-
-// Declaring and Typecasting the textview in the inflated layout
-            TextView txtCategoria = (TextView) layout
-                    .findViewById(R.id.txtCategorySpinner);
-
-// Setting the text using the array
-            txtCategoria.setText(categorias[position]);
-
-
-// Declaring and Typecasting the imageView in the inflated layout
-            ImageView img = (ImageView) layout.findViewById(R.id.imageSpinner);
-
-// Setting an image using the id's in the array
-            img.setImageResource(images[position]);
-
-// Setting Special atrributes for 1st element
-            if (position == 0) {
-// Removing the image view
-                img.setVisibility(View.GONE);
-
-
-            }
-
-            return layout;
-        }
-
-        // It gets a View that displays in the drop down popup the data at the specified position
-        @Override
-        public View getDropDownView(int position, View convertView,
-                                    ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        // It gets a View that displays the data at the specified position
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
         }
     }
+
+    private void estaConectado() {
+
+        alertDialog = new AlertDialog.Builder(getActivity())
+                .setTitle("Falha na conexão")
+                .setMessage("Verifique se o seu dispositivo está conectado à rede e tente novamente")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.dismiss();
+                    }
+                })
+                .setIcon(R.drawable.ic_no_signal)
+                .show();
+
+
+    }
+
+
 
 }

@@ -17,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -37,11 +39,19 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
+import com.firebase.geofire.GeoFire;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.ErrorDialogFragment;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
@@ -50,6 +60,7 @@ import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.adapter.ViewPagerAdapter;
@@ -57,8 +68,13 @@ import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
 import eliteapps.SOSBattery.domain.Localizacao;
+import eliteapps.SOSBattery.eventBus.MessageEB;
+import eliteapps.SOSBattery.fragment.ListaLojasFragment;
+import eliteapps.SOSBattery.fragment.WifiFragment;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.FacebookUtil;
+import eliteapps.SOSBattery.util.FirebaseUtil;
+import eliteapps.SOSBattery.util.GeoFireUtil;
 import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
@@ -67,23 +83,32 @@ import eliteapps.SOSBattery.util.PrefManager;
 import io.fabric.sdk.android.Fabric;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
 
+    // Unique tag for the error dialog fragment
+    private static final String DIALOG_ERROR = "dialog_error";
+    // Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final int REQUEST_CHECK_SETTINGS = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private final String TAG = this.getClass().getSimpleName();
+    GoogleApiClient mGoogleApiClient;
+    LocationRequest mLocationRequest;
+    Location myLocation;
     boolean doubleBackToExitPressedOnce = false;
     CustomViewPager pager;
     ViewPagerAdapter adapter;
     PagerSlidingTabStrip tabs;
-    int Numboftabs = 3;
+    int Numboftabs = 2;
     ImageButton refreshBtn;
     PrefManager prefManager;
     Tracker mTracker;
-    private GoogleAPIConnectionUtil googleAPIConnectionUtil;
+    private boolean mResolvingError = false;
     private boolean firstUse = false;
     private AlertDialog alertDialog;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -95,8 +120,12 @@ public class MainActivity extends AppCompatActivity {
 
         Fabric.with(this, new Crashlytics());
 
+        Log.println(Log.ASSERT, TAG, "onCreate");
 
-        Firebase.setAndroidContext(this);
+
+        FirebaseUtil.getFirebase();
+        GeoFireUtil.getFirebase();
+
         prefManager = new PrefManager(MainActivity.this, TAG);
         if (getIntent() != null) {
             if (getIntent().getExtras() != null) {
@@ -115,11 +144,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        googleAPIConnectionUtil = new GoogleAPIConnectionUtil(this);
-
-        if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
-                !NotificationUtils.isAppIsInBackground(MainActivity.this))
-            teste();
+        if (mGoogleApiClient == null) {
+            createLocationRequest();
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
 
 
 
@@ -132,21 +164,24 @@ public class MainActivity extends AppCompatActivity {
 
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.barraLoading);
 
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.colorPrimary), android.graphics.PorterDuff.Mode.MULTIPLY);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.md_white_1000),
+                android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
         refreshBtn = (ImageButton) findViewById(R.id.refresh_button);
 
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tabs.getVisibility() == View.GONE)
+
                     tabs.setVisibility(View.VISIBLE);
-                pager.removeAllViews();
-                googleAPIConnectionUtil.setMinhaLocalizacao(null);
-                googleAPIConnectionUtil.startLocationUpdates();
-                changeSettings();
+
+                Log.println(Log.ASSERT, TAG, "refreshBtn clicked");
+
+
+                startLocationUpdates();
+
+
 
 
                 // Build and send an Event.
@@ -155,16 +190,18 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Refresh")
                         .setLabel("Refresh")
                         .build());
-                new DialogoDeProgresso(MainActivity.this, "Carregando Lojas...");
+                new DialogoDeProgresso(MainActivity.this, "Carregando Estabelecimentos...");
 
 
                 firstUse = false;
 
+                if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
+                        !NotificationUtils.isAppIsInBackground(MainActivity.this))
+                    semConexao();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                    new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 else
-                    new MyTask().execute();
+                    changeSettings();
+
 
 
             }
@@ -176,23 +213,28 @@ public class MainActivity extends AppCompatActivity {
 
         new NavigationDrawerUtil(MainActivity.this, toolbar);
 
+        if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
+                !NotificationUtils.isAppIsInBackground(MainActivity.this))
+            semConexao();
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getPermission();
+        } else
+            changeSettings();
+
+
     }
 
 
     protected void onStart() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getPermission();
-        } else {
-            googleAPIConnectionUtil.getmGoogleApiClient().connect();
-
-            changeSettings();
-        }
+        mGoogleApiClient.connect();
         super.onStart();
-
     }
 
     protected void onStop() {
-        googleAPIConnectionUtil.getmGoogleApiClient().disconnect();
+        mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -207,7 +249,6 @@ public class MainActivity extends AppCompatActivity {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    googleAPIConnectionUtil.getmGoogleApiClient().connect();
 
                     changeSettings();
 
@@ -240,7 +281,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        // Logs 'install' and 'app activate' App Events.
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+
+        }
         AppEventsLogger.activateApp(this);
         super.onResume();
     }
@@ -260,12 +304,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
 
+        stopLocationUpdates();
+
         // Logs 'app deactivate' App Event.
         AppEventsLogger.deactivateApp(this);
 
-        Location location = googleAPIConnectionUtil.minhaLocalizacao();
-        if (location != null)
-        prefManager.setMinhaCoord(location.getLatitude() + "_" + location.getLongitude());
+
+        if (myLocation != null)
+            prefManager.setMinhaCoord(myLocation.getLatitude() + "_" + myLocation.getLongitude());
 
 
         super.onPause();
@@ -384,27 +430,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void comecaListaLojasFragment() {
 
-        Localizacao.getInstance().setLocation(googleAPIConnectionUtil.minhaLocalizacao());
-
-
-
 
         if (findViewById(R.id.main_container) != null && !firstUse) {
 
-            ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos().clear();
+            Log.println(Log.ASSERT, TAG, "comecaListaLojasFragment");
+
+
             ListaMarker.getInstance().getListaMarker().clear();
             // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-            adapter = new ViewPagerAdapter(MainActivity.this, getFragmentManager(), Numboftabs);
+            adapter = new ViewPagerAdapter(MainActivity.this, getFragmentManager(), Numboftabs, myLocation);
 
             // Assigning ViewPager View and setting the adapter
             pager = (CustomViewPager) findViewById(R.id.pager);
-            pager.setPagingEnabled(true);
+            pager.setPagingEnabled(false);
             pager.setAdapter(adapter);
+
             // Assiging the Sliding Tab Layout View
             tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
 
             tabs.setViewPager(pager);
 
+            tabs.setVisibility(View.VISIBLE);
+          
 
             mudaCorTab(pager.getCurrentItem());
 
@@ -416,8 +463,13 @@ public class MainActivity extends AppCompatActivity {
 
     protected void changeSettings() {
 
+        LocationSettingsRequest.Builder builder =
+                new LocationSettingsRequest.Builder()
+                        .setAlwaysShow(true)
+                        .addLocationRequest(mLocationRequest);
 
-        PendingResult<LocationSettingsResult> result = googleAPIConnectionUtil.mudaSettingsLocation();
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
+                builder.build());
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
@@ -429,13 +481,12 @@ public class MainActivity extends AppCompatActivity {
                     case LocationSettingsStatusCodes.SUCCESS:
 
 
-                        if (googleAPIConnectionUtil.minhaLocalizacao() != null)
-                            comecaListaLojasFragment();
-                        else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                                new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                            else
-                                new MyTask().execute();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                            Log.println(Log.ASSERT, TAG, "aqui3");
+                            startLocationUpdates();
+                        } else {
+                            Log.println(Log.ASSERT, TAG, "aqui4");
+                            startLocationUpdates();
                         }
 
 
@@ -475,7 +526,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (resultCode) {
                     case Activity.RESULT_OK:
 
-                        new MyTask().execute();
+                        Log.println(Log.ASSERT, TAG, "aqui5");
+                        if (!mGoogleApiClient.isConnected())
+                            mGoogleApiClient.connect();
 
                         break;
                     case Activity.RESULT_CANCELED:
@@ -495,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog = new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Falha na conexão")
                 .setMessage("Verifique se o seu dispositivo está conectado à rede e tente novamente")
-                .setPositiveButton("Reconectar", new DialogInterface.OnClickListener() {
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
@@ -521,7 +574,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    protected void teste() {
+    protected void semConexao() {
+        final Timer mTimer = new Timer();
 
         TimerTask mTimerTask = new TimerTask() {
 
@@ -544,14 +598,15 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            onStart();
+                            mTimer.cancel();
+                            changeSettings();
                         }
                     });
 
                 }
             }
         };
-        Timer mTimer = new Timer();
+
         mTimer.scheduleAtFixedRate(mTimerTask, 1000, 8000);
     }
 
@@ -573,7 +628,7 @@ public class MainActivity extends AppCompatActivity {
             // result of the request.
 
         } else {
-            googleAPIConnectionUtil.getmGoogleApiClient().connect();
+            mGoogleApiClient.reconnect();
 
             changeSettings();
 
@@ -635,6 +690,104 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        startLocationUpdates();
+
+    }
+
+
+    protected void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        myLocation = location;
+        if (!firstUse)
+            comecaListaLojasFragment();
+
+
+        else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+                new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+            else
+                new MyTask().execute();
+
+        }
+
+
+        stopLocationUpdates();
+
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (connectionResult.hasResolution()) {
+            try {
+
+                mResolvingError = true;
+                connectionResult.startResolutionForResult(MainActivity.this, REQUEST_RESOLVE_ERROR);
+            } catch (IntentSender.SendIntentException e) {
+                // There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
+            }
+        } else {
+            // Show dialog using GoogleApiAvailability.getErrorDialog()
+            showErrorDialog(connectionResult.getErrorCode());
+
+            mResolvingError = true;
+        }
+
+
+    }
+
+    /* Creates a dialog for an error message */
+    private void showErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getFragmentManager(), "errordialog");
+    }
+
+    /* Called from ErrorDialogFragment when the dialog is dismissed. */
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
 
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
@@ -642,12 +795,14 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
 
 
-            if (!googleAPIConnectionUtil.getmGoogleApiClient().isConnected())
-                googleAPIConnectionUtil.getmGoogleApiClient().reconnect();
+            if (!mGoogleApiClient.isConnected())
+                mGoogleApiClient.reconnect();
+
+            Log.println(Log.ASSERT, TAG, "doInBackground");
 
 
             while (true) {
-                if (googleAPIConnectionUtil.minhaLocalizacao() != null)
+                if (myLocation != null)
                     break;
 
             }
@@ -658,9 +813,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            GoogleAPIConnectionUtil.setLocationChanged(false);
 
-            comecaListaLojasFragment();
+
+            GoogleAPIConnectionUtil.setLocationChanged(false);
+            Log.println(Log.ASSERT, TAG, "onPostExecute");
+            MessageEB m = new MessageEB("All");
+            m.setLocation(myLocation);
+            EventBus.getDefault().post(m);
+
 
         }
     }

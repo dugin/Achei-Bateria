@@ -2,26 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/lista_lojas_fragment"
     android:layout_width="match_parent"
-
-
     android:layout_height="match_parent"
-    android:visibility="visible"
+    android:background="@android:color/white"
+    android:clipToPadding="false"
     tools:context="eliteapps.SOSBattery.fragment.ListaLojasFragment"
 
     >
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/colorBackground"
+        android:background="@android:color/white"
+        android:clipToPadding="false"
         android:divider="#ffffff"
         android:dividerHeight="1sp"
         android:scrollbars="none" />
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/txtSemLoja"

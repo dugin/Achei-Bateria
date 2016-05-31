@@ -2,7 +2,8 @@
 
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scrollView1"
+
+    android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -28,19 +29,29 @@
             android:textColor="#000000"
             android:textSize="18sp" />
 
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextLabel">
+
+            >
         <EditText
             android:id="@+id/editTextNome"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/nomeLoja"
-            android:textColor="#50000000"
-            android:textSize="14sp" />
+            android:layout_height="match_parent"
+            android:hint="@string/nomeLoja"
+            android:maxLines="1"
 
+
+            android:textSize="14sp" />
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:id="@+id/textViewLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="15dp"
             android:text="@string/local"
             android:textColor="#000000"
@@ -51,30 +62,50 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/editTextEnd"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="5"
-                android:selectAllOnFocus="false"
-                android:text="@string/end"
-                android:textColor="#50000000"
-                android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/editTextNum"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:theme="@style/TextLabel">
+
+                >
+
+                <EditText
+                    android:id="@+id/editTextEnd"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="numberSigned"
-                android:text="@string/num"
-                android:textColor="#50000000"
+                    android:hint="@string/end"
+                    android:maxLines="1"
+                android:selectAllOnFocus="false"
+
                 android:textSize="14sp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:theme="@style/TextLabel">
+
+                >
+
+                <EditText
+                    android:id="@+id/editTextNum"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                    android:hint="@string/num"
+                android:inputType="numberSigned"
+                    android:maxLines="1"
+
+                android:textSize="14sp" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
 
@@ -94,6 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:alpha=".6"
+            android:buttonTint="@color/colorPrimaryDark"
             android:checked="true"
             android:clickable="false"
             android:text="@string/tomada"
@@ -103,6 +135,7 @@
             android:id="@+id/checkBoxCabo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimaryDark"
             android:checked="false"
             android:text="@string/cabo"
             android:textSize="14sp" />
@@ -118,6 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:buttonTint="@color/colorPrimaryDark"
                 android:checked="false"
                 android:text="@string/wifi"
                 android:textSize="14sp" />
@@ -125,39 +159,69 @@
 
         </LinearLayout>
 
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/TextLabel">
+
+            >
+
         <EditText
             android:id="@+id/editTextNomeWifi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/wifiNome"
-            android:textColor="#50000000"
+            android:hint="@string/wifiNome"
+            android:maxLines="1"
             android:textSize="14sp"
             android:visibility="gone" />
+        </android.support.design.widget.TextInputLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-        <EditText
-                android:id="@+id/editTextSenha"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/senha"
-                android:textColor="#50000000"
+                android:theme="@style/TextLabel">
+
+                >
+
+                <EditText
+                    android:id="@+id/editTextSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/senha"
+                    android:maxLines="1"
+
                 android:textSize="14sp"
                 android:visibility="gone" />
 
-            <EditText
-                android:id="@+id/editTextRepSenha"
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/repSenha"
-                android:textColor="#50000000"
+                android:theme="@style/TextLabel">
+
+                >
+
+                <EditText
+                    android:id="@+id/editTextRepSenha"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/repSenha"
+                    android:maxLines="1"
+
                 android:textSize="14sp"
                 android:visibility="gone" />
+            </android.support.design.widget.TextInputLayout>
+
         </LinearLayout>
 
         <TextView

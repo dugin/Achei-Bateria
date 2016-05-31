@@ -7,8 +7,10 @@
     <color name="colorAccent">#FFFFFF</color>
     <color name="colorBackground">#F4F4F4</color>
 
+    <color name="apptheme_color">#41722f</color>
 
- <!-- Material DEFAULT colors -->
+
+    <!-- Material DEFAULT colors -->
     <color name="material_drawer_primary">#589e3f</color>
     <color name="material_drawer_primary_dark">#41722F</color>
     <color name="material_drawer_primary_light">#A5A5A5</color>

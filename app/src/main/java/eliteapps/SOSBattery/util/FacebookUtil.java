@@ -38,9 +38,7 @@ public class FacebookUtil {
     AccessTokenTracker mFacebookAccessTokenTracker;
     PrefManager prefManager;
 
-    public FacebookUtil() {
 
-    }
 
     public FacebookUtil(Context context) {
 

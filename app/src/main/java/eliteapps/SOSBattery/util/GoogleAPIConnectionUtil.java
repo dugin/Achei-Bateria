@@ -32,14 +32,14 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     static String nome;
     static Location mCurrentLocation;
     private static boolean locationChanged = false;
+    private static GoogleApiClient mGoogleApiClient;
     private final String TAG = this.getClass().getSimpleName();
     LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
     private Activity mActivity;
 
-    public GoogleAPIConnectionUtil() {
+    private GoogleAPIConnectionUtil() {
 
     }
 
@@ -90,6 +90,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
     }
 
     public static boolean isLocationChanged() {
+
         return locationChanged;
     }
 
@@ -200,6 +201,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
                 EventBus.getDefault().post(m);
             }
 
+
         }
 
         if (mGoogleApiClient.isConnected())
@@ -228,8 +230,7 @@ public class GoogleAPIConnectionUtil implements GoogleApiClient.ConnectionCallba
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            GoogleAPIConnectionUtil googleAPIConnectionUtil = new GoogleAPIConnectionUtil();
-            googleAPIConnectionUtil.onDialogDismissed();
+            dialog.dismiss();
         }
     }
 }

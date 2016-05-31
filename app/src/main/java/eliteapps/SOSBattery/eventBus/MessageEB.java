@@ -2,6 +2,8 @@ package eliteapps.SOSBattery.eventBus;
 
 import android.location.Location;
 
+import java.util.List;
+
 import eliteapps.SOSBattery.domain.Estabelecimentos;
 
 
@@ -11,14 +13,22 @@ public class MessageEB {
     private int pos;
     private Location location;
     private Estabelecimentos e;
-    private boolean isCabo, isWifi;
-    private String categoria;
+    private boolean isCabo, isWifi, isRestaurant, isBar, isStore;
+
     private int raio;
     private int difDist;
-
+    private List<Estabelecimentos> estabelecimentosList;
 
     public MessageEB(String nomeClasse) {
         this.nomeClasse = nomeClasse;
+    }
+
+    public List<Estabelecimentos> getEstabelecimentosList() {
+        return estabelecimentosList;
+    }
+
+    public void setEstabelecimentosList(List<Estabelecimentos> estabelecimentosList) {
+        this.estabelecimentosList = estabelecimentosList;
     }
 
     public Estabelecimentos getE() {
@@ -65,14 +75,6 @@ public class MessageEB {
         this.isWifi = isWifi;
     }
 
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
     public int getRaio() {
         return raio;
     }
@@ -87,5 +89,29 @@ public class MessageEB {
 
     public void setDifDist(int difDist) {
         this.difDist = difDist;
+    }
+
+    public boolean isRestaurant() {
+        return isRestaurant;
+    }
+
+    public void setIsRestaurant(boolean isRestaurant) {
+        this.isRestaurant = isRestaurant;
+    }
+
+    public boolean isBar() {
+        return isBar;
+    }
+
+    public void setIsBar(boolean isBar) {
+        this.isBar = isBar;
+    }
+
+    public boolean isStore() {
+        return isStore;
+    }
+
+    public void setIsStore(boolean isStore) {
+        this.isStore = isStore;
     }
 }

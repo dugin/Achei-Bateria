@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,14 +17,13 @@
         android:gravity="center"
         android:lineSpacingMultiplier="1.3"
         android:paddingBottom="40dp"
-        android:text="Entre num estabelecimento parceiro que disponibilize wifi, e pressione o botão conectar e pronto, é só aproveitar!"
+        android:text="Entre em uma loja parceira com Wi-FI disponível e fique conectado. Aproveite!"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="24dp"
         android:textStyle="bold"
         android:visibility="visible" />
 
-    <mehdi.sakout.fancybuttons.FancyButton xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/botaoConecta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -11,9 +11,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
+import android.view.ActionMode;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -79,6 +86,20 @@ public class InsereEstabelecimentoFragment extends Fragment {
         nomeWifi = (EditText) view.findViewById(R.id.editTextNomeWifi);
 
 
+        mudaFocoEditText(nome, end);
+        mudaFocoEditText(end, numero);
+        mudaFocoEditText(nomeWifi, senha);
+
+        denyCopyPaste(nome);
+        denyCopyPaste(end);
+        denyCopyPaste(numero);
+        denyCopyPaste(senha);
+        denyCopyPaste(senhaRep);
+        denyCopyPaste(nomeWifi);
+
+
+
+
         nome.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -123,12 +144,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
                     senha.setVisibility(View.GONE);
                     senhaDiscplaimer.setVisibility(View.GONE);
                     senhaRep.setVisibility(View.GONE);
-                    senha.setText("Senha");
-                    senha.setTextColor(Color.parseColor("#50000000"));
-                    senhaRep.setText("Repetir Senha");
-                    senhaRep.setTextColor(Color.parseColor("#50000000"));
-                    senha.setInputType(InputType.TYPE_CLASS_TEXT);
-                    senhaRep.setInputType(InputType.TYPE_CLASS_TEXT);
+
                 }
             }
         });
@@ -137,6 +153,7 @@ public class InsereEstabelecimentoFragment extends Fragment {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 senha.setInputType(129);
+
                 editText(senha, "Senha", hasFocus);
                 senhaRep.setVisibility(View.VISIBLE);
             }
@@ -262,19 +279,59 @@ public class InsereEstabelecimentoFragment extends Fragment {
 
     private void editText(EditText campo, String texto, boolean hasFocus) {
 
-        if (campo.getText().toString().equals("") && !hasFocus) {
-            campo.setText(texto);
-            campo.setTextColor(Color.parseColor("#50000000"));
-            campo.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        } else if (hasFocus && campo.getText().toString().equals(texto)) {
+        if (hasFocus && campo.getText().toString().equals(texto)) {
             campo.setText("");
             campo.setTextColor(Color.BLACK);
-
+            getActivity().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         }
 
 
+    }
+
+    private void denyCopyPaste(EditText editText) {
+        editText.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+        });
+    }
+
+
+    private void mudaFocoEditText(EditText atual, final EditText proximo) {
+
+        atual.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+
+                if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+                    proximo.requestFocus();
+                    return true;
+
+                }
+
+                return false;
+
+            }
+
+
+        });
     }
 
 

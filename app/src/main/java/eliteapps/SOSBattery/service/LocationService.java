@@ -95,8 +95,9 @@ public class LocationService extends Service {
             mGoogleApiClient.disconnect();
 
             carregou();
-            stopSelf();
             EventBus.getDefault().unregister(this);
+            stopSelf();
+
         }
     }
 
