@@ -2,7 +2,6 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,14 +15,26 @@
 
         >
 
+
         <ImageView
             android:id="@+id/imageView_splash"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/splash" />
+            android:paddingBottom="25dp"
+            android:src="@drawable/ic_splash" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView_splash"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp" />
 
         <TextView
             android:id="@+id/textLoading"
@@ -46,6 +57,18 @@
             android:layout_toRightOf="@+id/imageView_splash"
             android:indeterminate="true"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/pular_login"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
 
 
     </RelativeLayout>

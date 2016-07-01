@@ -6,9 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:background="@color/colorPrimary"
+    android:elevation="10dp"
     android:theme="@style/ToolbarTheme"
 
-    app:layout_collapseMode="pin"
     app:popupTheme="@style/ToolbarTheme">
 
     <RelativeLayout
@@ -71,7 +71,7 @@
             android:layout_toLeftOf="@+id/filter_list"
             android:background="?android:selectableItemBackground"
             android:src="@drawable/refresh_button"
-            android:visibility="gone"
+            android:visibility="visible"
 
             />
 

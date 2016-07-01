@@ -17,7 +17,7 @@ public class FirebaseUtil {
     public static Firebase getFirebase() {
 
         if (firebase == null) {
-            firebase = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentos");
+            firebase = new Firebase("https://sosbattery-1198.firebaseio.com/estabelecimentos");
         }
         return (firebase);
     }

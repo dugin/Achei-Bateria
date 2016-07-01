@@ -39,8 +39,10 @@ public class CalendarUtil {
                 resp = hr_abre + "" + hr_fecha;
 
                 if (lojas.getHr_open().length > 3 && lojas.getHr_close().length > 3) {
-                    resp += "\n" + lojas.getHr_open()[3].substring(0, 2) + "h às ";
-                    resp += lojas.getHr_close()[3].substring(0, 2) + "h";
+                    if (!lojas.getHr_open()[3].isEmpty() && !lojas.getHr_close()[3].isEmpty()) {
+                        resp += "\n" + lojas.getHr_open()[3].substring(0, 2) + "h às ";
+                        resp += lojas.getHr_close()[3].substring(0, 2) + "h";
+                    }
 
                 }
             } else if (day == 7) {
@@ -49,8 +51,10 @@ public class CalendarUtil {
                 resp = hr_abre + "" + hr_fecha;
 
                 if (lojas.getHr_open().length > 4 && lojas.getHr_close().length > 4) {
-                    resp += "\n" + lojas.getHr_open()[4].substring(0, 2) + "h às ";
-                    resp += lojas.getHr_close()[4].substring(0, 2) + "h";
+                    if (!lojas.getHr_open()[4].isEmpty() && !lojas.getHr_close()[4].isEmpty()) {
+                        resp += "\n" + lojas.getHr_open()[4].substring(0, 2) + "h às ";
+                        resp += lojas.getHr_close()[4].substring(0, 2) + "h";
+                    }
 
                 }
             } else if (day == 1) {
@@ -59,8 +63,10 @@ public class CalendarUtil {
                 resp = hr_abre + "" + hr_fecha;
 
                 if (lojas.getHr_open().length > 5 && lojas.getHr_close().length > 5) {
-                    resp += "\n" + lojas.getHr_open()[5].substring(0, 2) + "h às ";
-                    resp += lojas.getHr_close()[5].substring(0, 2) + "h";
+                    if (!lojas.getHr_open()[5].isEmpty() && !lojas.getHr_close()[5].isEmpty()) {
+                        resp += "\n" + lojas.getHr_open()[5].substring(0, 2) + "h às ";
+                        resp += lojas.getHr_close()[5].substring(0, 2) + "h";
+                    }
 
                 }
             }

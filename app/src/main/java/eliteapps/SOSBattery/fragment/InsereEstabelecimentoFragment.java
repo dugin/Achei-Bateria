@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -60,6 +57,9 @@ public class InsereEstabelecimentoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_insere_estabelecimento, container, false);
 
         NavigationDrawerUtil.getDrawer().getActionBarDrawerToggle().setDrawerIndicatorEnabled(false);
+
+        if (Build.VERSION.SDK_INT >= 21)
+            getActivity().findViewById(R.id.app_bar).setElevation(10);
 
         App application = (App) getActivity().getApplication();
         mTracker = application.getDefaultTracker();

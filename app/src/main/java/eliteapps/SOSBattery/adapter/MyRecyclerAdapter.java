@@ -4,11 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import java.util.List;
 
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
-import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.extras.CircleTransformation;
 import eliteapps.SOSBattery.extras.RecyclerViewOnClickListenerHack;
 import eliteapps.SOSBattery.util.CalendarUtil;
@@ -44,17 +41,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         context = c;
         mList = l;
 
-
     }
 
     @Override
     public int getItemViewType(int position) {
 
-
-        if (mList.size() < position)
+        if (mList.size() <= position)
             return VIEW_TYPES.Fechados;
-        else if (mList.size() == position)
-            return VIEW_TYPES.TituloFechados;
+
         else
             return VIEW_TYPES.Normal;
 
@@ -63,22 +57,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-
-        if (viewType == VIEW_TYPES.TituloFechados) {
-
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.footer_item, viewGroup, false);
-
-            return new FooterViewHolder(v);
-
-
-        } else if (viewType == VIEW_TYPES.Fechados || viewType == VIEW_TYPES.Normal) {
-
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.content_lista_lojas, viewGroup, false);
             return new MyViewHolder(v, viewType);
-        }
 
 
-        return null;
     }
 
     @Override
@@ -89,13 +71,20 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Estabelecimentos estabelecimentos = null;
 
             MyViewHolder genericViewHolder = (MyViewHolder) myViewHolder;
+
             if (genericViewHolder.viewType == VIEW_TYPES.Normal) {
+                genericViewHolder.txtTituloFechado.setVisibility(View.GONE);
                 list = mList;
                 estabelecimentos = list.get(position);
             } else if (genericViewHolder.viewType == VIEW_TYPES.Fechados) {
                 genericViewHolder.contentLayout.setAlpha((float) 0.6);
                 list = mListFechados;
-                estabelecimentos = list.get(position - mList.size() - 1);
+                estabelecimentos = list.get(position - mList.size());
+                if (position - mList.size() == 0)
+                    genericViewHolder.txtTituloFechado.setVisibility(View.VISIBLE);
+
+                else
+                    genericViewHolder.txtTituloFechado.setVisibility(View.GONE);
             }
 
 
@@ -119,7 +108,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             else
                 genericViewHolder.wifi.setVisibility(View.VISIBLE);
 
-            if (!estabelecimentos.getCabo())
+            if (!estabelecimentos.getCabo().getAndroid())
                 genericViewHolder.cabo.setVisibility(View.INVISIBLE);
             else
                 genericViewHolder.cabo.setVisibility(View.VISIBLE);
@@ -160,10 +149,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        if (mListFechados.isEmpty())
-            return mList.size();
 
-        return mList.size() + 1 + mListFechados.size();
+        return mList.size() + mListFechados.size();
+
+
     }
 
 
@@ -171,18 +160,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mRecyclerViewOnClickListenerHack = r;
     }
 
-
-
-    public void addListItem(Estabelecimentos e, int position) {
-        mList.add(e);
-        notifyItemInserted(position);
-    }
-
-
-    public void removeListItem(int position) {
-        mList.remove(position);
-        notifyItemRemoved(position);
-    }
 
     private int calculaTempoMin(double distanciaM) {
         double segundos = distanciaM / 1.3;
@@ -193,24 +170,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     }
 
-    class FooterViewHolder extends RecyclerView.ViewHolder {
-        TextView txtTitleFooter;
-        FrameLayout footerLayout;
-
-        public FooterViewHolder(View itemView) {
-            super(itemView);
-            this.txtTitleFooter = (TextView) itemView.findViewById(R.id.txtFooter);
-            footerLayout = (FrameLayout) itemView.findViewById(R.id.footer_layout);
-        }
-    }
-
-
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final String TAG = this.getClass().getSimpleName();
 
         ImageView wifi, cabo, imgLoja;
-        private TextView txtEnd, txtDist, txtHrFunc, txtBairro, txtNome;
+        private TextView txtEnd, txtDist, txtHrFunc, txtBairro, txtNome, txtTituloFechado;
         private int viewType;
         private RelativeLayout contentLayout;
 
@@ -229,6 +194,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             wifi = (ImageView) itemView.findViewById(R.id.imgWifi);
             cabo = (ImageView) itemView.findViewById(R.id.imgCabo);
 
+            txtTituloFechado = (TextView) itemView.findViewById(R.id.txtTituloFechados);
+
             imgLoja = (ImageView) itemView.findViewById(R.id.imgLoja);
 
             itemView.setOnClickListener(this);
@@ -246,7 +213,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private class VIEW_TYPES {
         public static final int Normal = 1;
-        public static final int TituloFechados = 2;
         public static final int Fechados = 3;
     }
 }

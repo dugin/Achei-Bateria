@@ -18,7 +18,7 @@ public class GeoFireUtil {
 
     public static GeoFire getFirebase() {
         if (geoFire == null) {
-            geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadas"));
+            geoFire = new GeoFire(new Firebase("https://sosbattery-1198.firebaseio.com/coordenadas"));
         }
         return (geoFire);
     }

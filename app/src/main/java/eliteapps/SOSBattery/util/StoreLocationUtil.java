@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.activities.MainActivity;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
+import eliteapps.SOSBattery.domain.Cabo;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
 import eliteapps.SOSBattery.json.Address_components;
 import eliteapps.SOSBattery.json.Periods;
@@ -67,10 +68,9 @@ public class StoreLocationUtil {
     public void saveToFirebase() {
 
 
+        final Firebase myFirebaseRef = new Firebase("https://sosbattery-1198.firebaseio.com/estabelecimentosTemp");
 
-        final Firebase myFirebaseRef = new Firebase("https://flickering-heat-3899.firebaseio.com/estabelecimentosTemp");
-
-        GeoFire geoFire = new GeoFire(new Firebase("https://flickering-heat-3899.firebaseio.com/coordenadasTemp"));
+        GeoFire geoFire = new GeoFire(new Firebase("https://sosbattery-1198.firebaseio.com/coordenadasTemp"));
 
         Firebase dbRef = myFirebaseRef.push();
         e.setId(dbRef.getKey());
@@ -232,10 +232,10 @@ public class StoreLocationUtil {
 
             Response response = gson.fromJson(result, Response.class);
             Address_components[] address = response.getResult().getAddress_components();
-
-            e.setCabo(isCabo);
+            Cabo c = new Cabo(isCabo, true);
+            e.setCabo(c);
             e.setWifi_senha(wifiSenha);
-            e.setWifi_ssid(nomeWifi);
+            e.setWifi_SSID(nomeWifi);
             String bairro = null;
             String cidade = null;
             e.setWifi(isWifi);

@@ -1,8 +1,10 @@
 {
   "project_info": {
+    "name": "SOS Battery",
     "project_id": "grounded-primer-120216",
-    "project_number": "497570755950",
-    "name": "SOS Battery"
+    "project_number": "749859060834",
+    "firebase_url": "https://sosbattery-1198.firebaseio.com",
+    "storage_bucket": "sosbattery-1198.appspot.com"
   },
   "client": [
     {
@@ -14,10 +16,15 @@
           "package_name": "eliteapps.SOSBattery"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "686881208651-t9jviiedisg634b54mtics6ptk55be0i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": ""
+          "current_key": "AIzaSyCttjsEUOPnF5Sgeh3anJ0Y2tmMP3-ziQY"
         }
       ],
       "services": {

@@ -9,7 +9,6 @@ import android.content.IntentSender;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -37,9 +37,8 @@ import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.firebase.client.Firebase;
-import com.firebase.geofire.GeoFire;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,12 +64,8 @@ import eliteapps.SOSBattery.R;
 import eliteapps.SOSBattery.adapter.CustomViewPager;
 import eliteapps.SOSBattery.adapter.ViewPagerAdapter;
 import eliteapps.SOSBattery.application.App;
-import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
-import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.eventBus.MessageEB;
-import eliteapps.SOSBattery.fragment.ListaLojasFragment;
-import eliteapps.SOSBattery.fragment.WifiFragment;
 import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.FacebookUtil;
 import eliteapps.SOSBattery.util.FirebaseUtil;
@@ -93,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final int REQUEST_CHECK_SETTINGS = 1;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    static boolean permissionGranted = false;
     private final String TAG = this.getClass().getSimpleName();
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -105,16 +101,19 @@ public class MainActivity extends AppCompatActivity
     ImageButton refreshBtn;
     PrefManager prefManager;
     Tracker mTracker;
+    boolean isResolutionRequired = false;
+    boolean isLocationUpdateOn;
+    Toolbar toolbar;
     private boolean mResolvingError = false;
-    private boolean firstUse = false;
+    private boolean firstUse = true;
     private AlertDialog alertDialog;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-
+        FacebookSdk.sdkInitialize(this);
         App application = (App) getApplication();
         mTracker = application.getDefaultTracker();
 
@@ -157,7 +156,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
+        toolbar = (Toolbar) findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
@@ -174,14 +173,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                    tabs.setVisibility(View.VISIBLE);
+
 
                 Log.println(Log.ASSERT, TAG, "refreshBtn clicked");
 
 
-                startLocationUpdates();
-
-
+                SwipeRefreshLayout s = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+                if (!s.isRefreshing())
+                    new DialogoDeProgresso(MainActivity.this, "Carregando Estabelecimentos...");
 
 
                 // Build and send an Event.
@@ -190,22 +189,24 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Refresh")
                         .setLabel("Refresh")
                         .build());
-                new DialogoDeProgresso(MainActivity.this, "Carregando Estabelecimentos...");
+                //new DialogoDeProgresso(MainActivity.this, "Carregando Estabelecimentos...");
 
 
                 firstUse = false;
+
 
                 if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
                         !NotificationUtils.isAppIsInBackground(MainActivity.this))
                     semConexao();
 
-                else
+                else if (mGoogleApiClient.isConnected() && !isLocationUpdateOn)
                     changeSettings();
 
 
 
             }
         });
+
 
         TextView t1 = (TextView) findViewById(R.id.toolbar_title);
         Typeface type = Typeface.createFromAsset(getAssets(), "fonts/Leelawadee.ttf");
@@ -216,13 +217,6 @@ public class MainActivity extends AppCompatActivity
         if (!InternetConnectionUtil.isNetworkAvailable(MainActivity.this) &&
                 !NotificationUtils.isAppIsInBackground(MainActivity.this))
             semConexao();
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getPermission();
-        } else
-            changeSettings();
 
 
     }
@@ -249,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
+                    permissionGranted = true;
                     changeSettings();
 
                 } else {
@@ -281,10 +275,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        if (mGoogleApiClient.isConnected()) {
-            startLocationUpdates();
 
-        }
+        if (mGoogleApiClient.isConnected() && !isLocationUpdateOn && permissionGranted)
+            changeSettings();
+
+
+
         AppEventsLogger.activateApp(this);
         super.onResume();
     }
@@ -304,6 +300,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
 
+        if (mGoogleApiClient.isConnected())
         stopLocationUpdates();
 
         // Logs 'app deactivate' App Event.
@@ -341,6 +338,9 @@ public class MainActivity extends AppCompatActivity
                 tabs.setViewPager(pager);
 
                 mudaCorTab(pager.getCurrentItem());
+
+                if (Build.VERSION.SDK_INT >= 21)
+                    toolbar.setElevation(0);
             }
             findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
             findViewById(R.id.filter_list).setVisibility(View.VISIBLE);
@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity
     public void comecaListaLojasFragment() {
 
 
-        if (findViewById(R.id.main_container) != null && !firstUse) {
+        if (findViewById(R.id.main_container) != null) {
 
             Log.println(Log.ASSERT, TAG, "comecaListaLojasFragment");
 
@@ -456,12 +456,13 @@ public class MainActivity extends AppCompatActivity
             mudaCorTab(pager.getCurrentItem());
 
 
-            firstUse = true;
+            firstUse = false;
         }
 
     }
 
     protected void changeSettings() {
+
 
         LocationSettingsRequest.Builder builder =
                 new LocationSettingsRequest.Builder()
@@ -478,30 +479,36 @@ public class MainActivity extends AppCompatActivity
                 final LocationSettingsStates locationSettingsStates = result.getLocationSettingsStates();
 
                 switch (status.getStatusCode()) {
+
                     case LocationSettingsStatusCodes.SUCCESS:
 
+                        TextView t = (TextView) findViewById(R.id.textLoading);
+                        t.setVisibility(View.VISIBLE);
+                        t.setText("Localizando...");
+                        findViewById(R.id.barraLoading).setVisibility(View.VISIBLE);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                            Log.println(Log.ASSERT, TAG, "aqui3");
+                        Log.println(Log.ASSERT, TAG, "LocationSettingsStatusCodes.SUCCESS");
+                        if (mGoogleApiClient.isConnected() && !isLocationUpdateOn)
                             startLocationUpdates();
-                        } else {
-                            Log.println(Log.ASSERT, TAG, "aqui4");
-                            startLocationUpdates();
-                        }
 
 
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
                         // a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(
-                                    MainActivity.this,
-                                    REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
+
+                        Log.println(Log.ASSERT, TAG, "LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
+                        if (!isResolutionRequired) {
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(
+                                        MainActivity.this,
+                                        REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            isResolutionRequired = true;
                         }
                         break;
 
@@ -566,6 +573,7 @@ public class MainActivity extends AppCompatActivity
                 .setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
+                        isResolutionRequired = false;
                         changeSettings();
                     }
                 })
@@ -623,11 +631,14 @@ public class MainActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
+            Log.println(Log.ASSERT, TAG, "getPermission");
             // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
             // app-defined int constant. The callback method gets the
             // result of the request.
 
         } else {
+            Log.println(Log.ASSERT, TAG, "getPermission else");
+            if (!mGoogleApiClient.isConnected())
             mGoogleApiClient.reconnect();
 
             changeSettings();
@@ -693,12 +704,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        startLocationUpdates();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            getPermission();
+        else {
+
+            Log.println(Log.ASSERT, TAG, "onConnected");
+            permissionGranted = true;
+            changeSettings();
+        }
 
     }
 
 
     protected void startLocationUpdates() {
+        isLocationUpdateOn = true;
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
 
@@ -712,12 +732,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
+        Log.println(Log.ASSERT, TAG, "onLocationChanged first use? = " + firstUse);
+        stopLocationUpdates();
         myLocation = location;
-        if (!firstUse)
+        if (firstUse)
             comecaListaLojasFragment();
 
 
         else {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                 new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -726,9 +749,6 @@ public class MainActivity extends AppCompatActivity
                 new MyTask().execute();
 
         }
-
-
-        stopLocationUpdates();
 
 
     }
@@ -776,6 +796,8 @@ public class MainActivity extends AppCompatActivity
 
 
     protected void stopLocationUpdates() {
+
+        isLocationUpdateOn = false;
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
     }

@@ -53,6 +53,7 @@
 
     <string name="wifiNome">Nome do Wifi</string>
     <string name="mudeFiltro">Mude o filtro e tente novamente</string>
+    <string name="pular_login"><u>Pular Login</u></string>
 
 
 </resources>

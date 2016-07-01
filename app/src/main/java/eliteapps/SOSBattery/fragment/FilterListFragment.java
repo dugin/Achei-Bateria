@@ -3,7 +3,6 @@ package eliteapps.SOSBattery.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -15,18 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.Tracker;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 import eliteapps.SOSBattery.R;
@@ -77,9 +70,13 @@ public class FilterListFragment extends Fragment {
         mTracker = application.getDefaultTracker();
 
 
+
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar); // Attaching the layout to the toolbar object
         getActivity().findViewById(R.id.filter_list).setVisibility(View.GONE);
         getActivity().findViewById(R.id.refresh_button).setVisibility(View.GONE);
+
+        if (Build.VERSION.SDK_INT >= 21)
+            toolbar.setElevation(10);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
