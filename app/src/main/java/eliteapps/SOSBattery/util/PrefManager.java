@@ -19,6 +19,9 @@ public class PrefManager {
     private static final String DATA_E_HORA = "data";
     private static final String MINHA_COORD = "coord";
 
+    private static final String CONT_CASA = "casa";
+    private static final String LATLONG_CASA = "latLonCasa";
+
     private static final String MEU_NOME = "nome";
     private static final String MINHA_IMG = "imgURL";
 
@@ -98,8 +101,27 @@ public class PrefManager {
 
     }
 
+    public Set getLatLonCasa() {
+        return pref.getStringSet(LATLONG_CASA, null);
+    }
+
+    public void setLatLonCasa(Set<String> coord) {
+
+        editor.putStringSet(LATLONG_CASA, coord);
+
+        editor.commit();
+    }
 
 
+    public int getContCasa() {
+        return pref.getInt(CONT_CASA, 0);
+    }
+
+    public void addContCasa() {
+
+        editor.putInt(CONT_CASA, getContCasa() + 1);
+        editor.commit();
+    }
 
 
     public String getMinhaCoord() {

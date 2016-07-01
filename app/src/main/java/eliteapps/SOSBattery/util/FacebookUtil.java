@@ -10,7 +10,6 @@ import android.view.Window;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -39,7 +38,6 @@ public class FacebookUtil {
     PrefManager prefManager;
 
 
-
     public FacebookUtil(Context context) {
 
 
@@ -51,31 +49,27 @@ public class FacebookUtil {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_facebook);
 
-        FacebookSdk.sdkInitialize(context.getApplicationContext());
 
         callbackManager = CallbackManager.Factory.create();
 
         loginButton = (LoginButton) dialog.findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("email", "user_photos", "public_profile"));
+        loginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
 
 
         mFacebookAccessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-                ref = new Firebase("https://flickering-heat-3899.firebaseio.com");
 
+                ref = new Firebase("https://sosbattery-users.firebaseio.com/");
                 if (currentAccessToken == null) {
-                    ref.unauth();
+
                     NavigationDrawerUtil.getHeaderNavigationLeft().removeProfile(0);
                     NavigationDrawerUtil.getHeaderNavigationLeft().addProfiles(
                             new ProfileDrawerItem().withName("Olá visitante!")
 
                     );
-
-
-                }
-
-                onFacebookAccessTokenChange(currentAccessToken);
+                } else
+                    onFacebookAccessTokenChange(currentAccessToken);
 
             }
         };
@@ -85,6 +79,7 @@ public class FacebookUtil {
 
 
     }
+
 
     public static CallbackManager getCallbackManager() {
         return callbackManager;
@@ -139,7 +134,9 @@ public class FacebookUtil {
                     prefManager.setNomeFacebook(nome + " " + sobrenome);
                     prefManager.setImgURLFacebook(authData.getProviderData().get("profileImageURL").toString());
 
-                    ref.child("usuarios").child(authData.getUid()).setValue(mapaBD);
+                    Firebase firebase = new Firebase("https://sosbattery-1198.firebaseio.com/usuarios/");
+
+                    firebase.child(authData.getUid()).setValue(mapaBD);
 
                     NavigationDrawerUtil.getHeaderNavigationLeft().removeProfile(0);
                     NavigationDrawerUtil.getHeaderNavigationLeft().addProfiles(

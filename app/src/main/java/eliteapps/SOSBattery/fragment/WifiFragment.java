@@ -8,7 +8,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -146,7 +145,7 @@ public class WifiFragment extends Fragment {
 
                     if (estabelecimentos.getWifi()) {
                         WifiConfiguration wifiConfig = new WifiConfiguration();
-                        if (estabelecimentos.getWifi_ssid() == null) {
+                        if (estabelecimentos.getWifi_SSID() == null) {
 
                             wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 
@@ -158,7 +157,7 @@ public class WifiFragment extends Fragment {
                         }
 
 
-                        wifiConfig.SSID = String.format("\"%s\"", estabelecimentos.getWifi_ssid());
+                        wifiConfig.SSID = String.format("\"%s\"", estabelecimentos.getWifi_SSID());
 
                         WifiManager wifiManager = (WifiManager) getActivity().getSystemService(MainActivity.WIFI_SERVICE);
 

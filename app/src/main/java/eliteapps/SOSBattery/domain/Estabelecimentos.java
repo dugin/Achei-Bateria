@@ -1,7 +1,8 @@
 package eliteapps.SOSBattery.domain;
 
+
 public class Estabelecimentos {
-    private Boolean cabo;
+    private Cabo cabo;
 
     private String imgURL;
 
@@ -33,16 +34,17 @@ public class Estabelecimentos {
 
     private float distancia;
 
-    private String wifi_ssid;
+    private String wifi_SSID;
 
 
     private String[] coordenadas;
 
 
-    public Estabelecimentos(String modifiedAt, String tipo, Boolean cabo, String imgURL, String wifi_senha, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
+    public Estabelecimentos(String modifiedAt, String tipo, Cabo cabo, String imgURL, String wifi_senha, String wifi_SSID, String bairro, String cidade, Boolean wifi, String estado, String createdAt, String[] hr_open, String id, String[] hr_close, String nome, String end) {
         this.cabo = cabo;
         this.imgURL = imgURL;
         this.wifi_senha = wifi_senha;
+        this.wifi_SSID = wifi_SSID;
         this.bairro = bairro;
         this.cidade = cidade;
         this.wifi = wifi;
@@ -75,11 +77,11 @@ public class Estabelecimentos {
         this.tipo = tipo;
     }
 
-    public Boolean getCabo() {
+    public Cabo getCabo() {
         return cabo;
     }
 
-    public void setCabo(Boolean cabo) {
+    public void setCabo(Cabo cabo) {
         this.cabo = cabo;
     }
 
@@ -195,13 +197,14 @@ public class Estabelecimentos {
         this.coordenadas = coordenadas;
     }
 
-    public String getWifi_ssid() {
-        return wifi_ssid;
+    public String getWifi_SSID() {
+        return wifi_SSID;
     }
 
-    public void setWifi_ssid(String wifi_ssid) {
-        this.wifi_ssid = wifi_ssid;
+    public void setWifi_SSID(String wifi_SSID) {
+        this.wifi_SSID = wifi_SSID;
     }
+
 
     @Override
     public String toString() {

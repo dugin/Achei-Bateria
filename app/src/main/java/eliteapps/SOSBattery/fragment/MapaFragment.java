@@ -40,7 +40,6 @@ import eliteapps.SOSBattery.domain.Estabelecimentos;
 import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
 import eliteapps.SOSBattery.domain.ListaMarker;
-import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.util.CalendarUtil;
 import eliteapps.SOSBattery.util.NavigationDrawerUtil;
@@ -245,7 +244,7 @@ public class MapaFragment extends Fragment {
                 if (!e.getWifi())
                     view.findViewById(R.id.imgWifiMapa).setVisibility(View.GONE);
 
-                if (!e.getCabo())
+                if (!e.getCabo().getAndroid())
                     view.findViewById(R.id.imgCaboMapa).setVisibility(View.GONE);
 
 
@@ -377,18 +376,18 @@ public class MapaFragment extends Fragment {
             Log.println(Log.ASSERT, TAG, "pos1: " + pos);
             estabelecimentosList = ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos();
 
-            if (pos <= estabelecimentosList.size()) {
+            if (pos < estabelecimentosList.size()) {
                 ID = estabelecimentosList.get(pos).getId();
                 location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
                 ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
 
             } else {
-                int posicao = pos - 1 - estabelecimentosList.size();
+                int posicao = pos - estabelecimentosList.size();
 
                 ID = lFechados.get(posicao).getId();
 
                 location = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(ID);
-                ListaMarker.getInstance().getListaMarker().get(pos - 1).showInfoWindow();
+                ListaMarker.getInstance().getListaMarker().get(pos).showInfoWindow();
 
 
             }
@@ -448,21 +447,14 @@ public class MapaFragment extends Fragment {
             mHashMap.put(location.getLatitude() + "_" + location.getLongitude(), l.get(i));
             // create marker
 
-            if (isStoreOpen) {
-                marker2 = new MarkerOptions().position(
-                        new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(l.get(i).getNome())
-                        .flat(true)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
-            } else {
-                marker2 = new MarkerOptions().position(
-                        new LatLng(location.getLatitude(), location.getLongitude()))
-                        .title(l.get(i).getNome())
-                        .flat(true)
-                        .alpha((float) .6)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
-            }
+            marker2 = new MarkerOptions().position(
+                    new LatLng(location.getLatitude(), location.getLongitude()))
+                    .title(l.get(i).getNome())
+                    .flat(true)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_battery_charging_full_34_dp));
 
+            if (!isStoreOpen)
+                marker2.alpha((float) .6);
 
             Marker marker = googleMap.addMarker(marker2);
 

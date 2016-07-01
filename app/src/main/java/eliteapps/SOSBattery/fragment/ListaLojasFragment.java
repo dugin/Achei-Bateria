@@ -1,7 +1,6 @@
 package eliteapps.SOSBattery.fragment;
 
 
-import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.firebase.client.DataSnapshot;
@@ -59,7 +57,6 @@ import eliteapps.SOSBattery.application.App;
 import eliteapps.SOSBattery.domain.Estabelecimentos;
 import eliteapps.SOSBattery.domain.ListaDeCoordenadas;
 import eliteapps.SOSBattery.domain.ListaDeEstabelecimentos;
-import eliteapps.SOSBattery.domain.Localizacao;
 import eliteapps.SOSBattery.eventBus.MessageEB;
 import eliteapps.SOSBattery.extras.RecyclerViewOnClickListenerHack;
 import eliteapps.SOSBattery.extras.SimpleDividerItemDecoration;
@@ -68,7 +65,6 @@ import eliteapps.SOSBattery.util.DialogoDeProgresso;
 import eliteapps.SOSBattery.util.FilterDataUtil;
 import eliteapps.SOSBattery.util.FirebaseUtil;
 import eliteapps.SOSBattery.util.GeoFireUtil;
-import eliteapps.SOSBattery.util.GoogleAPIConnectionUtil;
 import eliteapps.SOSBattery.util.InternetConnectionUtil;
 import eliteapps.SOSBattery.util.NotificationUtils;
 import eliteapps.SOSBattery.util.PrefManager;
@@ -93,7 +89,7 @@ public class ListaLojasFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     PrefManager prefManager;
     Location l;
-
+    SwipeRefreshLayout swipeRefreshLayout;
     Tracker mTracker;
     Firebase myFirebaseRef = FirebaseUtil.getFirebase();
 
@@ -142,7 +138,9 @@ public class ListaLojasFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
 
-        getActivity().findViewById(R.id.textLoading).setVisibility(View.VISIBLE);
+        TextView t = (TextView) getActivity().findViewById(R.id.textLoading);
+        t.setText("Carregando...");
+        t.setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.barraLoading).setVisibility(View.VISIBLE);
 
         Log.println(Log.ASSERT, TAG, "onCreateView");
@@ -190,12 +188,16 @@ public class ListaLojasFragment extends Fragment {
             }
         });
 
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary_dark));
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
                 ImageButton refreshBtn = (ImageButton) getActivity().findViewById(R.id.refresh_button);
                 refreshBtn.callOnClick();
+
             }
         });
 
@@ -242,7 +244,7 @@ public class ListaLojasFragment extends Fragment {
             Estabelecimentos e = it.next();
 
             if (isCabo) {
-                if (!e.getCabo()) {
+                if (!e.getCabo().getAndroid()) {
                     it.remove();
                     continue;
 
@@ -308,7 +310,6 @@ public class ListaLojasFragment extends Fragment {
             if (DialogoDeProgresso.getDialog() != null)
                 DialogoDeProgresso.getDialog().dismiss();
 
-            attachAdapter();
 
             if (!NotificationUtils.isAppIsInBackground(getActivity())) {
 
@@ -326,6 +327,8 @@ public class ListaLojasFragment extends Fragment {
 
 
     private void attachAdapter() {
+
+        Log.println(Log.ASSERT, TAG, "attachAdapter");
 
         adapter = new MyRecyclerAdapter(getActivity(), ListaDeEstabelecimentos.getInstance().getListaDeEstabelecimentos(), listFechados, l);
 
@@ -392,7 +395,6 @@ public class ListaLojasFragment extends Fragment {
 
                             if (ListaDeCoordenadas.getInstance().getListaDeCoordenadas().containsKey(estabelecimentos.getId())) {
                                 Location l2 = ListaDeCoordenadas.getInstance().getListaDeCoordenadas().get(estabelecimentos.getId());
-                                Log.println(Log.ASSERT, TAG, "lat2: " + l2.getLatitude());
 
                                 verificaLojaFechada(l2, estabelecimentos);
 
@@ -439,7 +441,7 @@ public class ListaLojasFragment extends Fragment {
 
                                         EventBus.getDefault().post(m);
 
-                                        attachAdapter();
+
 
                                     }
 
@@ -531,13 +533,16 @@ public class ListaLojasFragment extends Fragment {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
     private void semLoja(View view, boolean isStoreAvailble) {
 
+        Log.println(Log.ASSERT, TAG, "semLoja " + isStoreAvailble);
 
+        android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.app_bar);
         TextView textNenhumaLoja = (TextView) view.findViewById(R.id.textNenhumaLoja);
         TextView txtMudaFiltro = (TextView) view.findViewById(R.id.txtMudaFiltro);
         CustomViewPager viewPager = (CustomViewPager) getActivity().findViewById(R.id.pager);
+
         PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) getActivity().findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
 
@@ -545,6 +550,8 @@ public class ListaLojasFragment extends Fragment {
         getActivity().findViewById(R.id.splash_layout).setVisibility(View.GONE);
         getActivity().findViewById(R.id.main_layout).setVisibility(View.VISIBLE);
 
+        if (swipeRefreshLayout != null)
+            swipeRefreshLayout.setRefreshing(false);
 
         if (DialogoDeProgresso.getDialog() != null)
             DialogoDeProgresso.getDialog().dismiss();
@@ -559,26 +566,34 @@ public class ListaLojasFragment extends Fragment {
 
         if (isStoreAvailble) {
 
+            mRecyclerView.setVisibility(View.VISIBLE);
 
-            //    toolbar.setElevation(0);
+            if (Build.VERSION.SDK_INT >= 21)
+                toolbar.setElevation(0);
+
             txtMudaFiltro.setVisibility(View.GONE);
             textNenhumaLoja.setVisibility(View.GONE);
             view.findViewById(R.id.imageSad).setVisibility(View.GONE);
             view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.GONE);
             txtSemLoja.setVisibility(View.GONE);
 
+            swipeRefreshLayout.setEnabled(true);
             pagerSlidingTabStrip.setVisibility(View.VISIBLE);
 
             viewPager.setPagingEnabled(true);
 
         } else {
-            //  toolbar.setElevation(4);
+
+            swipeRefreshLayout.setEnabled(false);
+
+            if (Build.VERSION.SDK_INT >= 21)
+                toolbar.setElevation(10);
             txtMudaFiltro.setVisibility(View.VISIBLE);
             textNenhumaLoja.setVisibility(View.VISIBLE);
             view.findViewById(R.id.imageSad).setVisibility(View.VISIBLE);
             view.findViewById(R.id.botãoFeedbackLista).setVisibility(View.VISIBLE);
             txtSemLoja.setVisibility(View.VISIBLE);
-
+            mRecyclerView.setVisibility(View.INVISIBLE);
 
             pagerSlidingTabStrip.setVisibility(View.GONE);
 
@@ -593,6 +608,8 @@ public class ListaLojasFragment extends Fragment {
             viewPager.setPagingEnabled(false);
 
         }
+
+        attachAdapter();
     }
 
 
@@ -654,7 +671,7 @@ public class ListaLojasFragment extends Fragment {
             if (hrAtual < hrAbre || hrAtual >= hrFecha) {
 
                 mapLojaFechada.put(l.distanceTo(location), estabelecimentos);
-            } else if (estabelecimentos.getCabo()) {
+            } else if (estabelecimentos.getCabo().getAndroid()) {
 
                 mapComcabo.put(l.distanceTo(location), estabelecimentos);
             } else {
@@ -814,8 +831,6 @@ public class ListaLojasFragment extends Fragment {
                                         }
                                     });
 
-
-                                    attachAdapter();
 
                                 }
 
